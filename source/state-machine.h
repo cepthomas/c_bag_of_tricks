@@ -4,17 +4,25 @@
 #include <stdio.h>
 #include "list.h"
 
+/// @file
 
-////////// Client interface to state machine //////////
+////////// Public/client interface to state machine //////////
+
+/////// Definitions //////
 
 /// Opaque state machine object.
 typedef struct sm sm_t;
 
-/// Transition function type. Carries ptr to app specific context data.
+/// Transition function type. Carries xxxxxxxxxxx xxxxxxxxx xxxxxxxxxxx
+/// @brief Brief Longer DOC
+/// @param ptr to app specific context data.
+/// @return Description 
 typedef void (*func_t)(void*);
 
 /// Translate a state or event to readable.
-typedef const char* (*xlat_t)(int);
+/// @param id The state or event id.
+/// @return String version of id. 
+typedef const char* (*xlat_t)(int id);
 
 /// Signifies stay in same state.
 #define ST_SAME -1
@@ -25,35 +33,60 @@ typedef const char* (*xlat_t)(int);
 /// Signifies default event handler.
 #define EVT_DEFAULT -3
 
-/// Create a machine. Pass a debug stream and translate function. Returns opaque pointer.
-/// Client must sm_destroy() it.
+//////// Functions /////////
+
+/// Create a state machine. Client must sm_destroy() it.
+/// fp and/or xlat can be null which means no trace.
+/// @param fp Optional stream for tracing. Can be NULL if not used.
+/// @param xlat Optional translator for id tracing.
+/// @return The opaque pointer used in all functions. 
 sm_t* sm_create(FILE* fp, xlat_t xlat);
 
-/// Clean up all resources including the sm.
+/// Clean up all resources including the state machine.
+/// @param sm Pertinent state machine.
 void sm_destroy(sm_t* sm);
 
-/// Reset a machine.
-void sm_reset(sm_t* sm);
-
 /// Add a new state - sets to current state.
+/// @param sm Pertinent state machine.
+/// @param stateId State name.
+/// @param func Optional entry function to call.
 void sm_addState(sm_t* sm, int stateId, const func_t func);
 
-/// Add an event to the current state.
-void sm_addEvent(sm_t* sm, int eventId, const func_t func, int nextState);
+/// Add a transition to the current state.
+/// @param sm Pertinent state machine.
+/// @param eventId Event that causes the transition.
+/// @param func Optional transition function to call.
+/// @param nextState State to go to. Can be ST_SAME to stay in the same state.
+void sm_addTransition(sm_t* sm, int eventId, const func_t func, int nextState);
 
 /// Process the event in the argument.
+/// @param sm Pertinent state machine.
+/// @param eventId Specific event id.
+/// @param context Optional context data.
 void sm_processEvent(sm_t* sm, int eventId, void* context);
 
 /// Get the current state.
-int sm_currentState(sm_t* sm);
+/// @param sm Pertinent state machine.
+/// @return Current state id. 
+int sm_getState(sm_t* sm);
 
-/// Dump contents of the loaded state machine to stdout as readable.
-void sm_dump(sm_t* sm);
+/// Get the current state as string.
+/// @param sm Pertinent state machine.
+/// @return Current state id as string.
+const char* sm_getStateString(sm_t* sm);
 
-/// Dump contents of the loaded state machine to stdout as a dot file.
+/// Reset a machine.
+/// @param sm Pertinent state machine.
+/// @param stateId State to set to.
+void sm_reset(sm_t* sm, int stateId);
+
+/// Dump contents of the loaded state machine to fp as a dot file.
+/// @param sm Pertinent state machine.
 void sm_toDot(sm_t* sm);
 
 /// Debug logging function.
+/// @param sm Pertinent state machine.
+/// @param format Format string followed by args.
 void sm_trace(sm_t* sm, const char* format, ...);
 
 #endif // STATE_MACHINE_H

@@ -9,7 +9,9 @@ int main()
 
     // Run the requested tests. Probably should be obtained from the command line.
     std::vector<std::string> whichSuites;
-    whichSuites.push_back("PNUT"); // LIST SM PNUT
+    // LIST SM SM_DOT SM_MAIN
+    whichSuites.push_back("LIST");
+    whichSuites.push_back("SM");
     tm.RunSuites(whichSuites, 'r');
 
     return 0;

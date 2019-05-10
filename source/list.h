@@ -12,14 +12,16 @@ typedef int bool;
 #endif
 
 
+/// @file
+
 ////////// Client facing interface //////////
 
 /// Generic data payload.
 typedef union
 {
-    void* p;
-    int i;
-    char c;
+    void* p;  ///< Generic pointer.
+    int i;    ///< Integer.
+    char c;   ///< Character.
 } listData_t;
 
 
@@ -27,30 +29,42 @@ typedef union
 typedef struct list list_t;
 
 /// Create a list. Client must list_destroy() it.
+/// @return The opaque pointer used in all functions. 
 list_t* list_create();
 
 /// Deletes all nodes. The client is responsible for freeing any malloced data beforehand.
+/// @param list List pointer.
 void list_clear(list_t* list);
 
 /// Add a node at the beginning.
+/// @param list List pointer.
+/// @param data Data to add.
 void list_push(list_t* list, listData_t data);
 
 /// Add a node at the end.
+/// @param list List pointer.
+/// @param data Data to add.
 void list_append(list_t* list, listData_t data);
 
 /// Remove and return the end. Returns false if at end.
+/// @param list List pointer.
+/// @param data Where to put the data.
+/// @return True if data is valid.
 bool list_pop(list_t* list, listData_t* data);
 
 /// Size of the list.
+/// @param list List pointer.
+/// @return The size. 
 int list_count(list_t* list);
 
-/// Returns the first in list. Does not remove it. Returns false if invalid.
-bool list_first(list_t* list, listData_t* data);
-
 /// Initialize iterator.
+/// @param list List pointer.
 void list_start(list_t* list);
 
 /// Next iteration in list. Returns false if at end.
+/// @param list List pointer.
+/// @param data Where to put the data.
+/// @return True if data is valid.
 bool list_next(list_t* list, listData_t* data);
 
 #endif // LIST_H

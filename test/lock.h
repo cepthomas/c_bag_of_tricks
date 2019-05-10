@@ -2,8 +2,11 @@
 #ifndef LOCK_H
 #define LOCK_H
 
+#include <stdio.h>
 
-///// Event IDs
+////// Ids - all unique ///////
+
+// Event IDs
 #define EVT_FOO 100
 #define EVT_BAR 101
 #define EVT_DIGIT_KEY_PRESSED 102
@@ -14,16 +17,15 @@
 #define EVT_SHUT_DOWN 108
 #define EVT_VALID_COMBO 109
 
-///// State IDs
-#define ST_FOO 200
-#define ST_BAR 201
+// State IDs
 #define ST_INITIAL 202
 #define ST_LOCKED 203
 #define ST_SETTING_COMBO 205
 #define ST_UNLOCKED 206
 
 
-///// Special keys. 0-9 are simply their ascii values.
+///// Special keys. ///////
+// Note that 0-9 are simply their ascii values.
 #define KEY_RESET '*'
 #define KEY_SET '#'
 #define KEY_POWER '!'
@@ -32,7 +34,7 @@
 /////// Client interface //////////
 
 /// Normal constructor.
-void lock_create(void);
+void lock_create(FILE* fp);
 
 /// Normal destructor.
 void lock_destroy(void);
@@ -40,12 +42,9 @@ void lock_destroy(void);
 // Input from the keypad.
 void lock_pressKey(char key);
 
-//////////// Stuff needed for unit testing TODO hide better ///////////
+/// Get the state machine for unit testing. TODO hide.
+#include "state-machine.h"
+sm_t* lock_getSm(void);
 
-/// Get the current state.
-int lock_currentState(void);
-
-/// Force a condition.
-void lock_inject(int eventId);
 
 #endif // LOCK_H

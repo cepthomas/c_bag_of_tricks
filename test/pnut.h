@@ -29,6 +29,7 @@ struct TestContext
     /// Collected property lines.
     vector<string> PropLines;
 
+    /// 
     void Reset()
     {
         CurrentSuiteId = "???";
@@ -123,7 +124,7 @@ public:
     virtual void Run(TestContext&) = 0;
 
     /// Compliance.
-    virtual ~TestSuite(){}
+    virtual ~TestSuite() {}
 };
 
 /// The orchestrator of the test execution.

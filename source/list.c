@@ -4,19 +4,22 @@
 
 #include "list.h"
 
+/// @file
 
+/// List node definition.
 typedef struct node
 {
-    listData_t data;
-    struct node* prev;
-    struct node* next;
+    listData_t data;    ///< Client specific data. Client must cast.
+    struct node* prev;  ///< Linked list previous node.
+    struct node* next;  ///< Linked list next node.
 } node_t;
 
+/// Doubly-linked list definition.
 struct list
 {
-    node_t* head;
-    node_t* tail;
-    node_t* iter; // internal convenience
+    node_t* head;  ///< Linked list head.
+    node_t* tail;  ///< Linked list tail.
+    node_t* iter;  ///< Internal pointer for iteration operations.
 };
 
 list_t* list_create()
@@ -141,18 +144,6 @@ int list_count(list_t* list)
     }
 
     return i;
-}
-
-bool list_first(list_t* list, listData_t* data)
-{
-    bool ret = false;
-
-    if(list != NULL)
-    {
-        *data = list->head->data;
-        ret = true;
-    }
-    return ret;
 }
 
 void list_start(list_t* list)
