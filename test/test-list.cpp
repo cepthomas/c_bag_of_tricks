@@ -83,7 +83,6 @@ UT_SUITE(LIST_1, "Test all list functions.")
     }
 
     // Test pop.
-    data;
     bool ok = list_pop(mylist, &data);
     UT_TRUE(ok);
 

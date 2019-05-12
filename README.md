@@ -1,5 +1,6 @@
 # c-bag-of-tricks
-A collection of the C (and a bit of C++) things I seem to use repeatedly.
+An ever-expanding collection of the C things I seem to use repeatedly. Of course there are
+lots of other ways to do this bu
 
 No dependencies on third party components.
 
@@ -12,14 +13,18 @@ It makes use of my standby unit tester [pnut](https://github.com/cepthomas/pnut)
 
 # state-machine
 - Semi-hierarchical state machine for C.
-- Generates diagrams via dot.
+- Generates diagrams via [dot](https://www.graphviz.org/).
 - See test-sm.cpp/lock.c for an example of usage.
 
 # list
 - A simple doubly-linked list so we can have some rudimentary collections in C.
 - See test-list.cpp for examples.
 
-
+# Coming sooner or later
+- String handling functions.
+- Instrumented memory functions.
+- Generic logging.
+- Serialization - json and/or binary.
 
 # License
 https://github.com/cepthomas/c-bag-of-tricks/blob/master/LICENSE

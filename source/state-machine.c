@@ -13,60 +13,53 @@
 /// One transition in a state.
 typedef struct
 {
-    int eventId;      ///< The event to respond to.
-    func_t func;      ///< Optional function to execute.
-    int nextStateId;  ///< Next state to go to. Can be ST_SAME.
+    int eventId;            ///< Unique id for the trigger event.
+    func_t func;            ///< Optional function to execute on entry.
+    int nextStateId;        ///< Next state to go to. Can be ST_SAME.
 } transDesc_t;
 
 /// One state and its handled events.
 typedef struct
 {
-    int stateId;         ///< Description DOC
-    func_t func;         ///< Description DOC
-    list_t* transDescs;  ///< Description DOC // transDesc_t
+    int stateId;            ///< Unique id for this state.
+    func_t func;            ///< Optional function to execute on entry.
+    list_t* transDescs;     ///< List of transitions - transDesc_t
 } stateDesc_t;
-
 
 /// Describes the behavior of a state machine instance.
 struct sm
 {
+    // Stuff supplied by client.
+    FILE* fp;                   ///< For logging output - optional.
+    xlat_t xlat;                ///< Client supplied translation for logging - optional.
+    int defState;               ///< The default state id.
+    int defEvent;               ///< The default event id.
+    // Internal context stuff.
     list_t* stateDescs;         ///< All the states - stateDesc_t.
     stateDesc_t* currentState;  ///< The current state.
     stateDesc_t* defaultState;  ///< Maybe a default state.
     struct timeval start;       ///< For measuring elapsed time.
-    FILE* fp;                   ///< For logging output - optional.
-    xlat_t xlat;                ///< Client supplied translation for logging - optional.
+    list_t* eventQueue;         ///< Queue of events to be processed - int.
+    bool processingEvents;      ///< Internal flag for recursion.
 };
 
 
-//////// Private functions ///////
-
-/// Translate a state or event id to turn into a string.
-/// @param sm Pertinent state machine.
-/// @param id State or event to translate.
-/// @return The translated string.
-const char* sm_xlat(sm_t* sm, int id)
-{
-    switch(id)
-    {
-        case ST_SAME: return "ST_SAME";
-        case ST_DEFAULT: return "ST_DEFAULT";
-        case EVT_DEFAULT: return "EVT_DEFAULT";
-        default: return (sm->xlat != NULL) ? sm->xlat(id) : "???";
-    }
-}
-
 //////// Public/client functions ////////
 
-sm_t* sm_create(FILE* fp, xlat_t xlat)
+sm_t* sm_create(FILE* fp, xlat_t xlat, int defState, int defEvent)
 {
     sm_t* sm = malloc(sizeof(sm_t));
+
+    sm->fp = fp;
+    sm->xlat = xlat;
+    sm->defState = defState;
+    sm->defEvent = defEvent;
 
     sm->stateDescs = list_create();
     sm->currentState = NULL;
     sm->defaultState = NULL;
-    sm->fp = fp;
-    sm->xlat = xlat;
+    sm->eventQueue = list_create();
+    sm->processingEvents = false;
 
     return sm;
 }
@@ -102,7 +95,7 @@ void sm_reset(sm_t* sm, int stateId)
 
             if(sm->currentState->func != NULL)
             {
-                sm->currentState->func(NULL);//TODO may call sm_processEvent()
+                sm->currentState->func();
             }
         }
     }
@@ -111,11 +104,6 @@ void sm_reset(sm_t* sm, int stateId)
 int sm_getState(sm_t* sm)
 {
     return sm->currentState->stateId;
-}
-
-const char* sm_getStateString(sm_t* sm)
-{
-    return sm->xlat(sm->currentState->stateId);
 }
 
 void sm_addState(sm_t* sm, int stateId, const func_t func)
@@ -131,7 +119,7 @@ void sm_addState(sm_t* sm, int stateId, const func_t func)
     list_push(sm->stateDescs, data);
     sm->currentState = stateDesc; // for adding transitions
 
-    if(stateId == ST_DEFAULT) // keep a reference to this one
+    if(stateId == sm->defState) // keep a reference to this one
     {
         sm->defaultState = stateDesc;
     }
@@ -150,98 +138,127 @@ void sm_addTransition(sm_t* sm, int eventId, const func_t func, int nextState)
     list_push(sm->currentState->transDescs, data);
 }
 
-void sm_processEvent(sm_t* sm, int eventId, void* context)
+void sm_processEvent(sm_t* sm, int eventId)
 {
-    sm_trace(sm, "Process state %s event %s\n",
-             sm_xlat(sm, sm->currentState->stateId), sm_xlat(sm, eventId));
+    // Transition functions may generate new events so keep a queue.
+    // This allows current execution to complete before handling new event.
+    listData_t ld;
+    ld.i = eventId;
+    list_push(sm->eventQueue, ld);
 
-    // Find match with this event for present state.
-    listData_t data;
-    transDesc_t* transDesc = NULL;
-    transDesc_t* defDesc = NULL;
-
-    // Try default state first.
-    if(sm->defaultState != NULL)
+    // Check for recursion through the processing loop - event may be generated internally during processing.
+    if (!sm->processingEvents)
     {
-        list_start(sm->defaultState->transDescs);
-        while(list_next(sm->defaultState->transDescs, &data))
+        sm->processingEvents = true;
+
+        // Process all events in the event queue.
+        listData_t qevt;
+        while (list_pop(sm->eventQueue, &qevt))
         {
-            transDesc_t* trans = (transDesc_t*)data.p;
-            if(trans->eventId == eventId) // found it
+            int qevtid = qevt.i;
+
+            sm_trace(sm, "Process current state %s event %s\n",
+                     sm->xlat(sm->currentState->stateId), sm->xlat(qevtid));
+
+            // Find match with this event for present state.
+            listData_t d;
+            transDesc_t* transDesc = NULL;
+            transDesc_t* defDesc = NULL;
+            int nextStateId = -1;
+
+            // Try default state first.
+            if(sm->defaultState != NULL)
             {
-                transDesc = trans;
-            }
-        }
-    }
-
-    // Otherwise check the regulars.
-    if(transDesc == NULL)
-    {
-        list_start(sm->currentState->transDescs);
-        while(list_next(sm->currentState->transDescs, &data))
-        {
-            transDesc_t* trans = (transDesc_t*)data.p;
-
-            if(trans->eventId == eventId) // found it
-            {
-                transDesc = trans;
-            }
-            else if(trans->eventId == EVT_DEFAULT)
-            {
-                defDesc = trans;
-            }
-        }
-    }
-
-    if(transDesc == NULL)
-    {
-        transDesc = defDesc;
-    }
-
-    if(transDesc != NULL)
-    {
-        // Execute the function.
-        if(transDesc->func != NULL)
-        {
-            transDesc->func(context);//TODO may call sm_processEvent()
-        }
-
-        // Process the next state.
-        if(transDesc->nextStateId != ST_SAME)
-        {
-            // State is changing. Find the new state.
-            stateDesc_t* nextState = NULL;
-            list_start(sm->stateDescs);
-            while(list_next(sm->stateDescs, &data))
-            {
-                stateDesc_t* st = (stateDesc_t*)data.p;
-                if(st->stateId == transDesc->nextStateId) // found it
+                list_start(sm->defaultState->transDescs);
+                while(list_next(sm->defaultState->transDescs, &d))
                 {
-                    nextState = st;
+                    transDesc_t* trans = (transDesc_t*)d.p;
+                    if(trans->eventId == qevtid) // found it
+                    {
+                        transDesc = trans;
+                        nextStateId = transDesc->nextStateId;
+                    }
                 }
             }
 
-            if(nextState != NULL)
+            // Otherwise check the regulars.
+            if(transDesc == NULL)
             {
-                sm_trace(sm, "Changing state from %s to %s\n", sm_xlat(sm,
-                       sm->currentState->stateId), sm_xlat(sm, nextState->stateId));
-                sm->currentState = nextState;
-                if(sm->currentState->func != NULL)
+                list_start(sm->currentState->transDescs);
+                while(list_next(sm->currentState->transDescs, &d))
                 {
-                    sm->currentState->func(context);//TODO may call sm_processEvent()
+                    transDesc_t* trans = (transDesc_t*)d.p;
+
+                    if(trans->eventId == qevtid) // found it
+                    {
+                        transDesc = trans;
+                    }
+                    else if(trans->eventId == sm->defEvent)
+                    {
+                        defDesc = trans;
+                    }
                 }
             }
-        }
-        else
-        {
-            sm_trace(sm, "Same state %s\n", sm_xlat(sm, sm->currentState->stateId));
+
+            if(transDesc == NULL)
+            {
+                transDesc = defDesc;
+            }
+
+            if(transDesc != NULL)
+            {
+                // Execute the transition function.
+                if(transDesc->func != NULL)
+                {
+                    transDesc->func();
+                }
+
+                // Process the next state.
+                if(transDesc->nextStateId != sm->currentState->stateId)
+                {
+                    // State is changing. Find the new state.
+                    stateDesc_t* nextState = NULL;
+                    list_start(sm->stateDescs);
+                    while(list_next(sm->stateDescs, &d))
+                    {
+                        stateDesc_t* st = (stateDesc_t*)d.p;
+                        if(st->stateId == transDesc->nextStateId) // found it
+                        {
+                            nextState = st;
+                        }
+                    }
+
+                    if(nextState != NULL)
+                    {
+                        sm_trace(sm, "Changing state from %s to %s\n",
+                                 sm->xlat(sm->currentState->stateId), sm->xlat(nextState->stateId));
+                        sm->currentState = nextState;
+                        if(sm->currentState->func != NULL)
+                        {
+                            sm->currentState->func();
+                        }
+                    }
+                    else
+                    {
+                        sm_trace(sm, "Couldn't find next state from %s to %s\n",
+                                 sm->xlat(sm->currentState->stateId), sm->xlat(nextState->stateId)); //TODO should be an error.
+                    }
+                }
+                else
+                {
+                    sm_trace(sm, "Same state %s\n", sm->xlat(sm->currentState->stateId));
+                }
+            }
+            else
+            {
+                sm_trace(sm, "No match for state %s for event %s\n",
+                      sm->xlat(sm->currentState->stateId), sm->xlat(qevtid));
+            }
         }
     }
-    else
-    {
-        sm_trace(sm, "No match for state %s for event %s\n",
-              sm_xlat(sm, sm->currentState->stateId), sm_xlat(sm, eventId));
-    }
+
+    // Done for now.
+    sm->processingEvents = false;
 }
 
 void sm_trace(sm_t* sm, const char* format, ...)
@@ -262,57 +279,52 @@ void sm_trace(sm_t* sm, const char* format, ...)
         gettimeofday(&now, NULL);
         secs = (double)(now.tv_usec - sm->start.tv_usec) / 1000000 + (double)(now.tv_sec - sm->start.tv_sec);
         
-        fprintf(sm->fp, "SM %06f %s", secs, sfmt);
+        fprintf(sm->fp, "SM: %06f %s", secs, sfmt);
     }
 }
 
-void sm_toDot(sm_t* sm)
+void sm_toDot(sm_t* sm, FILE* fp)
 {
-    if(sm->fp != NULL)
+    // Init attributes for dot.
+    fprintf(fp, "digraph StateDiagram {\n");
+    fprintf(fp, "    ratio=\"compress\";\n");
+    fprintf(fp, "    fontname=\"Arial\";\n");
+    fprintf(fp, "    label=\"\";\n"); // (your label here!)
+    fprintf(fp, "    node [\n");
+    fprintf(fp, "    height=\"1.00\";\n");
+    fprintf(fp, "    width=\"1.5\";\n");
+    fprintf(fp, "    shape=\"ellipse\";\n");
+    fprintf(fp, "    fixedsize=\"true\";\n");
+    fprintf(fp, "    fontsize=\"8\";\n");
+    fprintf(fp, "    fontname=\"Arial\";\n");
+    fprintf(fp, "];\n");
+    fprintf(fp, "\n");
+    fprintf(fp, "    edge [\n");
+    fprintf(fp, "    fontsize=\"8\";\n");
+    fprintf(fp, "    fontname=\"Arial\";\n");
+    fprintf(fp, "];\n");
+    fprintf(fp, "\n");
+
+    // Generate actual nodes and edges from states
+    // Iterate all states.
+    listData_t data;
+    list_start(sm->stateDescs);
+    while(list_next(sm->stateDescs, &data))
     {
-        FILE* fp = sm->fp;
+        stateDesc_t* st = (stateDesc_t*)data.p;
 
-        // Init attributes for dot.
-        fprintf(fp, "digraph StateDiagram {\n");
-        fprintf(fp, "    ratio=\"compress\";\n");
-        fprintf(fp, "    fontname=\"Arial\";\n");
-        fprintf(fp, "    label=\"\";\n"); // (your label here!)
-        fprintf(fp, "    node [\n");
-        fprintf(fp, "    height=\"1.00\";\n");
-        fprintf(fp, "    width=\"1.5\";\n");
-        fprintf(fp, "    shape=\"ellipse\";\n");
-        fprintf(fp, "    fixedsize=\"true\";\n");
-        fprintf(fp, "    fontsize=\"8\";\n");
-        fprintf(fp, "    fontname=\"Arial\";\n");
-        fprintf(fp, "];\n");
-        fprintf(fp, "\n");
-        fprintf(fp, "    edge [\n");
-        fprintf(fp, "    fontsize=\"8\";\n");
-        fprintf(fp, "    fontname=\"Arial\";\n");
-        fprintf(fp, "];\n");
-        fprintf(fp, "\n");
-
-        // Generate actual nodes and edges from states
-        // Iterate all states.
-        listData_t data;
-        list_start(sm->stateDescs);
-        while(list_next(sm->stateDescs, &data))
+        // Iterate through the state transitions.
+        list_start(st->transDescs);
+        while(list_next(st->transDescs, &data))
         {
-            stateDesc_t* st = (stateDesc_t*)data.p;
+            transDesc_t* trans = (transDesc_t*)data.p;
 
-            // Iterate through the state transitions.
-            list_start(st->transDescs);
-            while(list_next(st->transDescs, &data))
-            {
-                transDesc_t* trans = (transDesc_t*)data.p;
-
-                fprintf(fp, "        \"%s\" -> \"%s\" [label=\"%s\"];\n",
-                        sm_xlat(sm, st->stateId),
-                        trans->nextStateId == ST_SAME ? sm_xlat(sm, st->stateId) : sm_xlat(sm, trans->nextStateId),
-                        sm_xlat(sm, trans->eventId) );
-            }
+            fprintf(fp, "        \"%s\" -> \"%s\" [label=\"%s\"];\n",
+                    sm->xlat(st->stateId),
+                    trans->nextStateId == st->stateId ? sm->xlat(st->stateId) : sm->xlat(trans->nextStateId),
+                    sm->xlat(trans->eventId) );
         }
-
-        fprintf(fp, "}\n");
     }
+
+    fprintf(fp, "}\n");
 }

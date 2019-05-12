@@ -3,6 +3,7 @@
 #define LIST_H
 
 #include <stdlib.h>
+#include <stdint.h>
 
 
 #ifndef __cplusplus
@@ -14,7 +15,7 @@ typedef int bool;
 
 /// @file
 
-////////// Client facing interface //////////
+////////// Public interface //////////
 
 /// Generic data payload.
 typedef union

@@ -2,7 +2,7 @@ TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle qt
 
-UNIT_TEST = false
+UNIT_TEST = true
 
 ### Common stuff.
 SOURCES += \
@@ -30,9 +30,7 @@ $$UNIT_TEST {
         test/pnut.h \
         test/lock.h
 
-    #TODO fix these:
     CONFIG += warn_off
-    #QMAKE_CXXFLAGS += -Wold-style-cast -Wzero-as-null-pointer-constant
     #QMAKE_CXXFLAGS_WARN_ON -= -Wold-style-cast -Wzero-as-null-pointer-constant
 
 } else {

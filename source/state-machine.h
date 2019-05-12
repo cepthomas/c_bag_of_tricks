@@ -6,41 +6,31 @@
 
 /// @file
 
-////////// Public/client interface to state machine //////////
+////////// Public interface //////////
 
 /////// Definitions //////
 
 /// Opaque state machine object.
 typedef struct sm sm_t;
 
-/// Transition function type. Carries xxxxxxxxxxx xxxxxxxxx xxxxxxxxxxx
-/// @brief Brief Longer DOC
-/// @param ptr to app specific context data.
-/// @return Description 
-typedef void (*func_t)(void*);
+/// Transition function type.
+typedef void (*func_t)(void);
 
 /// Translate a state or event to readable.
 /// @param id The state or event id.
 /// @return String version of id. 
 typedef const char* (*xlat_t)(int id);
 
-/// Signifies stay in same state.
-#define ST_SAME -1
-
-/// Signifies state for default handlers.
-#define ST_DEFAULT -2
-
-/// Signifies default event handler.
-#define EVT_DEFAULT -3
-
 //////// Functions /////////
 
 /// Create a state machine. Client must sm_destroy() it.
-/// fp and/or xlat can be null which means no trace.
+/// Currently this is NOT thread-safe.
 /// @param fp Optional stream for tracing. Can be NULL if not used.
 /// @param xlat Optional translator for id tracing.
+/// @param defState The default state id.
+/// @param defEvent The default event id.
 /// @return The opaque pointer used in all functions. 
-sm_t* sm_create(FILE* fp, xlat_t xlat);
+sm_t* sm_create(FILE* fp, xlat_t xlat, int defState, int defEvent);
 
 /// Clean up all resources including the state machine.
 /// @param sm Pertinent state machine.
@@ -63,26 +53,22 @@ void sm_addTransition(sm_t* sm, int eventId, const func_t func, int nextState);
 /// @param sm Pertinent state machine.
 /// @param eventId Specific event id.
 /// @param context Optional context data.
-void sm_processEvent(sm_t* sm, int eventId, void* context);
+void sm_processEvent(sm_t* sm, int eventId);
 
 /// Get the current state.
 /// @param sm Pertinent state machine.
 /// @return Current state id. 
 int sm_getState(sm_t* sm);
 
-/// Get the current state as string.
-/// @param sm Pertinent state machine.
-/// @return Current state id as string.
-const char* sm_getStateString(sm_t* sm);
-
 /// Reset a machine.
 /// @param sm Pertinent state machine.
 /// @param stateId State to set to.
 void sm_reset(sm_t* sm, int stateId);
 
-/// Dump contents of the loaded state machine to fp as a dot file.
+/// Dump contents of the loaded state machine as a dot file.
 /// @param sm Pertinent state machine.
-void sm_toDot(sm_t* sm);
+/// @param fp Output stream.
+void sm_toDot(sm_t* sm, FILE* fp);
 
 /// Debug logging function.
 /// @param sm Pertinent state machine.
