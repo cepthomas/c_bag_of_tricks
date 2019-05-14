@@ -1,6 +1,6 @@
 # c-bag-of-tricks
 An ever-expanding collection of the C things I seem to use repeatedly. Of course there are
-lots of other ways to do this bu
+lots of other ways to do this but I find most to be over-complicated.
 
 No dependencies on third party components.
 
