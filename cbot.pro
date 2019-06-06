@@ -18,7 +18,7 @@ INCLUDEPATH += \
     test
 
 $$UNIT_TEST {
-    message(g++ for unit tests)
+    #message(g++ for unit tests)
 
     SOURCES += \
         main.cpp \
@@ -34,10 +34,12 @@ $$UNIT_TEST {
     #QMAKE_CXXFLAGS_WARN_ON -= -Wold-style-cast -Wzero-as-null-pointer-constant
 
 } else {
-    message(gcc for C99 compliance)
+    #message(gcc for C99 compliance)
 
     CONFIG += strict_c
     CONFIG -= c11
+    QMAKE_CFLAGS += -Werror
+
     SOURCES += \
         main.c \
 }

@@ -7,7 +7,7 @@
 
 int main()
 {
-    printf("main.c");
+    printf("main.c\n");
 
     return 0;
 }

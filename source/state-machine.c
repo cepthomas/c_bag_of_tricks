@@ -164,7 +164,7 @@ void sm_processEvent(sm_t* sm, int eventId)
             listData_t d;
             transDesc_t* transDesc = NULL;
             transDesc_t* defDesc = NULL;
-            int nextStateId = -1;
+            //int nextStateId = -1;
 
             // Try default state first.
             if(sm->defaultState != NULL)
@@ -176,7 +176,7 @@ void sm_processEvent(sm_t* sm, int eventId)
                     if(trans->eventId == qevtid) // found it
                     {
                         transDesc = trans;
-                        nextStateId = transDesc->nextStateId;
+                        //nextStateId = transDesc->nextStateId;
                     }
                 }
             }

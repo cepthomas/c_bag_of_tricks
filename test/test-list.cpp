@@ -1,5 +1,5 @@
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 
 #include "pnut.h"
 
@@ -54,7 +54,7 @@ UT_SUITE(LIST_1, "Test all list functions.")
     listData_t data;
     while(list_next(mylist, &data))
     {
-        test_struct_t* ts = static_cast<test_struct_t*>(data.p);
+        auto* ts = static_cast<test_struct_t*>(data.p);
         UT_NOT_NULL(ts);
 
         switch(i)
@@ -86,7 +86,7 @@ UT_SUITE(LIST_1, "Test all list functions.")
     bool ok = list_pop(mylist, &data);
     UT_TRUE(ok);
 
-    test_struct_t* ts = static_cast<test_struct_t*>(data.p);
+    auto* ts = static_cast<test_struct_t*>(data.p);
     UT_EQUAL(list_count(mylist), 3);
     UT_NOT_NULL(ts);
     UT_EQUAL(ts->anumber, 33);

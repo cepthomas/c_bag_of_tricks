@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <cstdio>
 #include "pnut.h"
 
 int main()
@@ -8,8 +8,8 @@ int main()
     // Run the requested tests. Probably should be obtained from the command line.
     std::vector<std::string> whichSuites;
     // LIST SM SM_DOT SM_MAIN
-    whichSuites.push_back("LIST");
-    whichSuites.push_back("SM");
+    whichSuites.emplace_back("LIST");
+    whichSuites.emplace_back("SM");
     tm.RunSuites(whichSuites, 'r');
 
     return 0;
