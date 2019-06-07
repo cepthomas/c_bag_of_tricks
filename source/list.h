@@ -29,13 +29,17 @@ typedef union
 /// Opaque list object.
 typedef struct list list_t;
 
-/// Create a list. Client must list_destroy() it.
+/// Create a list.
 /// @return The opaque pointer used in all functions. 
 list_t* list_create();
 
 /// Deletes all nodes. The client is responsible for freeing any malloced data beforehand.
 /// @param list List pointer.
 void list_clear(list_t* list);
+
+/// Deletes all nodes and this struct. The client is responsible for freeing any malloced data beforehand.
+/// @param list List pointer.
+void list_destroy(list_t* list);
 
 /// Add a node at the beginning.
 /// @param list List pointer.

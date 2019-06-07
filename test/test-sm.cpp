@@ -12,9 +12,8 @@ extern "C"
 /////////////////////////////////////////////////////////////////////////////
 UT_SUITE(SM_MAIN, "Test the full StateMachine using a real world example.")
 {
-
     // Create a new lock.
-    sm_t* sm = lock_create(stdout);
+    sm_t* sm = lock_create(nullptr); // stdout);
 
     // Should come up in the locked state.
     UT_STR_EQUAL(STATE_STR, "ST_LOCKED");
@@ -75,7 +74,7 @@ UT_SUITE(SM_DOT, "Test the dot file creation.")
     UT_NOT_NULL(fp);
 
     // Create a new lock.
-    sm_t* sm = lock_create(stdout);
+    sm_t* sm = lock_create(fp);
 
     sm_toDot(sm, fp);
 

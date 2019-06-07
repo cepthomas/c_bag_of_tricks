@@ -4,6 +4,9 @@
 #include <sys/time.h>
 
 #include "state-machine.h"
+#include "tools.h"
+#include "list.h"
+
 
 /// @file
 
@@ -48,7 +51,7 @@ struct sm
 
 sm_t* sm_create(FILE* fp, xlat_t xlat, int defState, int defEvent)
 {
-    sm_t* sm = malloc(sizeof(sm_t));
+    sm_t* sm = MALLOC_EX(sizeof(sm_t));
 
     sm->fp = fp;
     sm->xlat = xlat;
@@ -66,18 +69,29 @@ sm_t* sm_create(FILE* fp, xlat_t xlat, int defState, int defEvent)
 
 void sm_destroy(sm_t* sm)
 {
-    listData_t data;
+    listData_t data1;
+    listData_t data2;
 
     list_start(sm->stateDescs);
-    while(list_next(sm->stateDescs, &data))
+    while(list_next(sm->stateDescs, &data1))
     {
-        stateDesc_t* stateDesc = data.p;
-        list_t* transDescs = stateDesc->transDescs;
-        free(transDescs);
-    }
-    free(sm->stateDescs);
+        stateDesc_t* stateDesc = data1.p;
 
-    free(sm);
+        list_start(stateDesc->transDescs);
+        while(list_next(stateDesc->transDescs, &data2))
+        {
+            transDesc_t* transDesc = data2.p;
+            FREE_EX(transDesc);
+        }
+
+        list_destroy(stateDesc->transDescs);
+        FREE_EX(stateDesc);
+    }
+    list_destroy(sm->stateDescs);
+
+    list_destroy(sm->eventQueue);
+
+    FREE_EX(sm);
 }
 
 void sm_reset(sm_t* sm, int stateId)
@@ -108,7 +122,7 @@ int sm_getState(sm_t* sm)
 
 void sm_addState(sm_t* sm, int stateId, const func_t func)
 {
-    stateDesc_t* stateDesc = malloc(sizeof (stateDesc_t));
+    stateDesc_t* stateDesc = MALLOC_EX(sizeof (stateDesc_t));
     
     stateDesc->stateId = stateId;
     stateDesc->func = func;
@@ -127,7 +141,7 @@ void sm_addState(sm_t* sm, int stateId, const func_t func)
 
 void sm_addTransition(sm_t* sm, int eventId, const func_t func, int nextState)
 {
-    transDesc_t* transDesc = malloc(sizeof (transDesc_t));
+    transDesc_t* transDesc = MALLOC_EX(sizeof (transDesc_t));
 
     transDesc->eventId = eventId;
     transDesc->func = func;

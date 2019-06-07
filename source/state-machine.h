@@ -2,7 +2,6 @@
 #define STATE_MACHINE_H
 
 #include <stdio.h>
-#include "list.h"
 
 /// @file
 

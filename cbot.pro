@@ -8,17 +8,22 @@ UNIT_TEST = true
 SOURCES += \
     source/list.c \
     source/state-machine.c \
+    source/tools.c
 
 HEADERS += \
     source/list.h \
-    source/state-machine.h
+    source/state-machine.h \
+    source/tools.h
 
 INCLUDEPATH += \
     source \
     test
 
+# To taste.
+DEFINES += MEM_EX
+
 $$UNIT_TEST {
-    #message(g++ for unit tests)
+    message(Using g++ for unit tests.)
 
     SOURCES += \
         main.cpp \
@@ -34,10 +39,11 @@ $$UNIT_TEST {
     #QMAKE_CXXFLAGS_WARN_ON -= -Wold-style-cast -Wzero-as-null-pointer-constant
 
 } else {
-    #message(gcc for C99 compliance)
+    message(Using gcc for C99 compliance check.)
 
     CONFIG += strict_c
     CONFIG -= c11
+    # Treat warnings as errors.
     QMAKE_CFLAGS += -Werror
 
     SOURCES += \

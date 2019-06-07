@@ -1,7 +1,8 @@
 
 #include "list.h"
-#include "state-machine.h"
 #include "lock.h"
+#include "state-machine.h"
+#include "tools.h"
 
 
 /// The lock is both an example of how to use the state machine and the unit test case.
@@ -42,11 +43,16 @@ sm_t* lock_create(FILE* fp)
     s_combination = list_create();
 
     // Initial combination is: 000
-    listData_t k1; k1.c = '0';
-    listData_t k2; k2.c = '0';
-    listData_t k3; k3.c = '0';
+    listData_t k1;
+    k1.c = '0';
     list_append(s_combination, k1);
+
+    listData_t k2;
+    k2.c = '0';
     list_append(s_combination, k2);
+
+    listData_t k3;
+    k3.c = '0';
     list_append(s_combination, k3);
 
     // Create the FSM.
@@ -89,12 +95,11 @@ sm_t* lock_create(FILE* fp)
 
 void lock_destroy(void)
 {
-    free(s_currentEntry);
-    free(s_combination);
+    list_destroy(s_currentEntry);
+    list_destroy(s_combination);
 
     sm_destroy(s_sm);
 }
-
 
 void lock_pressKey(char key)
 {

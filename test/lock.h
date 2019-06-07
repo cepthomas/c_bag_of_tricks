@@ -3,8 +3,8 @@
 #define LOCK_H
 
 #include <stdio.h>
-#include "state-machine.h"
 
+#include "state-machine.h"
 
 ////// Ids - all unique ///////
 
