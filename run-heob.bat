@@ -1,0 +1,30 @@
+
+rem Run leak test on the app.
+
+@echo off
+cls
+
+rem Setup path for qt and heob runtimes.
+set PATH=%PATH%;C:\Qt\Tools\mingw530_32\bin;C:\Qt\5.11.2\mingw53_32\bin;C:\Qt\Tools\mingw530_32\bin;C:\Tools
+
+rem Run the app.
+heob64 -o1 ..\build-cbot-Desktop_Qt_5_11_2_MinGW_32bit-Debug\debug\cbot
+
+rem Usage: heob64 [OPTION]... APP [APP-OPTION]...
+rem     -oX    heob output (0 = none, 1 = stdout, 2 = stderr, ... = file) [1]
+rem     -PX    show process ID and wait [0]
+rem     -cX    create new console [0]
+rem     -pX    page protection (0 = off, 1 = after, 2 = before) [1]
+rem     -fX    freed memory protection [0]
+rem     -dX    monitor dlls [3]
+rem     -hX    handle exceptions [1]
+rem     -RX    raise breakpoint exception on allocation # [0]
+rem     -rX    raise breakpoint exception on error [0]
+rem     -FX    show full path [0]
+rem     -lX    show leak details [1]
+rem     -zX    minimum leak size [0]
+rem     -kX    control leak recording [0]
+rem     -LX    show leak contents [0]
+rem     -H     show full help
+
+rem pause

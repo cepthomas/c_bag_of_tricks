@@ -3,7 +3,6 @@
 #include <stdio.h>
 
 #include "list.h"
-#include "tools.h"
 
 
 /// @file
@@ -26,7 +25,7 @@ struct list
 
 list_t* list_create()
 {
-    list_t* list = MALLOC_EX(sizeof(list_t));
+    list_t* list = malloc(sizeof(list_t));
     list->head = NULL;
     list->tail = NULL;
     list->iter = NULL;
@@ -40,7 +39,7 @@ void list_push(list_t* list, listData_t data)
         // Get current head. Can be null.
         node_t* chead = list->head;
 
-        node_t* newNode = MALLOC_EX(sizeof(node_t));
+        node_t* newNode = malloc(sizeof(node_t));
         newNode->data = data;
 
         if(chead != NULL)
@@ -68,7 +67,7 @@ void list_append(list_t* list, listData_t data)
         // Get current tail. Can be null.
         node_t* ctail = list->tail;
 
-        node_t* newNode = MALLOC_EX(sizeof(node_t));
+        node_t* newNode = malloc(sizeof(node_t));
         newNode->data = data;
 
         if(ctail != NULL)
@@ -124,7 +123,7 @@ bool list_pop(list_t* list, listData_t* data)
             }
 
             // Remove the node.
-            FREE_EX(ctail);
+            free(ctail);
         }
     }
 
@@ -183,7 +182,7 @@ void list_clear(list_t* list)
         while(iter != NULL)
         {
             node_t* next = iter->next;
-            FREE_EX(iter);
+            free(iter);
             iter = next;
         }
 
@@ -196,5 +195,5 @@ void list_clear(list_t* list)
 void list_destroy(list_t* list)
 {
     list_clear(list);
-    FREE_EX(list);
+    free(list);
 }

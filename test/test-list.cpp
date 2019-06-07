@@ -5,7 +5,6 @@
 
 extern "C"
 {
-#include "tools.h"
 #include "list.h"
 }
 
@@ -110,5 +109,5 @@ UT_SUITE(LIST_1, "Test all list functions.")
     list_clear(mylist);
     UT_NOT_NULL(mylist);
     UT_EQUAL(list_count(mylist), 0);
-    FREE_EX(mylist);
+    free(mylist);
 }

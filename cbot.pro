@@ -7,14 +7,12 @@ UNIT_TEST = true
 ### Common stuff.
 SOURCES += \
     source/list.c \
-    source/state-machine.c \
-    source/tools.c
+    source/state-machine.c
 
 HEADERS += \
     source/list.h \
-    source/state-machine.h \
-    source/tools.h
-
+    source/state-machine.h
+    
 INCLUDEPATH += \
     source \
     test
