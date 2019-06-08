@@ -8,6 +8,14 @@
 //////////////////////////////////////////////////////////////////////////////////////
 
 
+/// List data payload.
+typedef struct
+{
+    char c;   ///< Character.
+} lockData_t;
+
+
+
 /// State of the lock.
 static bool s_isLocked;
 
@@ -42,16 +50,16 @@ sm_t* lock_create(FILE* fp)
     s_combination = list_create();
 
     // Initial combination is: 000
-    listData_t k1;
-    k1.c = '0';
+    lockData_t* k1 = malloc(sizeof(lockData_t));
+    k1->c = '0';
     list_append(s_combination, k1);
 
-    listData_t k2;
-    k2.c = '0';
+    lockData_t* k2 = malloc(sizeof(lockData_t));
+    k2->c = '0';
     list_append(s_combination, k2);
 
-    listData_t k3;
-    k3.c = '0';
+    lockData_t* k3 = malloc(sizeof(lockData_t));
+    k3->c = '0';
     list_append(s_combination, k3);
 
     // Create the FSM.
@@ -192,13 +200,14 @@ static void lockedAddDigit(void)
 {
     sm_trace(s_sm, "lockedAddDigit()\n");
 
-    listData_t data;
-    data.c = s_currentKey;
+    lockData_t* data = malloc(sizeof(lockData_t));
+    data->c = s_currentKey;
     list_append(s_currentEntry, data);
 
     // Test to see if it matches the stored combination.
-    listData_t dcomb;
-    listData_t dentry;
+    lockData_t* dcomb;
+    lockData_t* dentry;
+
     list_start(s_combination);
     list_start(s_currentEntry);
 
@@ -206,9 +215,13 @@ static void lockedAddDigit(void)
 
     for(int i = 0; i < list_count(s_combination) && ok; i++)
     {
-        list_next(s_combination, &dcomb);
-        list_next(s_currentEntry, &dentry);
-        ok = dcomb.c == dentry.c;
+        list_next(s_combination, (void*)&dcomb);
+        list_next(s_currentEntry, (void*)&dentry);
+
+        if(dcomb != NULL && dentry != NULL)
+        {
+            ok = dcomb->c == dentry->c;
+        }
     }
 
     if (ok)
@@ -222,8 +235,8 @@ static void setComboAddDigit(void)
 {
     sm_trace(s_sm, "setComboAddDigit()\n");
 
-    listData_t data;
-    data.c = s_currentKey;
+    lockData_t* data = malloc(sizeof(lockData_t));
+    data->c = s_currentKey;
     list_append(s_currentEntry, data);
 }
 
@@ -239,12 +252,14 @@ static void setCombo(void)
         // Copy data over.
         list_start(s_currentEntry);
         bool done = false;
+        lockData_t* data;
         while (!done)
         {
-            listData_t data;
-            if(list_next(s_currentEntry, &data))
+            if(list_next(s_currentEntry, (void*)&data))
             {
-                list_append(s_combination, data);
+                lockData_t* data2 = malloc(sizeof(lockData_t));
+                *data2 = *data;
+                list_append(s_combination, data2);
             }
             else
             {

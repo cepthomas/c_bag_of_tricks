@@ -1,5 +1,5 @@
 
-rem Run leak test on the app.
+rem Run leak test on the app. For windows use heob. For nx use valgrind.
 
 @echo off
 cls

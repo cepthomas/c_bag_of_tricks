@@ -68,24 +68,15 @@ sm_t* sm_create(FILE* fp, xlat_t xlat, int defState, int defEvent)
 
 void sm_destroy(sm_t* sm)
 {
-    listData_t data1;
-    listData_t data2;
+    stateDesc_t* states;
 
+    // Clean up sub-list.
     list_start(sm->stateDescs);
-    while(list_next(sm->stateDescs, &data1))
+    while(list_next(sm->stateDescs, (void*)&states))
     {
-        stateDesc_t* stateDesc = data1.p;
-
-        list_start(stateDesc->transDescs);
-        while(list_next(stateDesc->transDescs, &data2))
-        {
-            transDesc_t* transDesc = data2.p;
-            free(transDesc);
-        }
-
-        list_destroy(stateDesc->transDescs);
-        free(stateDesc);
+        list_destroy(states->transDescs);
     }
+
     list_destroy(sm->stateDescs);
 
     list_destroy(sm->eventQueue);
@@ -97,11 +88,10 @@ void sm_reset(sm_t* sm, int stateId)
 {
     gettimeofday(&sm->start, NULL);
 
-    listData_t data;
+    stateDesc_t* st;
     list_start(sm->stateDescs);
-    while(list_next(sm->stateDescs, &data))
+    while(list_next(sm->stateDescs, (void*)&st))
     {
-        stateDesc_t* st = (stateDesc_t*)data.p;
         if(st->stateId == stateId) // found it
         {
             sm->currentState = st;
@@ -127,9 +117,7 @@ void sm_addState(sm_t* sm, int stateId, const func_t func)
     stateDesc->func = func;
     stateDesc->transDescs = list_create();
 
-    listData_t data;
-    data.p = stateDesc;
-    list_push(sm->stateDescs, data);
+    list_push(sm->stateDescs, stateDesc);
     sm->currentState = stateDesc; // for adding transitions
 
     if(stateId == sm->defState) // keep a reference to this one
@@ -146,17 +134,16 @@ void sm_addTransition(sm_t* sm, int eventId, const func_t func, int nextState)
     transDesc->func = func;
     transDesc->nextStateId = nextState;
 
-    listData_t data;
-    data.p = transDesc;
-    list_push(sm->currentState->transDescs, data);
+    list_push(sm->currentState->transDescs, transDesc);
 }
 
 void sm_processEvent(sm_t* sm, int eventId)
 {
     // Transition functions may generate new events so keep a queue.
     // This allows current execution to complete before handling new event.
-    listData_t ld;
-    ld.i = eventId;
+
+    int* ld = malloc(sizeof(int));
+    *ld = eventId;
     list_push(sm->eventQueue, ld);
 
     // Check for recursion through the processing loop - event may be generated internally during processing.
@@ -165,31 +152,29 @@ void sm_processEvent(sm_t* sm, int eventId)
         sm->processingEvents = true;
 
         // Process all events in the event queue.
-        listData_t qevt;
-        while (list_pop(sm->eventQueue, &qevt))
+        int* qevt;
+        while (list_pop(sm->eventQueue, (void*)&qevt))
         {
-            int qevtid = qevt.i;
+            int qevtid = *qevt;
+            free(qevt);
 
             sm_trace(sm, "Process current state %s event %s\n",
                      sm->xlat(sm->currentState->stateId), sm->xlat(qevtid));
 
             // Find match with this event for present state.
-            listData_t d;
+            transDesc_t* trans = NULL;
             transDesc_t* transDesc = NULL;
             transDesc_t* defDesc = NULL;
-            //int nextStateId = -1;
 
             // Try default state first.
             if(sm->defaultState != NULL)
             {
                 list_start(sm->defaultState->transDescs);
-                while(list_next(sm->defaultState->transDescs, &d))
+                while(list_next(sm->defaultState->transDescs, (void*)&trans))
                 {
-                    transDesc_t* trans = (transDesc_t*)d.p;
                     if(trans->eventId == qevtid) // found it
                     {
                         transDesc = trans;
-                        //nextStateId = transDesc->nextStateId;
                     }
                 }
             }
@@ -198,10 +183,8 @@ void sm_processEvent(sm_t* sm, int eventId)
             if(transDesc == NULL)
             {
                 list_start(sm->currentState->transDescs);
-                while(list_next(sm->currentState->transDescs, &d))
+                while(list_next(sm->currentState->transDescs, (void*)&trans))
                 {
-                    transDesc_t* trans = (transDesc_t*)d.p;
-
                     if(trans->eventId == qevtid) // found it
                     {
                         transDesc = trans;
@@ -230,11 +213,11 @@ void sm_processEvent(sm_t* sm, int eventId)
                 if(transDesc->nextStateId != sm->currentState->stateId)
                 {
                     // State is changing. Find the new state.
+                    stateDesc_t* st = NULL;
                     stateDesc_t* nextState = NULL;
                     list_start(sm->stateDescs);
-                    while(list_next(sm->stateDescs, &d))
+                    while(list_next(sm->stateDescs, (void*)&st))
                     {
-                        stateDesc_t* st = (stateDesc_t*)d.p;
                         if(st->stateId == transDesc->nextStateId) // found it
                         {
                             nextState = st;
@@ -320,18 +303,15 @@ void sm_toDot(sm_t* sm, FILE* fp)
 
     // Generate actual nodes and edges from states
     // Iterate all states.
-    listData_t data;
+    stateDesc_t* st = NULL;
+    transDesc_t* trans = NULL;
     list_start(sm->stateDescs);
-    while(list_next(sm->stateDescs, &data))
+    while(list_next(sm->stateDescs, (void*)&st))
     {
-        stateDesc_t* st = (stateDesc_t*)data.p;
-
         // Iterate through the state transitions.
         list_start(st->transDescs);
-        while(list_next(st->transDescs, &data))
+        while(list_next(st->transDescs, (void*)&trans))
         {
-            transDesc_t* trans = (transDesc_t*)data.p;
-
             fprintf(fp, "        \"%s\" -> \"%s\" [label=\"%s\"];\n",
                     sm->xlat(st->stateId),
                     trans->nextStateId == st->stateId ? sm->xlat(st->stateId) : sm->xlat(trans->nextStateId),

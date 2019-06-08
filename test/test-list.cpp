@@ -8,7 +8,7 @@ extern "C"
 #include "list.h"
 }
 
-typedef struct test_struct
+typedef struct
 {
     int anumber;
     const char* astring;
@@ -20,41 +20,50 @@ UT_SUITE(LIST_1, "Test all list functions.")
 {
     int i;
 
-    test_struct_t st1 = { 11, "Ajay1" };
-    test_struct_t st2 = { 22, "Ajay2" };
-    test_struct_t st3 = { 33, "Ajay3" };
-    test_struct_t st4 = { 44, "Ajay4" };
-    test_struct_t st5 = { 55, "Ajay5" };
+    test_struct_t* st1 = static_cast<test_struct_t*>(malloc(sizeof(test_struct_t)));
+    st1->anumber = 11;
+    st1->astring = "Ajay1";
+
+    test_struct_t* st2 = static_cast<test_struct_t*>(malloc(sizeof(test_struct_t)));
+    st2->anumber = 22;
+    st2->astring = "Ajay2";
+
+    test_struct_t* st3 = static_cast<test_struct_t*>(malloc(sizeof(test_struct_t)));
+    st3->anumber = 33;
+    st3->astring = "Ajay3";
+
+    test_struct_t* st4 = static_cast<test_struct_t*>(malloc(sizeof(test_struct_t)));
+    st4->anumber = 44;
+    st4->astring = "Ajay4";
+
+    test_struct_t* st5 = static_cast<test_struct_t*>(malloc(sizeof(test_struct_t)));
+    st5->anumber = 55;
+    st5->astring = "Ajay5";
 
     // Make a list.
     list_t* mylist = list_create();
 
     // Add a node at the beginning.
-    listData_t d1 = {&st1};
-    list_push(mylist, d1);
+    list_push(mylist, st1);
 
     // Add a node at the beginning.
-    listData_t d2 = {&st2};
-    list_push(mylist, d2);
+    list_push(mylist, st2);
 
     // Add a node at the end.
-    listData_t d3 = {&st3};
-    list_append(mylist, d3);
+    list_append(mylist, st3);
 
     // Add a node at the beginning.
-    listData_t d4 = {&st4};
-    list_push(mylist, d4);
+    list_push(mylist, st4);
 
     UT_EQUAL(list_count(mylist), 4);
 
     // Iterate through list.
     i = 0;
+    void* data;
     list_start(mylist);
-
-    listData_t data;
     while(list_next(mylist, &data))
     {
-        auto* ts = static_cast<test_struct_t*>(data.p);
+        auto* ts = static_cast<test_struct_t*>(data);
         UT_NOT_NULL(ts);
 
         switch(i)
@@ -86,28 +95,32 @@ UT_SUITE(LIST_1, "Test all list functions.")
     bool ok = list_pop(mylist, &data);
     UT_TRUE(ok);
 
-    auto* ts = static_cast<test_struct_t*>(data.p);
+    auto* ts = static_cast<test_struct_t*>(data);
     UT_EQUAL(list_count(mylist), 3);
     UT_NOT_NULL(ts);
     UT_EQUAL(ts->anumber, 33);
     UT_STR_EQUAL(ts->astring, "Ajay3");
+    // I own this now so clean up.
+    free(data);
 
     // Add another.
-    listData_t d5 = {&st5};
-    list_push(mylist, d5);
+    list_push(mylist, st5);
 
     // Test pop.
     ok = list_pop(mylist, &data);
     UT_TRUE(ok);
-    ts = static_cast<test_struct_t*>(data.p);
+    ts = static_cast<test_struct_t*>(data);
     UT_EQUAL(list_count(mylist), 3);
     UT_NOT_NULL(ts);
     UT_EQUAL(ts->anumber, 11);
     UT_STR_EQUAL(ts->astring, "Ajay1");
+    // I own this now so clean up.
+    free(data);
 
     // Remove everything.
     list_clear(mylist);
     UT_NOT_NULL(mylist);
     UT_EQUAL(list_count(mylist), 0);
-    free(mylist);
+
+    list_destroy(mylist);
 }

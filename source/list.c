@@ -10,7 +10,7 @@
 /// List node definition.
 typedef struct node
 {
-    listData_t data;    ///< Client specific data. Client must cast.
+    void* data;         ///< Client specific data. Client must cast.
     struct node* prev;  ///< Linked list previous node.
     struct node* next;  ///< Linked list next node.
 } node_t;
@@ -32,7 +32,7 @@ list_t* list_create()
     return list;
 }
 
-void list_push(list_t* list, listData_t data)
+void list_push(list_t* list, void* data)
 {
     if(list != NULL)
     {
@@ -60,7 +60,7 @@ void list_push(list_t* list, listData_t data)
     }
 }
 
-void list_append(list_t* list, listData_t data)
+void list_append(list_t* list, void* data)
 {
     if(list != NULL)
     {
@@ -88,7 +88,7 @@ void list_append(list_t* list, listData_t data)
     }
 }
 
-bool list_pop(list_t* list, listData_t* data)
+bool list_pop(list_t* list, void** data)
 {
     bool ret = false;
 
@@ -124,6 +124,7 @@ bool list_pop(list_t* list, listData_t* data)
 
             // Remove the node.
             free(ctail);
+            ctail = NULL;
         }
     }
 
@@ -155,7 +156,7 @@ void list_start(list_t* list)
     }
 }
 
-bool list_next(list_t* list, listData_t* data)
+bool list_next(list_t* list, void** data)
 {
     bool ret = false;
 
@@ -177,11 +178,16 @@ void list_clear(list_t* list)
 {
     if(list != NULL)
     {
-        // Remove all nodes.
+        // Remove all nodes and corresponding data.
         node_t* iter = list->head;
         while(iter != NULL)
         {
             node_t* next = iter->next;
+            if(iter->data != NULL)
+            {
+                free(iter->data);
+                iter->data = NULL;
+            }
             free(iter);
             iter = next;
         }
