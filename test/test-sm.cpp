@@ -10,7 +10,7 @@ extern "C"
 
 
 /////////////////////////////////////////////////////////////////////////////
-UT_SUITE(SM_MAIN, "Test the full StateMachine using a real world example.")
+UT_SUITE(SM_MAIN, "Test the full state machine using a real world example.")
 {
     // Create a new lock.
     sm_t* sm = lock_create(nullptr); // stdout);
@@ -78,8 +78,8 @@ UT_SUITE(SM_DOT, "Test the dot file creation.")
 
     sm_toDot(sm, fp);
 
-//    int r = system("dot -Tpng sm.gv -o sm.png");
-//    UT_GREATER_OR_EQUAL(r, 0);
+    // int r = system("dot -Tpng sm.gv -o sm.png");
+    // UT_GREATER_OR_EQUAL(r, 0);
 
     // Clean up.
     fclose(fp);

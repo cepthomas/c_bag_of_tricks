@@ -28,7 +28,7 @@ list_t* list_create();
 /// @param list List pointer.
 void list_clear(list_t* list);
 
-/// Deletes all nodes and associated data pointers.
+/// Deletes all nodes and associated data pointers, and the list struct.
 /// @param list List pointer.
 void list_destroy(list_t* list);
 
