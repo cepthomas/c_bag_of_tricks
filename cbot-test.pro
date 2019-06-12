@@ -4,7 +4,7 @@
 TEMPLATE = app
 CONFIG += console warn_off
 CONFIG -= app_bundle qt
-CONFIG += warn_off
+
 
 SOURCES += \
     main.cpp \
