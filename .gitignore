@@ -1,4 +1,3 @@
-/cbot.sublime-workspace
-/cbot.pro.user
-/cbot.sublime-project
-/doc
+/*.sublime*
+/*.user
+/sm.gv

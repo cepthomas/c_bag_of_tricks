@@ -1,14 +1,17 @@
 
-rem Run leak test on the app. For windows use heob. For nx use valgrind.
-
 @echo off
 cls
 
-rem Setup path for qt and heob runtimes.
-set PATH=%PATH%;C:\Qt\Tools\mingw530_32\bin;C:\Qt\5.11.2\mingw53_32\bin;C:\Qt\Tools\mingw530_32\bin;C:\Tools
+rem Run leak test on the app.
+rem This is a windows version using heob (https://sourceforge.net/projects/heob/).
+rem For nx you would use valgrind.
+rem There is still a tiny leak from the unit tester itself.
+
+rem Setup path.
+set PATH=%PATH%;C:\Tools
 
 rem Run the app.
-heob64 -o1 ..\build-cbot-Desktop_Qt_5_11_2_MinGW_32bit-Debug\debug\cbot
+heob64 -o1 ..\build-cbot-test-Desktop_Qt_5_11_2_MinGW_32bit-Debug\debug\cbot-test
 
 rem Usage: heob64 [OPTION]... APP [APP-OPTION]...
 rem     -oX    heob output (0 = none, 1 = stdout, 2 = stderr, ... = file) [1]

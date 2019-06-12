@@ -237,7 +237,7 @@ void sm_processEvent(sm_t* sm, int eventId)
                     else
                     {
                         sm_trace(sm, "Couldn't find next state from %s to %s\n",
-                                 sm->xlat(sm->currentState->stateId), sm->xlat(nextState->stateId)); //TODO should be an error.
+                                 sm->xlat(sm->currentState->stateId), sm->xlat(nextState->stateId)); // Should be an error.
                     }
                 }
                 else

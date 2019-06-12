@@ -1,0 +1,224 @@
+
+#include "pnut.h"
+
+//-------------------------- TestSuite ------------------------------//
+
+//---------------------------------------------------------------//
+void TestContext::Reset()
+{
+    CurrentSuiteId = "???";
+    Format = 'r';
+
+    OutLines.clear();
+    PropLines.clear();
+}
+
+//-------------------------- TestSuite ------------------------------//
+
+//---------------------------------------------------------------//
+TestSuite::TestSuite(const std::string& id, const std::string& desc)
+{
+    ID = id;
+    Description = desc;
+    CaseCnt = 0;
+    FailCnt = 0;
+}
+
+//---------------------------------------------------------------//
+void TestSuite::RecordResult(TestContext& context, bool pass, const std::string& file, unsigned int line, const std::string& message)
+{
+    std::ostringstream sstr;
+    CaseCnt++;
+
+    if (pass)
+    {
+        if (context.Format == 'x')
+        {
+            sstr << "        <testcase name=\"" << context.CurrentSuiteId << "." << CaseCnt << "\" classname=\"" << context.CurrentSuiteId << "\" />" << std::endl;
+        }
+    }
+    else
+    {
+        FailCnt++;
+
+        if (context.Format == 'x')
+        {
+            sstr << "        <testcase name=\"" << context.CurrentSuiteId << "." << CaseCnt << "\" classname=\"" << context.CurrentSuiteId << "\">" << std::endl;
+            sstr << "            <failure message=\"" << file << ":" << line << " " << message << "\"></failure>" << std::endl;
+            sstr << "        </testcase>" << std::endl;
+        }
+        else // readable
+        {
+            /// Output the failure string with file/line.
+            sstr << "! (" << file << ":" << line << ") " << context.CurrentSuiteId << "." << CaseCnt << " " << message << std::endl;
+        }
+    }
+
+    context.OutLines.push_back(sstr.str());
+}
+    
+//---------------------------------------------------------------//
+void TestSuite::RecordProperty(TestContext& context, const std::string& name, const std::string& value)
+{
+    std::ostringstream pstr;
+    if (context.Format == 'x')
+    {
+        pstr << "<property name=\"" << name << "\" value=\"" << value << "\" />";
+        context.PropLines.push_back(pstr.str());
+    }
+    else // readable
+    {
+        pstr << "Property " << name << ":" << value << std::endl;
+        context.OutLines.push_back(pstr.str());
+    }
+}
+
+//---------------------------------------------------------------//
+void TestSuite::RecordVerbatim(TestContext& context, const std::string& message)
+{
+    context.OutLines.push_back(message);
+}
+
+//---------------------------------------------------------------//
+TestSuite::~TestSuite()
+{
+
+}
+
+//-------------------------- TestSuite ------------------------------//
+
+//---------------------------------------------------------------//
+TestManager::TestManager()
+{
+    _context.Reset();
+}
+
+//---------------------------------------------------------------//
+TestManager& TestManager::Instance()
+{
+    static TestManager self;
+    return self;
+}
+
+//---------------------------------------------------------------//
+void TestManager::AddSuite(TestSuite* ptc)
+{
+    _suites.push_back(ptc);
+}
+
+//---------------------------------------------------------------//
+void TestManager::RunSuites(std::vector<std::string> which, char fmt)
+{
+    _context.Reset();
+    _context.Format = fmt;
+
+    int caseCnt = 0;
+    int failCnt = 0;
+
+    time_t tStart = time(nullptr);
+
+    // Run through to execute suites.
+    for (std::vector<TestSuite*>::iterator iter = _suites.begin(); iter != _suites.end(); ++iter)
+    {
+        // Is this suite requested?
+        bool newSuite = (which.size() == 0);
+        if(!newSuite)
+        {
+            for (std::vector<std::string>::iterator itRun = which.begin(); itRun != which.end(); ++itRun)
+            {
+                if ((*iter)->ID.find(*itRun) != std::string::npos)
+                {
+                    newSuite = true;
+                }
+            }
+        }
+
+        if(newSuite)
+        {
+            /// New suite. Reset states.
+            _context.CurrentSuiteId = (*iter)->ID.c_str();
+            _context.PropLines.clear();
+
+            /// Document the start of the suite.
+            if(_context.Format == 'x')
+            {
+                std::ostringstream oss;
+                oss << "    <testsuite name=" << (*iter)->ID << ">" << std::endl;
+                (*iter)->RecordVerbatim(_context, oss.str());
+            }
+            else // readable
+            {
+                std::ostringstream oss;
+                oss << std::endl << "Test Suite " << (*iter)->ID << ": " << (*iter)->Description << std::endl;
+                (*iter)->RecordVerbatim(_context, oss.str());
+            }
+
+            /// Run the suite.
+            (*iter)->Run(_context);
+
+            /// Completed the suite, update the counts.
+            failCnt += (*iter)->FailCnt;
+            caseCnt += (*iter)->CaseCnt;
+
+            if(_context.Format == 'x')
+            {
+                // Any properties?
+                if (_context.PropLines.size() > 0)
+                {
+                    std::ostringstream oss1;
+                    oss1 << "        <properties>" << std::endl;
+                    (*iter)->RecordVerbatim(_context, oss1.str());
+
+                    for (std::vector<std::string>::iterator piter = _context.PropLines.begin(); piter != _context.PropLines.end(); ++piter)
+                    {
+                        std::ostringstream ossp;
+                        ossp << "            " << *piter << std::endl;
+                        (*iter)->RecordVerbatim(_context, ossp.str());
+                    }
+
+                    std::ostringstream oss2;
+                    oss2 << "        </properties>" << std::endl;
+                    (*iter)->RecordVerbatim(_context, oss2.str());
+                }
+
+                std::ostringstream oss;
+                oss << "    </testsuite>" << std::endl;
+                (*iter)->RecordVerbatim(_context, oss.str());
+            }
+        }
+    }
+
+    /// Finished the test run, prepare the summary.
+    time_t tEnd = time(nullptr);
+    char sStartTime[32];
+    strftime(sStartTime, 32, "%Y-%m-%d %H:%M:%S", localtime(&tStart));
+    long dur = static_cast<long>(tEnd - tStart);
+
+    if(_context.Format == 'x')
+    {
+        std::cout << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << std::endl;
+        std::cout << "<testsuites" << " tests=" << caseCnt << " failures=" << failCnt << " time=" << dur << ">" << std::endl;
+    }
+    else // readable
+    {
+        std::cout << "#------------------------------------------------------------------" << std::endl;
+        std::cout << "# Unit Test Report" << std::endl;
+        std::cout << "# Start Time: " << sStartTime << std::endl;
+        std::cout << "# Duration: " << dur << std::endl;
+        std::cout << "# Cases Run: " << caseCnt << std::endl;
+        std::cout << "# Cases Failed: " << failCnt << std::endl;
+        std::cout << "# Test Result: " << ((failCnt > 0) ? "Fail" : "Pass") << std::endl;
+        std::cout << "#--------------------------------------------------------------------" << std::endl;
+    }
+
+    /// Write out the test result lines.
+    for (std::vector<std::string>::iterator iter = _context.OutLines.begin(); iter != _context.OutLines.end(); ++iter)
+    {
+        std::cout << *iter;
+    }
+
+    if(_context.Format == 'x')
+    {
+        std::cout << "</testsuites>" << std::endl;
+    }
+}

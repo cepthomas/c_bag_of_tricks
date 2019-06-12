@@ -159,7 +159,7 @@ const char* lock_xlat(int id)
         case ST_SETTING_COMBO: return "ST_SETTING_COMBO";
         case ST_UNLOCKED: return "ST_UNLOCKED";
         case ST_DEAD: return "ST_DEAD";
-        default: sprintf(defId, "*** Invalid id %d", id); return defId; //TODO should be an error?
+        default: sprintf(defId, "*** Invalid id %d", id); return defId; // Should be an error?
     }
 }
 

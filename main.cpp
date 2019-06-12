@@ -10,8 +10,9 @@ int main()
 
     whichSuites.emplace_back("LIST");
     whichSuites.emplace_back("SM");
+    whichSuites.emplace_back("PNUT");
 
-    tm.RunSuites(whichSuites, 'r');
+    tm.RunSuites(whichSuites, 'r'); // 'r' for readable, 'x' for xml
 
     return 0;
 }
