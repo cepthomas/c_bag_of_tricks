@@ -10,11 +10,11 @@ QMAKE_CFLAGS += -Werror
 SOURCES += \
     main.c \
     source/list.c \
-    source/state-machine.c
+    source/state_machine.c
 
 HEADERS += \
     source/list.h \
-    source/state-machine.h
+    source/state_machine.h
     
 INCLUDEPATH += \
     source

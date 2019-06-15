@@ -1,7 +1,7 @@
 
 #include "list.h"
 #include "lock.h"
-#include "state-machine.h"
+#include "state_machine.h"
 
 
 /// The lock is both an example of how to use the state machine and the unit test case.

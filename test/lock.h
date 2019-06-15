@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 
-#include "state-machine.h"
+#include "state_machine.h"
 
 ////// Ids - all unique ///////
 

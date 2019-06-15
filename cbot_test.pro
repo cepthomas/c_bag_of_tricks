@@ -10,16 +10,16 @@ SOURCES += \
     main.cpp \
     source/pnut.cpp \
     source/list.c \
-    source/state-machine.c \
-    test/test-pnut.cpp \
-    test/test-list.cpp \
-    test/test-sm.cpp \
+    source/state_machine.c \
+    test/test_pnut.cpp \
+    test/test_list.cpp \
+    test/test_sm.cpp \
     test/lock.c
 
 HEADERS += \
     source/pnut.h \
     source/list.h \
-    source/state-machine.h \
+    source/state_machine.h \
     test/lock.h
     
 INCLUDEPATH += \

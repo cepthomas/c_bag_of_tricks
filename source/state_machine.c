@@ -3,7 +3,7 @@
 #include <stdarg.h>
 #include <sys/time.h>
 
-#include "state-machine.h"
+#include "state_machine.h"
 #include "list.h"
 
 
