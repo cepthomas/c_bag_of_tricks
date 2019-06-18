@@ -1,4 +1,5 @@
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <sys/time.h>
@@ -8,6 +9,9 @@
 
 
 /// @file
+
+
+//---------------- Private --------------------------//
 
 #define MAX_LOG_LINE 100
 
@@ -46,8 +50,9 @@ struct sm
 };
 
 
-//////// Public/client functions ////////
+//---------------- Public API Implementation -------------//
 
+//--------------------------------------------------------//
 sm_t* sm_create(FILE* fp, xlat_t xlat, int defState, int defEvent)
 {
     sm_t* sm = malloc(sizeof(sm_t));
@@ -66,6 +71,7 @@ sm_t* sm_create(FILE* fp, xlat_t xlat, int defState, int defEvent)
     return sm;
 }
 
+//--------------------------------------------------------//
 void sm_destroy(sm_t* sm)
 {
     stateDesc_t* states;
@@ -84,6 +90,7 @@ void sm_destroy(sm_t* sm)
     free(sm);
 }
 
+//--------------------------------------------------------//
 void sm_reset(sm_t* sm, int stateId)
 {
     gettimeofday(&sm->start, NULL);
@@ -104,11 +111,13 @@ void sm_reset(sm_t* sm, int stateId)
     }
 }
 
+//--------------------------------------------------------//
 int sm_getState(sm_t* sm)
 {
     return sm->currentState->stateId;
 }
 
+//--------------------------------------------------------//
 void sm_addState(sm_t* sm, int stateId, const func_t func)
 {
     stateDesc_t* stateDesc = malloc(sizeof (stateDesc_t));
@@ -126,6 +135,7 @@ void sm_addState(sm_t* sm, int stateId, const func_t func)
     }
 }
 
+//--------------------------------------------------------//
 void sm_addTransition(sm_t* sm, int eventId, const func_t func, int nextState)
 {
     transDesc_t* transDesc = malloc(sizeof (transDesc_t));
@@ -137,6 +147,7 @@ void sm_addTransition(sm_t* sm, int eventId, const func_t func, int nextState)
     list_push(sm->currentState->transDescs, transDesc);
 }
 
+//--------------------------------------------------------//
 void sm_processEvent(sm_t* sm, int eventId)
 {
     // Transition functions may generate new events so keep a queue.
@@ -257,6 +268,7 @@ void sm_processEvent(sm_t* sm, int eventId)
     sm->processingEvents = false;
 }
 
+//--------------------------------------------------------//
 void sm_trace(sm_t* sm, const char* format, ...)
 {
     if(sm->fp != NULL)
@@ -279,6 +291,7 @@ void sm_trace(sm_t* sm, const char* format, ...)
     }
 }
 
+//--------------------------------------------------------//
 void sm_toDot(sm_t* sm, FILE* fp)
 {
     // Init attributes for dot.

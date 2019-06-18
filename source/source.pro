@@ -7,14 +7,18 @@ CONFIG -= app_bundle qt c11
 # Keep it honest - treat warnings as errors.
 QMAKE_CFLAGS += -Werror
 
+DEFINES += HAVE_LIST
+
 SOURCES += \
     main.c \
-    source/list.c \
-    source/state_machine.c
+    list.c \
+    stringx.c \
+    state_machine.c
 
 HEADERS += \
-    source/list.h \
-    source/state_machine.h
+    list.h \
+    stringx.h \
+    state_machine.h
     
 INCLUDEPATH += \
-    source
+    .

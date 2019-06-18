@@ -7,6 +7,8 @@
 
 /// @file
 
+//---------------- Private --------------------------//
+
 /// List node definition.
 typedef struct node
 {
@@ -23,6 +25,9 @@ struct list
     node_t* iter;  ///< Internal pointer for iteration operations.
 };
 
+//---------------- Public API Implementation -------------//
+
+//--------------------------------------------------------//
 list_t* list_create()
 {
     list_t* list = malloc(sizeof(list_t));
@@ -32,6 +37,7 @@ list_t* list_create()
     return list;
 }
 
+//--------------------------------------------------------//
 void list_push(list_t* list, void* data)
 {
     if(list != NULL)
@@ -60,6 +66,7 @@ void list_push(list_t* list, void* data)
     }
 }
 
+//--------------------------------------------------------//
 void list_append(list_t* list, void* data)
 {
     if(list != NULL)
@@ -88,6 +95,7 @@ void list_append(list_t* list, void* data)
     }
 }
 
+//--------------------------------------------------------//
 bool list_pop(list_t* list, void** data)
 {
     bool ret = false;
@@ -131,6 +139,7 @@ bool list_pop(list_t* list, void** data)
     return ret;
 }
 
+//--------------------------------------------------------//
 int list_count(list_t* list)
 {
     int i = 0;
@@ -148,6 +157,7 @@ int list_count(list_t* list)
     return i;
 }
 
+//--------------------------------------------------------//
 void list_start(list_t* list)
 {
     if(list != NULL)
@@ -156,6 +166,7 @@ void list_start(list_t* list)
     }
 }
 
+//--------------------------------------------------------//
 bool list_next(list_t* list, void** data)
 {
     bool ret = false;
@@ -174,6 +185,7 @@ bool list_next(list_t* list, void** data)
     return ret;
 }
 
+//--------------------------------------------------------//
 void list_clear(list_t* list)
 {
     if(list != NULL)
@@ -198,6 +210,7 @@ void list_clear(list_t* list)
     }
 }
 
+//--------------------------------------------------------//
 void list_destroy(list_t* list)
 {
     list_clear(list);

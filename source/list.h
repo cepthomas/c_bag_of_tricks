@@ -2,20 +2,12 @@
 #ifndef LIST_H
 #define LIST_H
 
-#include <stdlib.h>
-#include <stdint.h>
-
-
-#ifndef __cplusplus
-typedef int bool;
-#define true 1
-#define false 0
-#endif
+#include "stdbool.h"
 
 
 /// @file
 
-////////// Public interface //////////
+//---------------- Public API ----------------------//
 
 /// Opaque list object.
 typedef struct list list_t;
@@ -28,7 +20,7 @@ list_t* list_create();
 /// @param list List pointer.
 void list_clear(list_t* list);
 
-/// Deletes all nodes and associated data pointers, and the list struct.
+/// Deletes all nodes and frees associated data pointers, and the list struct.
 /// @param list List pointer.
 void list_destroy(list_t* list);
 

@@ -1,3 +1,5 @@
 /*.sublime*
-/*.user
-/sm.gv
+/*.sublime*
+/source/*.user
+/test/*.user
+/test/sm.gv

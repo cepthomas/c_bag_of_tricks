@@ -16,7 +16,7 @@ typedef struct
 
 
 /////////////////////////////////////////////////////////////////////////////
-UT_SUITE(LIST_1, "Test all list functions.")
+UT_SUITE(LIST_ALL, "Test all list functions.")
 {
     int i;
 

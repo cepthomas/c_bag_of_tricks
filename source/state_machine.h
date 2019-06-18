@@ -5,9 +5,7 @@
 
 /// @file
 
-////////// Public interface //////////
-
-/////// Definitions //////
+//---------------- Public API ----------------------//
 
 /// Opaque state machine object.
 typedef struct sm sm_t;
@@ -19,8 +17,6 @@ typedef void (*func_t)(void);
 /// @param id The state or event id.
 /// @return String version of id. 
 typedef const char* (*xlat_t)(int id);
-
-//////// Functions /////////
 
 /// Create a state machine. Client must sm_destroy() it.
 /// Currently this is NOT thread-safe.
