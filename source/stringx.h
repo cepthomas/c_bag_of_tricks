@@ -97,6 +97,11 @@ stringx_t* stringx_left(stringx_t* s, unsigned int num);
 /// @param s Source stringx.
 void stringx_trim(stringx_t* s);
 
+/// Append a char to the stringx.
+/// @param s Source stringx.
+/// @param c Char to append.
+void stringx_append(stringx_t* s, char c);
+
 /// Format the string in place.
 /// @param s Source stringx.
 /// @param maxlen Client must give us a clue.

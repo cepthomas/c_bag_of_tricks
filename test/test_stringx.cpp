@@ -70,6 +70,13 @@ UT_SUITE(STR_ALL, "Test all stringx functions.")
     UT_STR_EQUAL(stringx_content(s4), "The Mu");
     UT_STR_EQUAL(stringx_content(s2), "lberry Bush");
 
+    // Append char.
+    stringx_append(s2, ' ');
+    stringx_append(s2, 'x');
+    stringx_append(s2, 'y');
+    stringx_append(s2, 'z');
+    UT_STR_EQUAL(stringx_content(s2), "lberry Bush xyz");
+
     list_t* parts = stringx_split(s1, " ");
     UT_EQUAL(list_count(parts), 3);
     list_start(parts);

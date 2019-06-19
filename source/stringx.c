@@ -26,7 +26,7 @@ static void p_assign(stringx_t* s, char* cs)
 {
     if(s->raw != NULL)
     {
-        free(s->raw);//<<<
+        free(s->raw);
     }
 
     s->raw = cs == NULL ? NULL : cs;
@@ -98,6 +98,17 @@ void stringx_set(stringx_t* s, const char* sinit)
 {
     // Copy the contents.
     p_assign(s, p_scopy(sinit));
+}
+
+//--------------------------------------------------------//
+void stringx_append(stringx_t* s, char c)
+{
+    // TODO This is really crude. Need to make smarter internal buffer to support growing.
+    unsigned int slen = stringx_len(s);
+    char* snew = calloc(sizeof(char), slen + 2);
+    strcpy(snew, s->raw);
+    snew[slen] = c;
+    p_assign(s, snew);
 }
 
 //--------------------------------------------------------//
