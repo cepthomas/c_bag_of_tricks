@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
-#include <sys/time.h>
 
 #include "state_machine.h"
 #include "list.h"
@@ -44,7 +43,6 @@ struct sm
     list_t* stateDescs;         ///< All the states - stateDesc_t.
     stateDesc_t* currentState;  ///< The current state.
     stateDesc_t* defaultState;  ///< Maybe a default state.
-    struct timeval start;       ///< For measuring elapsed time.
     list_t* eventQueue;         ///< Queue of events to be processed - int.
     bool processingEvents;      ///< Internal flag for recursion.
 };
@@ -93,8 +91,6 @@ void sm_destroy(sm_t* sm)
 //--------------------------------------------------------//
 void sm_reset(sm_t* sm, int stateId)
 {
-    gettimeofday(&sm->start, NULL);
-
     stateDesc_t* st;
     list_start(sm->stateDescs);
     while(list_next(sm->stateDescs, (void*)&st))
@@ -279,15 +275,8 @@ void sm_trace(sm_t* sm, const char* format, ...)
         char sfmt[MAX_LOG_LINE];
         vsnprintf(sfmt, MAX_LOG_LINE-1, format, args);
         va_end(args);
-
-        // Add elapsed time.
-        struct timeval now;
-        double secs = 0;
-
-        gettimeofday(&now, NULL);
-        secs = (double)(now.tv_usec - sm->start.tv_usec) / 1000000 + (double)(now.tv_sec - sm->start.tv_sec);
         
-        fprintf(sm->fp, "SM: %06f %s", secs, sfmt);
+        fprintf(sm->fp, "SM: %s", sfmt);
     }
 }
 

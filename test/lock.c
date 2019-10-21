@@ -11,7 +11,7 @@
 /// List data payload.
 typedef struct
 {
-    char c;   ///< Character.
+    char c;     ///< Character.
 } lockData_t;
 
 

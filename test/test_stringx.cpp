@@ -9,7 +9,7 @@ extern "C"
 }
 
 /////////////////////////////////////////////////////////////////////////////
-UT_SUITE(STR_ALL, "Test all stringx functions.")
+UT_SUITE(STR_BASIC, "Test basic stringx functions.")
 {
     // Basic ops.
     stringx_t* s1 = stringx_create("  round and square  ");
@@ -77,6 +77,22 @@ UT_SUITE(STR_ALL, "Test all stringx functions.")
     stringx_append(s2, 'z');
     UT_STR_EQUAL(stringx_content(s2), "lberry Bush xyz");
 
+    // Clean up.
+    stringx_destroy(s1);
+    stringx_destroy(s2);
+    stringx_destroy(s3);
+    stringx_destroy(s4);
+    // Don't try to destroy the same object twice!
+    //stringx_destroy(s4);
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+UT_SUITE(STR_FANCY, "Test fancier stringx functions.")
+{
+    stringx_t* s1 = stringx_create("  round and square  ");
+    stringx_t* s2 = stringx_create(nullptr);
+
     list_t* parts = stringx_split(s1, " ");
     UT_EQUAL(list_count(parts), 3);
     list_start(parts);
@@ -99,10 +115,5 @@ UT_SUITE(STR_ALL, "Test all stringx functions.")
     // Clean up.
     stringx_destroy(s1);
     stringx_destroy(s2);
-    stringx_destroy(s3);
-    stringx_destroy(s4);
-    // Don't try to destroy the same object twice!
-    //stringx_destroy(s4);
-
     list_destroy(parts);
 }

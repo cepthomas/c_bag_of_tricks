@@ -2,3 +2,8 @@
 /source/*.user
 /test/*.user
 /test/sm.gv
+/msvc/cbot_msvc.vcxproj.user
+/msvc/sm.gv
+/msvc/.vs
+/msvc/Debug
+/msvc/x64
