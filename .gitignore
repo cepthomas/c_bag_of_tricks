@@ -1,9 +1,7 @@
 /*.sublime*
-/source/*.user
-/test/*.user
-/test/sm.gv
-/msvc/cbot_msvc.vcxproj.user
-/msvc/sm.gv
-/msvc/.vs
-/msvc/Debug
-/msvc/x64
+/CMakeCache.txt
+/CMakeFiles
+/Makefile
+/cbot_test.exe
+/cmake_install.cmake
+/sm.*

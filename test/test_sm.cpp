@@ -1,4 +1,5 @@
 
+#include <unistd.h>
 #include "pnut.h"
 
 extern "C"
@@ -74,12 +75,12 @@ UT_SUITE(SM_DOT, "Test the dot file creation.")
     UT_NOT_NULL(fp);
 
     // Create a new lock.
-    sm_t* sm = lock_create(fp);
+    sm_t* sm = lock_create(nullptr);
 
     sm_toDot(sm, fp);
 
-    // int r = system("dot -Tpng sm.gv -o sm.png");
-    // UT_GREATER_OR_EQUAL(r, 0);
+    int r = system("dot -Tpng sm.gv -o sm.png"); //TODO this doesn't work???
+    UT_EQUAL(r, 0);
 
     // Clean up.
     fclose(fp);

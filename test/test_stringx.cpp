@@ -5,6 +5,7 @@
 
 extern "C"
 {
+#include "list.h"
 #include "stringx.h"
 }
 

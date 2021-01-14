@@ -56,12 +56,12 @@ char* p_scopy(const char* sinit)
     // Copy the contents.
     if(sinit != NULL)
     {
-        buff = calloc(sizeof(char), strlen(sinit) + 1);
+        buff = (char*)calloc(sizeof(char), strlen(sinit) + 1);
         strcpy(buff, sinit);
     }
     else // make a valid empty string
     {
-        buff = malloc(1);
+        buff = (char*)malloc(1);
         buff[0] = 0;
     }
     return buff;
@@ -72,7 +72,7 @@ char* p_scopy(const char* sinit)
 //--------------------------------------------------------//
 stringx_t* stringx_create(const char* sinit)
 {
-    stringx_t* s = malloc(sizeof(stringx_t));
+    stringx_t* s = (stringx_t*)malloc(sizeof(stringx_t));
     s->raw = NULL;
     // Copy the contents.
     p_assign(s, p_scopy(sinit));
@@ -105,7 +105,7 @@ void stringx_append(stringx_t* s, char c)
 {
     // TODO This is really crude. Need to make smarter internal buffer to support growing.
     unsigned int slen = stringx_len(s);
-    char* snew = calloc(sizeof(char), slen + 2);
+    char* snew = (char*)calloc(sizeof(char), slen + 2);
     strcpy(snew, s->raw);
     snew[slen] = c;
     p_assign(s, snew);
@@ -192,8 +192,8 @@ stringx_t* stringx_left(stringx_t* s, unsigned int num)
 
     if(strlen(s->raw) >= num)
     {
-        char* sleft = calloc(sizeof(char), (num + 1));
-        char* sresid = calloc(sizeof(char), stringx_len(s) - num + 1);
+        char* sleft = (char*)calloc(sizeof(char), (num + 1));
+        char* sresid = (char*)calloc(sizeof(char), stringx_len(s) - num + 1);
 
         strncpy(sleft, s->raw, num);
         strncpy(sresid, s->raw + num, stringx_len(s) - num);
@@ -239,7 +239,7 @@ void stringx_trim(stringx_t* s)
         last = last >= 0 ? last : len - 1;
 
         unsigned int slen = (unsigned int)(last - first);
-        char* cs = malloc(slen + 1);
+        char* cs = (char*)malloc(slen + 1);
         memcpy(cs, s->raw + first, slen);
         cs[slen] = 0;
         p_assign(s, cs);
@@ -279,7 +279,7 @@ bool stringx_format(stringx_t* s, unsigned int maxlen, const char* format, ...)
 {
     bool stat = true;
 
-    char* buff = calloc(sizeof(char), maxlen + 1);
+    char* buff = (char*)calloc(sizeof(char), maxlen + 1);
     va_list args;
     va_start(args, format);
     vsnprintf(buff, maxlen, format, args);
@@ -296,13 +296,13 @@ list_t* stringx_split(stringx_t* s, const char* delim)
     list_t* parts = list_create();
 
     // Make writable copy and tokenize it.
-    char* cp = calloc(sizeof(char), strlen(s->raw) + 1);
+    char* cp = (char*)calloc(sizeof(char), strlen(s->raw) + 1);
     strcpy(cp, s->raw);
 
     char* token = strtok(cp, delim);
     while(token != NULL)
     {
-        char* ctoken = calloc(sizeof(char), strlen(token) + 1);
+        char* ctoken = (char*)calloc(sizeof(char), strlen(token) + 1);
         strcpy(ctoken, token);
         list_append(parts, ctoken);
         token = strtok(NULL, delim);

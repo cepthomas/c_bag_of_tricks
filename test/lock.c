@@ -1,4 +1,5 @@
 
+#include <stdlib.h>
 #include "list.h"
 #include "lock.h"
 #include "state_machine.h"
@@ -50,15 +51,15 @@ sm_t* lock_create(FILE* fp)
     s_combination = list_create();
 
     // Initial combination is: 000
-    lockData_t* k1 = malloc(sizeof(lockData_t));
+    lockData_t* k1 = (lockData_t*)malloc(sizeof(lockData_t)); //TODO these casts?
     k1->c = '0';
     list_append(s_combination, k1);
 
-    lockData_t* k2 = malloc(sizeof(lockData_t));
+    lockData_t* k2 = (lockData_t*)malloc(sizeof(lockData_t));
     k2->c = '0';
     list_append(s_combination, k2);
 
-    lockData_t* k3 = malloc(sizeof(lockData_t));
+    lockData_t* k3 = (lockData_t*)malloc(sizeof(lockData_t));
     k3->c = '0';
     list_append(s_combination, k3);
 
@@ -200,7 +201,7 @@ static void lockedAddDigit(void)
 {
     sm_trace(s_sm, "lockedAddDigit()\n");
 
-    lockData_t* data = malloc(sizeof(lockData_t));
+    lockData_t* data = (lockData_t*)malloc(sizeof(lockData_t));
     data->c = s_currentKey;
     list_append(s_currentEntry, data);
 
@@ -215,8 +216,8 @@ static void lockedAddDigit(void)
 
     for(int i = 0; i < list_count(s_combination) && ok; i++)
     {
-        list_next(s_combination, (void*)&dcomb);
-        list_next(s_currentEntry, (void*)&dentry);
+        list_next(s_combination, (void**)&dcomb);
+        list_next(s_currentEntry, (void**)&dentry);
 
         if(dcomb != NULL && dentry != NULL)
         {
@@ -235,7 +236,7 @@ static void setComboAddDigit(void)
 {
     sm_trace(s_sm, "setComboAddDigit()\n");
 
-    lockData_t* data = malloc(sizeof(lockData_t));
+    lockData_t* data = (lockData_t*)malloc(sizeof(lockData_t));
     data->c = s_currentKey;
     list_append(s_currentEntry, data);
 }
@@ -255,9 +256,9 @@ static void setCombo(void)
         lockData_t* data;
         while (!done)
         {
-            if(list_next(s_currentEntry, (void*)&data))
+            if(list_next(s_currentEntry, (void**)&data))
             {
-                lockData_t* data2 = malloc(sizeof(lockData_t));
+                lockData_t* data2 = (lockData_t*)malloc(sizeof(lockData_t));
                 *data2 = *data;
                 list_append(s_combination, data2);
             }

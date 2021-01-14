@@ -11,11 +11,11 @@ int main()
     whichSuites.emplace_back("STR");
     whichSuites.emplace_back("LIST");
     whichSuites.emplace_back("SM");
-    //whichSuites.emplace_back("PNUT");
+    // whichSuites.emplace_back("PNUT");
 
     tm.RunSuites(whichSuites, 'r'); // 'r' for readable, 'x' for xml
 
-    printf("Don't forget to run_mem_chk!\n");
+    //TODO printf("Don't forget to run_mem_chk!\n");
 
     return 0;
 }

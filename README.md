@@ -1,3 +1,5 @@
+
+
 # c-bag-of-tricks
 An ever-expanding collection of the C things I seem to use repeatedly. Of course there are
 lots of other ways to do this but I find most to be over-complicated.
@@ -7,7 +9,8 @@ No dependencies on third party components.
 They all (except pnut) use the opaque pointer (pimpl) idiom.
 
 Runtime components are plain C99 so should build and run on any win or nx platform using any compiler.
-A QMake project using mingw is supplied (no Qt libs in output).
+
+A VS Code workspace using mingw and CMake is supplied.
 
 ![logo](https://github.com/cepthomas/c-bag-of-tricks/blob/master/felix.jpg)
 
@@ -34,7 +37,6 @@ Output is to stdout. There are two formats currently supported:
 - JUnit subset intended for consumption by your CI server. Not tested yet but looks nice.
 
 It is plain C++ with a little bit of stl so will build and run on any win or nx platform using any compiler.
-A QMake project using mingw is supplied (no Qt libs in output).
 
 See test-pnut.cpp for an example of how to write unit tests and main.cpp of how to run them.
 

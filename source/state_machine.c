@@ -53,7 +53,7 @@ struct sm
 //--------------------------------------------------------//
 sm_t* sm_create(FILE* fp, xlat_t xlat, int defState, int defEvent)
 {
-    sm_t* sm = malloc(sizeof(sm_t));
+    sm_t* sm = (sm_t*)malloc(sizeof(sm_t));
 
     sm->fp = fp;
     sm->xlat = xlat;
@@ -76,7 +76,7 @@ void sm_destroy(sm_t* sm)
 
     // Clean up sub-list.
     list_start(sm->stateDescs);
-    while(list_next(sm->stateDescs, (void*)&states))
+    while(list_next(sm->stateDescs, (void**)&states))
     {
         list_destroy(states->transDescs);
     }
@@ -93,7 +93,7 @@ void sm_reset(sm_t* sm, int stateId)
 {
     stateDesc_t* st;
     list_start(sm->stateDescs);
-    while(list_next(sm->stateDescs, (void*)&st))
+    while(list_next(sm->stateDescs, (void**)&st))
     {
         if(st->stateId == stateId) // found it
         {
@@ -116,7 +116,7 @@ int sm_getState(sm_t* sm)
 //--------------------------------------------------------//
 void sm_addState(sm_t* sm, int stateId, const func_t func)
 {
-    stateDesc_t* stateDesc = malloc(sizeof (stateDesc_t));
+    stateDesc_t* stateDesc = (stateDesc_t*)malloc(sizeof (stateDesc_t));
     
     stateDesc->stateId = stateId;
     stateDesc->func = func;
@@ -134,7 +134,7 @@ void sm_addState(sm_t* sm, int stateId, const func_t func)
 //--------------------------------------------------------//
 void sm_addTransition(sm_t* sm, int eventId, const func_t func, int nextState)
 {
-    transDesc_t* transDesc = malloc(sizeof (transDesc_t));
+    transDesc_t* transDesc = (transDesc_t*)malloc(sizeof (transDesc_t));
 
     transDesc->eventId = eventId;
     transDesc->func = func;
@@ -149,7 +149,7 @@ void sm_processEvent(sm_t* sm, int eventId)
     // Transition functions may generate new events so keep a queue.
     // This allows current execution to complete before handling new event.
 
-    int* ld = malloc(sizeof(int));
+    int* ld = (int*)malloc(sizeof(int));
     *ld = eventId;
     list_push(sm->eventQueue, ld);
 
@@ -160,7 +160,7 @@ void sm_processEvent(sm_t* sm, int eventId)
 
         // Process all events in the event queue.
         int* qevt;
-        while (list_pop(sm->eventQueue, (void*)&qevt))
+        while (list_pop(sm->eventQueue, (void**)&qevt))
         {
             int qevtid = *qevt;
             free(qevt);
@@ -177,7 +177,7 @@ void sm_processEvent(sm_t* sm, int eventId)
             if(sm->defaultState != NULL)
             {
                 list_start(sm->defaultState->transDescs);
-                while(list_next(sm->defaultState->transDescs, (void*)&trans))
+                while(list_next(sm->defaultState->transDescs, (void**)&trans))
                 {
                     if(trans->eventId == qevtid) // found it
                     {
@@ -190,7 +190,7 @@ void sm_processEvent(sm_t* sm, int eventId)
             if(transDesc == NULL)
             {
                 list_start(sm->currentState->transDescs);
-                while(list_next(sm->currentState->transDescs, (void*)&trans))
+                while(list_next(sm->currentState->transDescs, (void**)&trans))
                 {
                     if(trans->eventId == qevtid) // found it
                     {
@@ -223,7 +223,7 @@ void sm_processEvent(sm_t* sm, int eventId)
                     stateDesc_t* st = NULL;
                     stateDesc_t* nextState = NULL;
                     list_start(sm->stateDescs);
-                    while(list_next(sm->stateDescs, (void*)&st))
+                    while(list_next(sm->stateDescs, (void**)&st))
                     {
                         if(st->stateId == transDesc->nextStateId) // found it
                         {
@@ -308,11 +308,11 @@ void sm_toDot(sm_t* sm, FILE* fp)
     stateDesc_t* st = NULL;
     transDesc_t* trans = NULL;
     list_start(sm->stateDescs);
-    while(list_next(sm->stateDescs, (void*)&st))
+    while(list_next(sm->stateDescs, (void**)&st))
     {
         // Iterate through the state transitions.
         list_start(st->transDescs);
-        while(list_next(st->transDescs, (void*)&trans))
+        while(list_next(st->transDescs, (void**)&trans))
         {
             fprintf(fp, "        \"%s\" -> \"%s\" [label=\"%s\"];\n",
                     sm->xlat(st->stateId),
