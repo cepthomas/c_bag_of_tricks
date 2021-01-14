@@ -1,6 +1,8 @@
 #include <cstdio>
 #include <cstring>
 
+#include "common.h"
+
 #include "pnut.h"
 
 extern "C"
@@ -19,6 +21,9 @@ typedef struct
 UT_SUITE(LIST_ALL, "Test all list functions.")
 {
     int i;
+
+    // CREATE_INST(V, test_struct_t); TODO these
+    // V->anumber = 11;
 
     test_struct_t* st1 = static_cast<test_struct_t*>(malloc(sizeof(test_struct_t)));
     st1->anumber = 11;

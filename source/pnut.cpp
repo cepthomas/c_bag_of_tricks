@@ -115,7 +115,7 @@ void TestManager::RunSuites(std::vector<std::string> which, char fmt)
     int caseCnt = 0;
     int failCnt = 0;
 
-    time_t tStart = time(nullptr);
+    time_t tStart = time(NULL);
 
     // Run through to execute suites.
     for (std::vector<TestSuite*>::iterator iter = _suites.begin(); iter != _suites.end(); ++iter)
@@ -189,7 +189,7 @@ void TestManager::RunSuites(std::vector<std::string> which, char fmt)
     }
 
     /// Finished the test run, prepare the summary.
-    time_t tEnd = time(nullptr);
+    time_t tEnd = time(NULL);
     char sStartTime[32];
     strftime(sStartTime, 32, "%Y-%m-%d %H:%M:%S", localtime(&tStart));
     long dur = static_cast<long>(tEnd - tStart);

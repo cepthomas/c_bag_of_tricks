@@ -14,7 +14,7 @@ extern "C"
 UT_SUITE(SM_MAIN, "Test the full state machine using a real world example.")
 {
     // Create a new lock.
-    sm_t* sm = lock_create(nullptr); // stdout);
+    sm_t* sm = lock_create(NULL); // stdout);
 
     // Should come up in the locked state.
     UT_STR_EQUAL(STATE_STR, "ST_LOCKED");
@@ -75,11 +75,11 @@ UT_SUITE(SM_DOT, "Test the dot file creation.")
     UT_NOT_NULL(fp);
 
     // Create a new lock.
-    sm_t* sm = lock_create(nullptr);
+    sm_t* sm = lock_create(NULL);
 
     sm_toDot(sm, fp);
 
-    int r = system("dot -Tpng sm.gv -o sm.png"); //TODO this doesn't work???
+    int r = system("dot -Tpng sm.gv -o sm.png"); //TODO this doesn't work right.
     UT_EQUAL(r, 0);
 
     // Clean up.

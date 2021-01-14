@@ -23,7 +23,9 @@ UT_SUITE(PNUT_1, "Test basic check macros")
 
     UT_GREATER(val1, val2);
 
-    void* p = nullptr;
+    void* p = NULL;
+    UT_NULL(p);
+    p = nullptr;
     UT_NULL(p);
     p = malloc(100);
     UT_NOT_NULL(p);

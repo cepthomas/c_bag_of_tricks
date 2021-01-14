@@ -10,7 +10,7 @@
             "type": "gdb",
             "request": "launch",
             // Set debug target as appropriate.
-            "target": "${workspaceFolder}/cbot_test.exe",
+            "target": "${workspaceFolder}/build/cbot_test.exe",
             "cwd": "${workspaceFolder}",
             "valuesFormatting": "parseText"
         }

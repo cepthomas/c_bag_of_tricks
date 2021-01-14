@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "common.h"
 #include "list.h"
 
 
@@ -30,7 +31,7 @@ struct list
 //--------------------------------------------------------//
 list_t* list_create()
 {
-    list_t* list = (list_t*)malloc(sizeof(list_t));
+    CREATE_INST(list, list_t);
     list->head = NULL;
     list->tail = NULL;
     list->iter = NULL;
@@ -45,7 +46,7 @@ void list_push(list_t* list, void* data)
         // Get current head. Can be null.
         node_t* chead = list->head;
 
-        node_t* newNode = (node_t*)malloc(sizeof(node_t));
+        CREATE_INST(newNode, node_t);
         newNode->data = data;
 
         if(chead != NULL)
@@ -74,7 +75,7 @@ void list_append(list_t* list, void* data)
         // Get current tail. Can be null.
         node_t* ctail = list->tail;
 
-        node_t* newNode = (node_t*)malloc(sizeof(node_t));
+        CREATE_INST(newNode, node_t);
         newNode->data = data;
 
         if(ctail != NULL)

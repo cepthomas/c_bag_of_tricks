@@ -4,6 +4,7 @@
 #include <stdarg.h>
 #include <ctype.h>
 
+#include "common.h"
 #include "stringx.h"
 
 /// @file String handling functions.
@@ -48,23 +49,23 @@ static bool p_match(char c1, char c2, csens_t csens)
 
 /// Copy a const string.
 /// @param sinit String to copy. If NULL, a valid empty string is created.
-/// @return The new mutable string.
+/// @return The new mutable string. TODO make all immutable?
 char* p_scopy(const char* sinit)
 {
-    char* buff;
+    char* retbuff;
 
     // Copy the contents.
     if(sinit != NULL)
     {
-        buff = (char*)calloc(sizeof(char), strlen(sinit) + 1);
+        CREATE_STR(buff, strlen(sinit));
         strcpy(buff, sinit);
+        retbuff = buff;
     }
-    else // make a valid empty string
+    else // make it a valid empty string
     {
-        buff = (char*)malloc(1);
-        buff[0] = 0;
+        retbuff = (char*)calloc(1, sizeof(char));
     }
-    return buff;
+    return retbuff;
 }
 
 //---------------- Public API Implementation -------------//
@@ -72,7 +73,7 @@ char* p_scopy(const char* sinit)
 //--------------------------------------------------------//
 stringx_t* stringx_create(const char* sinit)
 {
-    stringx_t* s = (stringx_t*)malloc(sizeof(stringx_t));
+    CREATE_INST(s, stringx_t);
     s->raw = NULL;
     // Copy the contents.
     p_assign(s, p_scopy(sinit));
@@ -105,7 +106,7 @@ void stringx_append(stringx_t* s, char c)
 {
     // TODO This is really crude. Need to make smarter internal buffer to support growing.
     unsigned int slen = stringx_len(s);
-    char* snew = (char*)calloc(sizeof(char), slen + 2);
+    CREATE_STR(snew, slen + 1);
     strcpy(snew, s->raw);
     snew[slen] = c;
     p_assign(s, snew);
@@ -169,7 +170,7 @@ bool stringx_ends(stringx_t* s1, const char* s2, csens_t csens)
 }
 
 //--------------------------------------------------------//
-bool stringx_contains(stringx_t* s1, const char* s2, csens_t csens) // TODO
+bool stringx_contains(stringx_t* s1, const char* s2, csens_t csens) // TODO implement
 {
     (void)s1;
     (void)s2;
@@ -192,8 +193,8 @@ stringx_t* stringx_left(stringx_t* s, unsigned int num)
 
     if(strlen(s->raw) >= num)
     {
-        char* sleft = (char*)calloc(sizeof(char), (num + 1));
-        char* sresid = (char*)calloc(sizeof(char), stringx_len(s) - num + 1);
+        CREATE_STR(sleft, num);
+        CREATE_STR(sresid, stringx_len(s) - num);
 
         strncpy(sleft, s->raw, num);
         strncpy(sresid, s->raw + num, stringx_len(s) - num);
@@ -239,7 +240,7 @@ void stringx_trim(stringx_t* s)
         last = last >= 0 ? last : len - 1;
 
         unsigned int slen = (unsigned int)(last - first);
-        char* cs = (char*)malloc(slen + 1);
+        CREATE_STR(cs, slen);
         memcpy(cs, s->raw + first, slen);
         cs[slen] = 0;
         p_assign(s, cs);
@@ -279,7 +280,7 @@ bool stringx_format(stringx_t* s, unsigned int maxlen, const char* format, ...)
 {
     bool stat = true;
 
-    char* buff = (char*)calloc(sizeof(char), maxlen + 1);
+    CREATE_STR(buff, maxlen);
     va_list args;
     va_start(args, format);
     vsnprintf(buff, maxlen, format, args);
@@ -296,13 +297,13 @@ list_t* stringx_split(stringx_t* s, const char* delim)
     list_t* parts = list_create();
 
     // Make writable copy and tokenize it.
-    char* cp = (char*)calloc(sizeof(char), strlen(s->raw) + 1);
+    CREATE_STR(cp, strlen(s->raw));
     strcpy(cp, s->raw);
 
     char* token = strtok(cp, delim);
     while(token != NULL)
     {
-        char* ctoken = (char*)calloc(sizeof(char), strlen(token) + 1);
+        CREATE_STR(ctoken, strlen(token));
         strcpy(ctoken, token);
         list_append(parts, ctoken);
         token = strtok(NULL, delim);

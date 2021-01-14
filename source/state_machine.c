@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#include "common.h"
 #include "state_machine.h"
 #include "list.h"
 
@@ -53,7 +54,7 @@ struct sm
 //--------------------------------------------------------//
 sm_t* sm_create(FILE* fp, xlat_t xlat, int defState, int defEvent)
 {
-    sm_t* sm = (sm_t*)malloc(sizeof(sm_t));
+    CREATE_INST(sm, sm_t);
 
     sm->fp = fp;
     sm->xlat = xlat;
@@ -76,7 +77,7 @@ void sm_destroy(sm_t* sm)
 
     // Clean up sub-list.
     list_start(sm->stateDescs);
-    while(list_next(sm->stateDescs, (void**)&states))
+    while(list_next(sm->stateDescs, (void**)&states)) //TODO fix casts like these?
     {
         list_destroy(states->transDescs);
     }
@@ -116,7 +117,7 @@ int sm_getState(sm_t* sm)
 //--------------------------------------------------------//
 void sm_addState(sm_t* sm, int stateId, const func_t func)
 {
-    stateDesc_t* stateDesc = (stateDesc_t*)malloc(sizeof (stateDesc_t));
+    CREATE_INST(stateDesc, stateDesc_t);
     
     stateDesc->stateId = stateId;
     stateDesc->func = func;
@@ -134,7 +135,7 @@ void sm_addState(sm_t* sm, int stateId, const func_t func)
 //--------------------------------------------------------//
 void sm_addTransition(sm_t* sm, int eventId, const func_t func, int nextState)
 {
-    transDesc_t* transDesc = (transDesc_t*)malloc(sizeof (transDesc_t));
+    CREATE_INST(transDesc, transDesc_t);
 
     transDesc->eventId = eventId;
     transDesc->func = func;
@@ -149,7 +150,7 @@ void sm_processEvent(sm_t* sm, int eventId)
     // Transition functions may generate new events so keep a queue.
     // This allows current execution to complete before handling new event.
 
-    int* ld = (int*)malloc(sizeof(int));
+    CREATE_INST(ld, int);
     *ld = eventId;
     list_push(sm->eventQueue, ld);
 
@@ -255,7 +256,7 @@ void sm_processEvent(sm_t* sm, int eventId)
             else
             {
                 sm_trace(sm, "No match for state %s for event %s\n",
-                      sm->xlat(sm->currentState->stateId), sm->xlat(qevtid));
+                         sm->xlat(sm->currentState->stateId), sm->xlat(qevtid));
             }
         }
     }

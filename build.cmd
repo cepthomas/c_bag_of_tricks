@@ -2,15 +2,16 @@
 echo off
 cls
 
-rem mkdir _build
-rem cd _build
+mkdir build
+cd build
 rem del /F /Q *.*
-cmake -G "MinGW Makefiles" .
+
+cmake -G "MinGW Makefiles" ..
 
 make
 
 rem cbot_test.exe
 
-rem cd ..
+cd ..
 
 rem pause

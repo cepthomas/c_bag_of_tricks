@@ -18,7 +18,7 @@ UT_SUITE(STR_BASIC, "Test basic stringx functions.")
     UT_EQUAL(stringx_len(s1), 20);
     UT_STR_EQUAL(stringx_content(s1), "  round and square  ");
 
-    stringx_t* s2 = stringx_create(nullptr);
+    stringx_t* s2 = stringx_create(NULL);
     UT_NOT_NULL(stringx_content(s2));
     UT_EQUAL(stringx_len(s2), 0);
     UT_STR_EQUAL(stringx_content(s2), "");
@@ -92,7 +92,7 @@ UT_SUITE(STR_BASIC, "Test basic stringx functions.")
 UT_SUITE(STR_FANCY, "Test fancier stringx functions.")
 {
     stringx_t* s1 = stringx_create("  round and square  ");
-    stringx_t* s2 = stringx_create(nullptr);
+    stringx_t* s2 = stringx_create(NULL);
 
     list_t* parts = stringx_split(s1, " ");
     UT_EQUAL(list_count(parts), 3);

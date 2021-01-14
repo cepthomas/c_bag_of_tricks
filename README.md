@@ -10,7 +10,7 @@ They all (except pnut) use the opaque pointer (pimpl) idiom.
 
 Runtime components are plain C99 so should build and run on any win or nx platform using any compiler.
 
-A VS Code workspace using mingw and CMake is supplied.
+A VS Code workspace using mingw and CMake is supplied. Your PATH needs to include this path.
 
 ![logo](https://github.com/cepthomas/c-bag-of-tricks/blob/master/felix.jpg)
 
