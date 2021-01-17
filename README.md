@@ -10,9 +10,9 @@ They all (except pnut) use the opaque pointer (pimpl) idiom.
 
 Runtime components are plain C99 so should build and run on any win or nx platform using any compiler.
 
-A VS Code workspace using mingw and CMake is supplied. Your PATH needs to include this path.
+A VS Code workspace using mingw and CMake is supplied. Your PATH needs to include mingw.
 
-![logo](https://github.com/cepthomas/c-bag-of-tricks/blob/master/felix.jpg)
+![logo](felix.jpg)
 
 # state_machine
 - Semi-hierarchical state machine for C.
@@ -43,6 +43,3 @@ See test-pnut.cpp for an example of how to write unit tests and main.cpp of how 
 The original intent was to provide a way to unit test algorithmic parts of embedded code in an isolated
 environment. To that end, the system must be designed so as to abstract the hardware components.
 An example showing how to use this for embedded applications is [c-modular](https://github.com/cepthomas/c-modular).
-
-# License
-https://github.com/cepthomas/c-bag-of-tricks/blob/master/LICENSE

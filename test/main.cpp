@@ -15,7 +15,5 @@ int main()
 
     tm.RunSuites(whichSuites, 'r'); // 'r' for readable, 'x' for xml
 
-    //TODO printf("Don't forget to run_mem_chk!\n");
-
     return 0;
 }
