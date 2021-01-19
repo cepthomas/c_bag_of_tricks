@@ -26,7 +26,6 @@ struct stringx
 static void p_assign(stringx_t* s, char* cs);
 
 /// Case sensitive char matcher.
-/// @param s Source stringx.
 /// @param c1 First char.
 /// @param c2 Second char.
 /// @param csens Case sensitivity.
@@ -73,13 +72,13 @@ void stringx_set(stringx_t* s, const char* sinit)
 }
 
 //--------------------------------------------------------//
-void stringx_append(stringx_t* s, char c)
+void stringx_append(stringx_t* s, stringx_t* sapp)
 {
-    // TODO This is really crude. Need to make smarter internal buffer to support growing.
-    unsigned int slen = stringx_len(s);
-    CREATE_STR(snew, slen + 1);
+    // This is a bit crude. Need to make smarter internal buffer to support growing.
+    unsigned int slen = stringx_len(s) + stringx_len(sapp);
+    CREATE_STR(snew, slen);
     strcpy(snew, s->raw);
-    snew[slen] = c;
+    strcpy(snew + stringx_len(s), sapp->raw);
     p_assign(s, snew);
 }
 
@@ -111,7 +110,7 @@ bool stringx_compare(stringx_t* s1, const char* s2, csens_t csens)
 }
 
 //--------------------------------------------------------//
-bool stringx_starts(stringx_t* s1, const char* s2, csens_t csens)
+bool stringx_startswith(stringx_t* s1, const char* s2, csens_t csens)
 {
     bool match = stringx_len(s1) >= strlen(s2);
 
@@ -124,11 +123,8 @@ bool stringx_starts(stringx_t* s1, const char* s2, csens_t csens)
 }
 
 //--------------------------------------------------------//
-bool stringx_ends(stringx_t* s1, const char* s2, csens_t csens)
+bool stringx_endswith(stringx_t* s1, const char* s2, csens_t csens)
 {
-    // s1 = "The Mulberry Bush"
-    // s2 = "Bush"
-
     bool match = stringx_len(s1) >= strlen(s2);
     unsigned int ind1 = stringx_len(s1) - strlen(s2);
 
@@ -141,13 +137,37 @@ bool stringx_ends(stringx_t* s1, const char* s2, csens_t csens)
 }
 
 //--------------------------------------------------------//
-bool stringx_contains(stringx_t* s1, const char* s2, csens_t csens) // TODO implement
+int stringx_contains(stringx_t* s1, const char* s2, csens_t csens)
 {
-    (void)s1;
-    (void)s2;
-    (void)csens;
+    int index = -1;
 
-    return false;
+    // Use strstr to do the hard work.
+    if(csens == CASE_SENS)
+    {
+        char* p = strstr(s1->raw, s2);
+        if(p != NULL)
+        {
+            index = p - s1->raw;
+        }
+    }
+    else
+    {
+        // Need to convert to lower case before comparing.
+        stringx_t* cs1 = stringx_copy(s1);
+        stringx_tolower(cs1);
+        stringx_t* cs2 = stringx_create(s2);
+        stringx_tolower(cs2);
+
+        char* p = strstr(cs1->raw, cs2->raw);
+        if(p != NULL)
+        {
+            index = p - cs1->raw;
+        }
+        stringx_destroy(cs1);
+        stringx_destroy(cs2);
+    }
+
+    return index;
 }
 
 //--------------------------------------------------------//
@@ -219,7 +239,7 @@ void stringx_trim(stringx_t* s)
 }
 
 //--------------------------------------------------------//
-void stringx_upper(stringx_t* s)
+void stringx_toupper(stringx_t* s)
 {
     unsigned int len = strlen(s->raw);
 
@@ -233,7 +253,7 @@ void stringx_upper(stringx_t* s)
 }
 
 //--------------------------------------------------------//
-void stringx_lower(stringx_t* s)
+void stringx_tolower(stringx_t* s)
 {
     unsigned int len = strlen(s->raw);
 

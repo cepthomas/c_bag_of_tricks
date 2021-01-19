@@ -10,8 +10,6 @@ cmake -G "MinGW Makefiles" ..
 
 make
 
-rem cbot_test.exe
-
 cd ..
 
 rem pause

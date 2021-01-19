@@ -192,7 +192,7 @@ void TestManager::RunSuites(std::vector<std::string> which, char fmt)
     time_t tEnd = time(NULL);
     char sStartTime[32];
     strftime(sStartTime, 32, "%Y-%m-%d %H:%M:%S", localtime(&tStart));
-    long dur = static_cast<long>(tEnd - tStart);
+    time_t dur = tEnd - tStart;
 
     if(_context.Format == 'x')
     {

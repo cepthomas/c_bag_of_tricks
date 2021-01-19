@@ -47,11 +47,11 @@ void stringx_set(stringx_t* s, const char* sinit);
 
 /// Convert to upper case in place.
 /// @param s Source stringx.
-void stringx_upper(stringx_t* s);
+void stringx_toupper(stringx_t* s);
 
 /// Convert to lower case in place.
 /// @param s Source stringx.
-void stringx_lower(stringx_t* s);
+void stringx_tolower(stringx_t* s);
 
 /// Compare strings.
 /// @param s1 Source stringx.
@@ -65,22 +65,21 @@ bool stringx_compare(stringx_t* s1, const char* s2, csens_t csens);
 /// @param s2 The test value.
 /// @param csens Case sensitivity.
 /// @return True if starts with.
-bool stringx_starts(stringx_t* s1, const char* s2, csens_t csens);
+bool stringx_startswith(stringx_t* s1, const char* s2, csens_t csens);
 
 /// Test if string ends with.
 /// @param s1 Source stringx.
 /// @param s2 The test value.
 /// @param csens Case sensitivity.
 /// @return True if ends with.
-bool stringx_ends(stringx_t* s1, const char* s2, csens_t csens);
+bool stringx_endswith(stringx_t* s1, const char* s2, csens_t csens);
 
 /// Test if string contains.
-/// @param s Source stringx.
 /// @param s1 Source stringx.
 /// @param s2 The test value.
 /// @param csens Case sensitivity.
-/// @return True if contains.
-bool stringx_contains(stringx_t* s1, const char* s2, csens_t csens);
+/// @return Index of match or -1 if not found.
+int stringx_contains(stringx_t* s1, const char* s2, csens_t csens);
 
 /// Copy a stringx.
 /// @param s Source stringx.
@@ -97,10 +96,10 @@ stringx_t* stringx_left(stringx_t* s, unsigned int num);
 /// @param s Source stringx.
 void stringx_trim(stringx_t* s);
 
-/// Append a char to the stringx.
+/// Append a string to the stringx.
 /// @param s Source stringx.
-/// @param c Char to append.
-void stringx_append(stringx_t* s, char c);
+/// @param sapp String to append.
+void stringx_append(stringx_t* s, stringx_t* sapp);
 
 /// Format the string in place.
 /// @param s Source stringx.

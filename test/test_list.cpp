@@ -48,47 +48,44 @@ UT_SUITE(LIST_ALL, "Test all list functions.")
 
     // Iterate through list.
     i = 0;
-    void* data;
+    test_struct_t* data;
     list_start(mylist);
-    while(list_next(mylist, &data))
+    while(list_next(mylist, (void**)&data))
     {
-        auto* ts = static_cast<test_struct_t*>(data);
-        UT_NOT_NULL(ts);
+        UT_NOT_NULL(data);
 
         switch(i)
         {
             case 0:
-                UT_EQUAL(ts->anumber, 44);
-                UT_STR_EQUAL(ts->astring, "Ajay4");
+                UT_EQUAL(data->anumber, 44);
+                UT_STR_EQUAL(data->astring, "Ajay4");
                 break;
 
             case 1:
-                UT_EQUAL(ts->anumber, 22);
-                UT_STR_EQUAL(ts->astring, "Ajay2");
+                UT_EQUAL(data->anumber, 22);
+                UT_STR_EQUAL(data->astring, "Ajay2");
                 break;
 
             case 2:
-                UT_EQUAL(ts->anumber, 11);
-                UT_STR_EQUAL(ts->astring, "Ajay1");
+                UT_EQUAL(data->anumber, 11);
+                UT_STR_EQUAL(data->astring, "Ajay1");
                 break;
 
             case 3:
-                UT_EQUAL(ts->anumber, 33);
-                UT_STR_EQUAL(ts->astring, "Ajay3");
+                UT_EQUAL(data->anumber, 33);
+                UT_STR_EQUAL(data->astring, "Ajay3");
                 break;
         }
         i++;
     }
 
     // Test pop.
-    bool ok = list_pop(mylist, &data);
+    bool ok = list_pop(mylist, (void**)&data);
     UT_TRUE(ok);
-
-    auto* ts = static_cast<test_struct_t*>(data);
     UT_EQUAL(list_count(mylist), 3);
-    UT_NOT_NULL(ts);
-    UT_EQUAL(ts->anumber, 33);
-    UT_STR_EQUAL(ts->astring, "Ajay3");
+    UT_NOT_NULL(data);
+    UT_EQUAL(data->anumber, 33);
+    UT_STR_EQUAL(data->astring, "Ajay3");
     // I own this now so clean up.
     free(data);
 
@@ -96,13 +93,12 @@ UT_SUITE(LIST_ALL, "Test all list functions.")
     list_push(mylist, &st5);
 
     // Test pop.
-    ok = list_pop(mylist, &data);
+    ok = list_pop(mylist, (void**)&data);
     UT_TRUE(ok);
-    ts = static_cast<test_struct_t*>(data);
     UT_EQUAL(list_count(mylist), 3);
-    UT_NOT_NULL(ts);
-    UT_EQUAL(ts->anumber, 11);
-    UT_STR_EQUAL(ts->astring, "Ajay1");
+    UT_NOT_NULL(data);
+    UT_EQUAL(data->anumber, 11);
+    UT_STR_EQUAL(data->astring, "Ajay1");
     // I own this now so clean up.
     free(data);
 

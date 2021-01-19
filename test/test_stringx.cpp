@@ -31,23 +31,23 @@ UT_SUITE(STR_BASIC, "Test basic stringx functions.")
     stringx_trim(s1);
     UT_STR_EQUAL(stringx_content(s1), "round and square");
 
-    UT_TRUE(stringx_starts(s1, "round", CASE_SENS));
-    UT_FALSE(stringx_starts(s1, "Round", CASE_SENS));
-    UT_TRUE(stringx_starts(s1, "Round", CASE_INSENS));
-    UT_FALSE(stringx_starts(s1, "xxx", CASE_SENS));
-    UT_FALSE(stringx_starts(s1, "xxx", CASE_INSENS));
+    UT_TRUE(stringx_startswith(s1, "round", CASE_SENS));
+    UT_FALSE(stringx_startswith(s1, "Round", CASE_SENS));
+    UT_TRUE(stringx_startswith(s1, "Round", CASE_INSENS));
+    UT_FALSE(stringx_startswith(s1, "xxx", CASE_SENS));
+    UT_FALSE(stringx_startswith(s1, "xxx", CASE_INSENS));
 
-    UT_FALSE(stringx_ends(s2, "bush", CASE_SENS));
-    UT_TRUE(stringx_ends(s2, "Bush", CASE_SENS));
-    UT_TRUE(stringx_ends(s2, "bush", CASE_INSENS));
-    UT_FALSE(stringx_ends(s2, "xxx", CASE_SENS));
-    UT_FALSE(stringx_ends(s2, "xxx", CASE_INSENS));
+    UT_FALSE(stringx_endswith(s2, "bush", CASE_SENS));
+    UT_TRUE(stringx_endswith(s2, "Bush", CASE_SENS));
+    UT_TRUE(stringx_endswith(s2, "bush", CASE_INSENS));
+    UT_FALSE(stringx_endswith(s2, "xxx", CASE_SENS));
+    UT_FALSE(stringx_endswith(s2, "xxx", CASE_INSENS));
 
-//    UT_TRUE(stringx_contains(s1, "and squ", CASE_SENS));
-//    UT_FALSE(stringx_contains(s1, "anD squ", CASE_SENS));
-//    UT_TRUE(stringx_contains(s1, "anD squ", CASE_INSENS));
-//    UT_FALSE(stringx_contains(s1, "xxx", CASE_SENS));
-//    UT_FALSE(stringx_contains(s1, "xxx", CASE_INSENS));
+    UT_EQUAL(6, stringx_contains(s1, "and squ", CASE_SENS));
+    UT_EQUAL(-1, stringx_contains(s1, "anD squ", CASE_SENS));
+    UT_EQUAL(8, stringx_contains(s1, "D squ", CASE_INSENS));
+    UT_EQUAL(-1, stringx_contains(s1, "xxx", CASE_SENS));
+    UT_EQUAL(-1, stringx_contains(s1, "xxx", CASE_INSENS));
 
     UT_TRUE(stringx_compare(s1, "round and square", CASE_SENS));
     UT_TRUE(stringx_compare(s1, "roUnd and sQuare", CASE_INSENS));
@@ -55,9 +55,9 @@ UT_SUITE(STR_BASIC, "Test basic stringx functions.")
     UT_FALSE(stringx_compare(s1, "xxx", CASE_SENS));
     UT_FALSE(stringx_compare(s1, "xxx", CASE_INSENS));
 
-    stringx_upper(s1);
+    stringx_toupper(s1);
     UT_TRUE(stringx_compare(s1, "ROUND AND SQUARE", CASE_SENS));
-    stringx_lower(s1);
+    stringx_tolower(s1);
     UT_TRUE(stringx_compare(s1, "round and square", CASE_SENS));
 
     // Copy ops.
@@ -71,12 +71,9 @@ UT_SUITE(STR_BASIC, "Test basic stringx functions.")
     UT_STR_EQUAL(stringx_content(s4), "The Mu");
     UT_STR_EQUAL(stringx_content(s2), "lberry Bush");
 
-    // Append char.
-    stringx_append(s2, ' ');
-    stringx_append(s2, 'x');
-    stringx_append(s2, 'y');
-    stringx_append(s2, 'z');
-    UT_STR_EQUAL(stringx_content(s2), "lberry Bush xyz");
+    // Append string.
+    stringx_append(s2, s1);
+    UT_STR_EQUAL(stringx_content(s2), "lberry Bushround and square");
 
     // Clean up.
     stringx_destroy(s1);
@@ -97,13 +94,13 @@ UT_SUITE(STR_FANCY, "Test fancier stringx functions.")
     list_t* parts = stringx_split(s1, " ");
     UT_EQUAL(list_count(parts), 3);
     list_start(parts);
-    void* data;
-    list_next(parts, &data);
-    UT_STR_EQUAL(static_cast<char*>(data), "round");
-    list_next(parts, &data);
-    UT_STR_EQUAL(static_cast<char*>(data), "and");
-    list_next(parts, &data);
-    UT_STR_EQUAL(static_cast<char*>(data), "square");
+    char* data;
+    list_next(parts, (void**)&data);
+    UT_STR_EQUAL(data, "round");
+    list_next(parts, (void**)&data);
+    UT_STR_EQUAL(data, "and");
+    list_next(parts, (void**)&data);
+    UT_STR_EQUAL(data, "square");
 
     // Formatting.
     int i = 123;
@@ -112,6 +109,7 @@ UT_SUITE(STR_FANCY, "Test fancier stringx functions.")
 
     UT_TRUE(stringx_format(s2, 100, "i:%d I am a GOOD formatted string with d:%f s:%s x:%0X", i, d, s, i));
     UT_TRUE(stringx_compare(s2, "i:123 I am a GOOD formatted string with d:44.990000 s:xyzzy oooo x:7B", CASE_SENS));
+
 
     // Clean up.
     stringx_destroy(s1);

@@ -77,7 +77,7 @@ void sm_destroy(sm_t* sm)
 
     // Clean up sub-list.
     list_start(sm->stateDescs);
-    while(list_next(sm->stateDescs, (void**)&states)) //TODO fix casts like these?
+    while(list_next(sm->stateDescs, (void**)&states)) //TODO all these (void**) casts??
     {
         list_destroy(states->transDescs);
     }

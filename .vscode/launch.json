@@ -9,9 +9,10 @@
             "name": "debug test",
             "type": "gdb",
             "request": "launch",
+            "preLaunchTask": "build-all",
             // Set debug target as appropriate.
             "target": "${workspaceFolder}/build/cbot_test.exe",
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/build",
             "valuesFormatting": "parseText"
         }
     ]

@@ -68,9 +68,19 @@ UT_SUITE(SM_MAIN, "Test the full state machine using a real world example.")
     lock_destroy();
 }
 
+
+
+#include <sys/stat.h>   // stat
+
+bool file_exists (char *filename) {
+  struct stat   buffer;   
+  return (stat (filename, &buffer) == 0);
+}
 /////////////////////////////////////////////////////////////////////////////
 UT_SUITE(SM_DOT, "Test the dot file creation.")
 {
+    system("del sm.*");
+
     FILE* fp = fopen("sm.gv", "w");
     UT_NOT_NULL(fp);
 
@@ -78,12 +88,17 @@ UT_SUITE(SM_DOT, "Test the dot file creation.")
     sm_t* sm = lock_create(NULL);
 
     sm_toDot(sm, fp);
-
-    int r = system("dot -Tpng sm.gv -o sm.png"); //TODO this doesn't work right.
-    UT_EQUAL(r, 0);
-
-    // Clean up.
     fclose(fp);
+
+    // Convert to image.
+    const char* cmd = "dot -Tpng sm.gv -o sm.png";
+    int r = system(cmd);
+    UT_EQUAL(0, r);
+
+    struct stat buffer;
+    int ifp = stat("sm.png", &buffer);
+    UT_EQUAL(0, ifp);
+    UT_EQUAL(40985, buffer.st_size);
 
     lock_destroy();
 }
