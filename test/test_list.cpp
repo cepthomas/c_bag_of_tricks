@@ -17,48 +17,32 @@ typedef struct
 } test_struct_t;
 
 
+
 /////////////////////////////////////////////////////////////////////////////
 UT_SUITE(LIST_ALL, "Test all list functions.")
 {
     int i;
 
-    // CREATE_INST(V, test_struct_t); TODO these
-    // V->anumber = 11;
-
-    test_struct_t* st1 = static_cast<test_struct_t*>(malloc(sizeof(test_struct_t)));
-    st1->anumber = 11;
-    st1->astring = "Ajay1";
-
-    test_struct_t* st2 = static_cast<test_struct_t*>(malloc(sizeof(test_struct_t)));
-    st2->anumber = 22;
-    st2->astring = "Ajay2";
-
-    test_struct_t* st3 = static_cast<test_struct_t*>(malloc(sizeof(test_struct_t)));
-    st3->anumber = 33;
-    st3->astring = "Ajay3";
-
-    test_struct_t* st4 = static_cast<test_struct_t*>(malloc(sizeof(test_struct_t)));
-    st4->anumber = 44;
-    st4->astring = "Ajay4";
-
-    test_struct_t* st5 = static_cast<test_struct_t*>(malloc(sizeof(test_struct_t)));
-    st5->anumber = 55;
-    st5->astring = "Ajay5";
+    test_struct_t st1 { .anumber = 11, .astring = "Ajay1" };
+    test_struct_t st2 { .anumber = 22, .astring = "Ajay2" };
+    test_struct_t st3 { .anumber = 33, .astring = "Ajay3" };
+    test_struct_t st4 { .anumber = 44, .astring = "Ajay4" };
+    test_struct_t st5 { .anumber = 55, .astring = "Ajay5" };
 
     // Make a list.
     list_t* mylist = list_create();
 
     // Add a node at the beginning.
-    list_push(mylist, st1);
+    list_push(mylist, &st1);
 
     // Add a node at the beginning.
-    list_push(mylist, st2);
+    list_push(mylist, &st2);
 
     // Add a node at the end.
-    list_append(mylist, st3);
+    list_append(mylist, &st3);
 
     // Add a node at the beginning.
-    list_push(mylist, st4);
+    list_push(mylist, &st4);
 
     UT_EQUAL(list_count(mylist), 4);
 
@@ -109,7 +93,7 @@ UT_SUITE(LIST_ALL, "Test all list functions.")
     free(data);
 
     // Add another.
-    list_push(mylist, st5);
+    list_push(mylist, &st5);
 
     // Test pop.
     ok = list_pop(mylist, &data);

@@ -7,7 +7,7 @@
 #include "common.h"
 #include "stringx.h"
 
-/// @file String handling functions.
+/// @file Definition of string thing.
 
 
 
@@ -23,16 +23,7 @@ struct stringx
 /// (Re)assign the underlying char pointer. Takes ownership of the string.
 /// @param s Source stringx.
 /// @param cs The new raw string or NULL for an empty stringx.
-static void p_assign(stringx_t* s, char* cs)
-{
-    if(s->raw != NULL)
-    {
-        free(s->raw);
-    }
-
-    s->raw = cs == NULL ? NULL : cs;
-//    s->valid = true;
-}
+static void p_assign(stringx_t* s, char* cs);
 
 /// Case sensitive char matcher.
 /// @param s Source stringx.
@@ -40,33 +31,13 @@ static void p_assign(stringx_t* s, char* cs)
 /// @param c2 Second char.
 /// @param csens Case sensitivity.
 /// @return True if they match.
-static bool p_match(char c1, char c2, csens_t csens)
-{
-    //A=65 Z=90 a=97 z=122
-    bool match = csens == CASE_INSENS ? toupper(c1) == toupper(c2) : c1 == c2;
-    return match;
-}
+static bool p_match(char c1, char c2, csens_t csens);
 
 /// Copy a const string.
 /// @param sinit String to copy. If NULL, a valid empty string is created.
-/// @return The new mutable string. TODO make all immutable?
-char* p_scopy(const char* sinit)
-{
-    char* retbuff;
+/// @return The new mutable string.
+static char* p_scopy(const char* sinit);
 
-    // Copy the contents.
-    if(sinit != NULL)
-    {
-        CREATE_STR(buff, strlen(sinit));
-        strcpy(buff, sinit);
-        retbuff = buff;
-    }
-    else // make it a valid empty string
-    {
-        retbuff = (char*)calloc(1, sizeof(char));
-    }
-    return retbuff;
-}
 
 //---------------- Public API Implementation -------------//
 
@@ -313,3 +284,43 @@ list_t* stringx_split(stringx_t* s, const char* delim)
     return parts;
 }
 #endif
+
+//---------------- Private Implementation --------------------------//
+
+void p_assign(stringx_t* s, char* cs)
+{
+    if(s->raw != NULL)
+    {
+        free(s->raw);
+    }
+
+    s->raw = cs == NULL ? NULL : cs;
+//    s->valid = true;
+}
+
+//--------------------------------------------------------//
+char* p_scopy(const char* sinit)
+{
+    char* retbuff;
+
+    // Copy the contents.
+    if(sinit != NULL)
+    {
+        CREATE_STR(buff, strlen(sinit));
+        strcpy(buff, sinit);
+        retbuff = buff;
+    }
+    else // make it a valid empty string
+    {
+        retbuff = (char*)calloc(1, sizeof(char));
+    }
+    return retbuff;
+}
+
+//--------------------------------------------------------//
+bool p_match(char c1, char c2, csens_t csens)
+{
+    //A=65 Z=90 a=97 z=122
+    bool match = csens == CASE_INSENS ? toupper(c1) == toupper(c2) : c1 == c2;
+    return match;
+}

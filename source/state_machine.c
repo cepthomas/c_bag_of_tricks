@@ -8,7 +8,7 @@
 #include "list.h"
 
 
-/// @file
+/// @file Definition of state machine.
 
 
 //---------------- Private --------------------------//

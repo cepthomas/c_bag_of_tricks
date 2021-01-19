@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-/// @file
+/// @file Declaration of state machine.
 
 //---------------- Public API ----------------------//
 
