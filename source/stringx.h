@@ -6,7 +6,7 @@
 #include <string.h>
 
 
-/// @file Declaration of string thing.
+/// @brief Declaration of string thing.
 
 
 //---------------- Public API ----------------------//

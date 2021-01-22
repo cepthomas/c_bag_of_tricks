@@ -7,7 +7,7 @@
 #include "common.h"
 #include "stringx.h"
 
-/// @file Definition of string thing.
+/// @brief Definition of string thing.
 
 
 

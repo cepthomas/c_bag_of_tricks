@@ -6,7 +6,7 @@
 #include "list.h"
 
 
-/// @file Definition of list thing.
+/// @brief Definition of list thing.
 
 //---------------- Private --------------------------//
 

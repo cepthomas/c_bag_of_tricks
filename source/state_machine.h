@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-/// @file Declaration of state machine.
+/// @brief Declaration of state machine.
 
 //---------------- Public API ----------------------//
 
@@ -47,7 +47,6 @@ void sm_addTransition(sm_t* sm, int eventId, const func_t func, int nextState);
 /// Process the event in the argument.
 /// @param sm Pertinent state machine.
 /// @param eventId Specific event id.
-/// @param context Optional context data.
 void sm_processEvent(sm_t* sm, int eventId);
 
 /// Get the current state.

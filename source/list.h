@@ -5,7 +5,7 @@
 #include "stdbool.h"
 
 
-/// @file Declaration of list thing.
+/// @brief Declaration of list thing.
 
 //---------------- Public API ----------------------//
 
