@@ -9,13 +9,11 @@
 /// The lock is both an example of how to use the state machine and the unit test case.
 //////////////////////////////////////////////////////////////////////////////////////
 
-
 /// List data payload.
 typedef struct
 {
     char c;     ///< Character.
 } lockData_t;
-
 
 
 /// State of the lock.
@@ -52,7 +50,7 @@ sm_t* lock_create(FILE* fp)
     s_combination = list_create();
 
     // Initial combination is: 000
-    CREATE_INST(k1, lockData_t);
+    CREATE_INST(k1, lockData_t); //TODO check these?
     k1->c = '0';
     list_append(s_combination, k1);
 
@@ -67,30 +65,30 @@ sm_t* lock_create(FILE* fp)
     // Create the FSM.
     s_sm = sm_create(fp, lock_xlat, ST_DEFAULT, EVT_DEFAULT);
 
-    sm_addState(s_sm, ST_INITIAL,                 initialEnter);
+    sm_addState(s_sm, ST_INITIAL,               initialEnter);
     sm_addTransition(s_sm, EVT_IS_LOCKED,              NULL,                   ST_LOCKED);
     sm_addTransition(s_sm, EVT_IS_UNLOCKED,            NULL,                   ST_UNLOCKED);
 
-    sm_addState(s_sm, ST_LOCKED,                  lockedEnter);
+    sm_addState(s_sm, ST_LOCKED,                lockedEnter);
     sm_addTransition(s_sm, EVT_DIGIT_KEY_PRESSED,      lockedAddDigit,         ST_LOCKED);
     sm_addTransition(s_sm, EVT_RESET,                  clearCurrentEntry,      ST_LOCKED);
     sm_addTransition(s_sm, EVT_VALID_COMBO,            NULL,                   ST_UNLOCKED);
     sm_addTransition(s_sm, EVT_DEFAULT,                clearCurrentEntry,      ST_LOCKED);
 
-    sm_addState(s_sm, ST_UNLOCKED,                unlockedEnter);
+    sm_addState(s_sm, ST_UNLOCKED,              unlockedEnter);
     sm_addTransition(s_sm, EVT_RESET,                  clearCurrentEntry,      ST_LOCKED);
     sm_addTransition(s_sm, EVT_SET_COMBO,              clearCurrentEntry,      ST_SETTING_COMBO);
     sm_addTransition(s_sm, EVT_DEFAULT,                clearCurrentEntry,      ST_UNLOCKED);
  
-    sm_addState(s_sm, ST_SETTING_COMBO,           clearCurrentEntry);
+    sm_addState(s_sm, ST_SETTING_COMBO,         clearCurrentEntry);
     sm_addTransition(s_sm, EVT_DIGIT_KEY_PRESSED,      setComboAddDigit,       ST_SETTING_COMBO);
     sm_addTransition(s_sm, EVT_SET_COMBO,              setCombo,               ST_UNLOCKED);
     sm_addTransition(s_sm, EVT_RESET,                  clearCurrentEntry,      ST_UNLOCKED);
  
-    sm_addState(s_sm, ST_DEAD,                 NULL);
+    sm_addState(s_sm, ST_DEAD,                  NULL);
     // Empty state. Maybe call it ST_SARTRE?
 
-    sm_addState(s_sm, ST_DEFAULT,                 NULL);
+    sm_addState(s_sm, ST_DEFAULT,               NULL);
     sm_addTransition(s_sm, EVT_SHUT_DOWN,              tryDefault,             ST_DEAD);
 
     // Set our initial state.
@@ -112,7 +110,7 @@ void lock_destroy(void)
 
 void lock_pressKey(char key)
 {
-    sm_trace(s_sm, "Key pressed %c\n", key);
+    sm_trace(s_sm, __LINE__, "Key pressed %c\n", key);
 
     s_currentKey = key;
 
@@ -140,9 +138,9 @@ void lock_pressKey(char key)
     }
 }
 
-const char* lock_xlat(int id)
+const char* lock_xlat(unsigned int id)
 {
-    static char defId[64];
+    static char defId[100];
 
     switch(id)
     {
@@ -170,7 +168,7 @@ const char* lock_xlat(int id)
 /// Initialize the lock
 void initialEnter()
 {
-    sm_trace(s_sm, "initialEnter()\n");
+    sm_trace(s_sm, __LINE__, "initialEnter()\n");
 
     if (s_isLocked)
     {
@@ -185,7 +183,7 @@ void initialEnter()
 /// Locked transition function.
 static void lockedEnter(void)
 {
-    sm_trace(s_sm, "lockedEnter()\n");
+    sm_trace(s_sm, __LINE__, "lockedEnter()\n");
     s_isLocked = true;
     list_clear(s_currentEntry);
 }
@@ -193,14 +191,14 @@ static void lockedEnter(void)
 /// Clear the lock.
 static void clearCurrentEntry(void)
 {
-    sm_trace(s_sm, "clearCurrentEntry()\n");
+    sm_trace(s_sm, __LINE__, "clearCurrentEntry()\n");
     list_clear(s_currentEntry);
 }
 
 /// Add a digit to the current sequence.
 static void lockedAddDigit(void)
 {
-    sm_trace(s_sm, "lockedAddDigit()\n");
+    sm_trace(s_sm, __LINE__, "lockedAddDigit()\n");
 
     CREATE_INST(data, lockData_t);
     data->c = s_currentKey;
@@ -235,7 +233,7 @@ static void lockedAddDigit(void)
 /// Add a digit to the current sequence.
 static void setComboAddDigit(void)
 {
-    sm_trace(s_sm, "setComboAddDigit()\n");
+    sm_trace(s_sm, __LINE__, "setComboAddDigit()\n");
 
     CREATE_INST(data, lockData_t);
     data->c = s_currentKey;
@@ -245,7 +243,7 @@ static void setComboAddDigit(void)
 /// Try setting a new combination.
 static void setCombo(void)
 {
-    sm_trace(s_sm, "setCombo()\n");
+    sm_trace(s_sm, __LINE__, "setCombo()\n");
 
     if (list_count(s_currentEntry) > 0)
     {
@@ -275,14 +273,14 @@ static void setCombo(void)
 /// Lock is unlocked now.
 static void unlockedEnter(void)
 {
-    sm_trace(s_sm, "unlockedEnter()\n");
+    sm_trace(s_sm, __LINE__, "unlockedEnter()\n");
     s_isLocked = false;
 }
 
 /// Clear the lock
 static void tryDefault(void)
 {
-    sm_trace(s_sm, "tryDefault()\n");
+    sm_trace(s_sm, __LINE__, "tryDefault()\n");
     s_isLocked = true;
     list_clear(s_currentEntry);
 }

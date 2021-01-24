@@ -18,7 +18,7 @@ typedef struct node
     struct node* next;  ///< Linked list next node.
 } node_t;
 
-/// Doubly-linked list definition.
+/// Double linked list definition.
 struct list
 {
     node_t* head;  ///< Linked list head.
@@ -29,170 +29,242 @@ struct list
 //---------------- Public API Implementation -------------//
 
 //--------------------------------------------------------//
-list_t* list_create()
+list_t* list_create(void)
 {
-    CREATE_INST(list, list_t);
-    list->head = NULL;
-    list->tail = NULL;
-    list->iter = NULL;
-    return list;
+    CREATE_INST(pl, list_t);
+
+    if(pl != NULL)
+    {
+        pl->head = NULL;
+        pl->tail = NULL;
+        pl->iter = NULL;
+    }
+    else
+    {
+        pl = PTR_ERR;
+        errno = ENOMEM;
+    }
+
+    return pl;
 }
 
 //--------------------------------------------------------//
-void list_push(list_t* list, void* data)
+int list_push(list_t* pl, void* data)
 {
-    if(list != NULL)
+    int ret = RET_PASS;
+
+    if(pl != NULL && data != NULL) // TODO a lot of repeated boilerplate here and CREATE_INST
     {
-        // Get current head. Can be null.
-        node_t* chead = list->head;
-
         CREATE_INST(newNode, node_t);
-        newNode->data = data;
 
-        if(chead != NULL)
+        if(newNode != NULL)
         {
-            chead->prev = newNode;
+            newNode->data = data;
+
+            // Get current head. Could be null if empty.
+            node_t* chead = pl->head;
+
+            if(chead != NULL) // insert
+            {
+                chead->prev = newNode;
+                newNode->next = chead;
+                pl->head = newNode;
+            }
+            else // init
+            {
+                pl->head = newNode;
+            }
+            
+            // Clean up tail also.
+            if(pl->tail == NULL)
+            {
+                pl->tail = newNode;
+            }
         }
-
-        newNode->prev = NULL; // first
-        newNode->next = chead;
-
-        list->head = newNode;
-
-        // Init.
-        if(list->tail == NULL)
+        else
         {
-            list->tail = newNode;
+            ret = RET_ERR;
+            errno = ENOMEM;
         }
     }
+    else
+    {
+        ret = RET_ERR;
+        errno = EINVAL;
+    }
+
+    return ret;
 }
 
 //--------------------------------------------------------//
-void list_append(list_t* list, void* data)
+int list_append(list_t* pl, void* data)
 {
-    if(list != NULL)
+    int ret = RET_PASS;
+
+    if(pl != NULL && data != NULL)
     {
         // Get current tail. Can be null.
-        node_t* ctail = list->tail;
+        node_t* ctail = pl->tail;
 
         CREATE_INST(newNode, node_t);
-        newNode->data = data;
-
-        if(ctail != NULL)
+        if(newNode != NULL)
         {
-            ctail->next = newNode;
+            newNode->data = data;
+
+            if(ctail != NULL)
+            {
+                ctail->next = newNode;
+            }
+
+            newNode->next = NULL; // last
+            newNode->prev = ctail;
+
+            pl->tail = newNode;
+
+            // Init.
+            if(pl->head == NULL)
+            {
+                pl->head  = newNode;
+            }
         }
-
-        newNode->next = NULL; // last
-        newNode->prev = ctail;
-
-        list->tail = newNode;
-
-        // Init.
-        if(list->head == NULL)
+        else
         {
-            list->head  = newNode;
+            ret = RET_ERR;
+            errno = ENOMEM;
         }
     }
+    else
+    {
+        ret = RET_ERR;
+        errno = EINVAL;
+    }
+
+    return ret;
 }
 
 //--------------------------------------------------------//
-bool list_pop(list_t* list, void** data)
+int list_pop(list_t* pl, void** data)
 {
-    bool ret = false;
+    int ret = RET_PASS;
 
-    if(list != NULL)
+    if(pl != NULL)
     {
         // Get current tail.
-        node_t* ctail = list->tail;
+        node_t* ctail = pl->tail;
 
         if(ctail != NULL)
         {
             // Return the attached data.
-            *data =  ctail->data;
-            ret = true;
+            *data = ctail->data;
 
-            // Remove the node.
-            if(ctail->prev == NULL)
+            // Update neighbors.
+            if(ctail->prev == NULL) // special processing for the first element
             {
-               list->head = ctail->next;
+               pl->head = NULL;
+               pl->tail = NULL;
             }
             else
             {
-               ctail->prev->next = ctail->next;
-            }
-
-            if(ctail->next == NULL)
-            {
-               list->tail = ctail->prev;
-            }
-            else
-            {
-               ctail->next->prev = ctail->prev;
+               pl->tail = ctail->prev;
+               pl->tail->next = NULL;
             }
 
             // Remove the node.
             free(ctail);
             ctail = NULL;
         }
+        else // no data there
+        {
+            ret = RET_FAIL;
+        }
+    }
+    else
+    {
+        ret = RET_ERR;
+        errno = EINVAL;
     }
 
     return ret;
 }
 
 //--------------------------------------------------------//
-int list_count(list_t* list)
+int list_count(list_t* pl)
 {
-    int i = 0;
+    int ret = RET_PASS;
 
-    if(list != NULL)
+    if(pl != NULL)
     {
-        node_t* iter = list->head;
+        ret = 0;
+        node_t* iter = pl->head;
         while(iter != NULL)
         {
-            i++;
+            ret++;
             iter = iter->next;
         }
     }
-
-    return i;
-}
-
-//--------------------------------------------------------//
-void list_start(list_t* list)
-{
-    if(list != NULL)
+    else
     {
-        list->iter = list->head;
-    }
-}
-
-//--------------------------------------------------------//
-bool list_next(list_t* list, void** data)
-{
-    bool ret = false;
-
-    if(list != NULL)
-    {
-        node_t* nt = list->iter;
-        if(nt != NULL)
-        {
-            list->iter = nt->next;
-            *data = nt->data;
-            ret = true;
-        }
+        ret = RET_ERR;
+        errno = EINVAL;
     }
 
     return ret;
 }
 
 //--------------------------------------------------------//
-void list_clear(list_t* list)
+int list_start(list_t* pl)
 {
-    if(list != NULL)
+    int ret = RET_PASS;
+
+    if(pl != NULL)
+    {
+        pl->iter = pl->head;
+    }
+    else
+    {
+        ret = RET_ERR;
+        errno = EINVAL;
+    }
+
+    return ret;
+}
+
+//--------------------------------------------------------//
+int list_next(list_t* pl, void** data)
+{
+    int ret = RET_PASS;
+
+    if(pl != NULL)
+    {
+        node_t* nt = pl->iter;
+        if(nt != NULL)
+        {
+            pl->iter = nt->next;
+            *data = nt->data;
+        }
+        else
+        {
+            ret = RET_FAIL;
+        }
+    }
+    else
+    {
+        ret = RET_ERR;
+        errno = EINVAL;
+    }
+
+    return ret;
+}
+
+//--------------------------------------------------------//
+int list_clear(list_t* pl)
+{
+    int ret = RET_PASS;
+
+    if(pl != NULL)
     {
         // Remove all nodes and corresponding data.
-        node_t* iter = list->head;
+        node_t* iter = pl->head;
         while(iter != NULL)
         {
             node_t* next = iter->next;
@@ -205,15 +277,34 @@ void list_clear(list_t* list)
             iter = next;
         }
 
-        list->head = NULL;
-        list->tail = NULL;
-        list->iter = NULL;
+        pl->head = NULL;
+        pl->tail = NULL;
+        pl->iter = NULL;
     }
+    else
+    {
+        ret = RET_ERR;
+        errno = EINVAL;
+    }
+
+    return ret;
 }
 
 //--------------------------------------------------------//
-void list_destroy(list_t* list)
+int list_destroy(list_t* pl)
 {
-    list_clear(list);
-    free(list);
+    int ret = RET_PASS;
+
+    if(pl != NULL)
+    {
+        ret = list_clear(pl);
+        free(pl);
+    }
+    else
+    {
+        ret = RET_ERR;
+        errno = EINVAL;
+    }
+
+    return ret;
 }

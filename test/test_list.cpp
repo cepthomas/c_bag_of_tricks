@@ -21,8 +21,6 @@ typedef struct
 /////////////////////////////////////////////////////////////////////////////
 UT_SUITE(LIST_ALL, "Test all list functions.")
 {
-    int i;
-
     test_struct_t st1 { .anumber = 11, .astring = "Ajay1" };
     test_struct_t st2 { .anumber = 22, .astring = "Ajay2" };
     test_struct_t st3 { .anumber = 33, .astring = "Ajay3" };
@@ -31,30 +29,32 @@ UT_SUITE(LIST_ALL, "Test all list functions.")
 
     // Make a list.
     list_t* mylist = list_create();
+    UT_NOT_NULL(mylist);
 
     // Add a node at the beginning.
-    list_push(mylist, &st1);
+    UT_EQUAL(list_push(mylist, &st1), RET_PASS);
 
     // Add a node at the beginning.
-    list_push(mylist, &st2);
+    UT_EQUAL(list_push(mylist, &st2), RET_PASS);
 
     // Add a node at the end.
-    list_append(mylist, &st3);
+    UT_EQUAL(list_append(mylist, &st3), RET_PASS);
 
     // Add a node at the beginning.
-    list_push(mylist, &st4);
+    UT_EQUAL(list_push(mylist, &st4), RET_PASS);
 
     UT_EQUAL(list_count(mylist), 4);
 
     // Iterate through list.
-    i = 0;
     test_struct_t* data;
-    list_start(mylist);
-    while(list_next(mylist, (void**)&data))
+    UT_EQUAL(list_start(mylist), RET_PASS);
+    int state = 0;
+
+    while(RET_PASS == list_next(mylist, (void**)&data))
     {
         UT_NOT_NULL(data);
 
-        switch(i)
+        switch(state++)
         {
             case 0:
                 UT_EQUAL(data->anumber, 44);
@@ -76,36 +76,46 @@ UT_SUITE(LIST_ALL, "Test all list functions.")
                 UT_STR_EQUAL(data->astring, "Ajay3");
                 break;
         }
-        i++;
     }
 
+    // Try to take one more.
+    UT_EQUAL(list_next(mylist, (void**)&data), RET_FAIL);
+
     // Test pop.
-    bool ok = list_pop(mylist, (void**)&data);
-    UT_TRUE(ok);
+    UT_EQUAL(list_pop(mylist, (void**)&data), RET_PASS);
     UT_EQUAL(list_count(mylist), 3);
     UT_NOT_NULL(data);
     UT_EQUAL(data->anumber, 33);
     UT_STR_EQUAL(data->astring, "Ajay3");
     // I own this now so clean up.
-    free(data);
+    DESTROY(data);
 
     // Add another.
-    list_push(mylist, &st5);
+    UT_EQUAL(list_push(mylist, &st5), RET_PASS);
 
     // Test pop.
-    ok = list_pop(mylist, (void**)&data);
-    UT_TRUE(ok);
+    UT_EQUAL(list_pop(mylist, (void**)&data), RET_PASS);
     UT_EQUAL(list_count(mylist), 3);
     UT_NOT_NULL(data);
     UT_EQUAL(data->anumber, 11);
     UT_STR_EQUAL(data->astring, "Ajay1");
     // I own this now so clean up.
-    free(data);
+    DESTROY(data);
 
     // Remove everything.
-    list_clear(mylist);
+    UT_EQUAL(list_clear(mylist), RET_PASS);
     UT_NOT_NULL(mylist);
     UT_EQUAL(list_count(mylist), 0);
+    UT_EQUAL(list_destroy(mylist), RET_PASS);
 
-    list_destroy(mylist);
+    // Bad container.
+    list_t* badlist = NULL;
+    UT_EQUAL(list_push(badlist, &st1), RET_ERR);
+    UT_EQUAL(list_append(badlist, &st3), RET_ERR);
+    UT_EQUAL(list_push(badlist, &st4), RET_ERR);
+    UT_EQUAL(list_count(badlist), RET_ERR);
+    UT_EQUAL(list_next(badlist, (void**)&data), RET_ERR);
+    UT_EQUAL(list_pop(badlist, (void**)&data), RET_ERR);
+    UT_EQUAL(list_clear(badlist), RET_ERR);
+    UT_EQUAL(list_destroy(badlist), RET_ERR);
 }

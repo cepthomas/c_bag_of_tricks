@@ -1,5 +1,6 @@
 
 #include <unistd.h>
+#include <sys/stat.h>
 #include "pnut.h"
 
 extern "C"
@@ -17,6 +18,7 @@ UT_SUITE(SM_MAIN, "Test the full state machine using a real world example.")
     sm_t* sm = lock_create(NULL); // stdout);
 
     // Should come up in the locked state.
+    //UT_EQUAL(sm_getState(sm), ST_LOCKED);
     UT_STR_EQUAL(STATE_STR, "ST_LOCKED");
 
     // Enter the default combination of 000.
@@ -25,7 +27,6 @@ UT_SUITE(SM_MAIN, "Test the full state machine using a real world example.")
     lock_pressKey('0');
     UT_STR_EQUAL(STATE_STR, "ST_LOCKED");
     lock_pressKey('0');
-
     // Should now be unlocked.
     UT_STR_EQUAL(STATE_STR, "ST_UNLOCKED");
 
@@ -48,34 +49,22 @@ UT_SUITE(SM_MAIN, "Test the full state machine using a real world example.")
     lock_pressKey(KEY_SET);
     UT_STR_EQUAL(STATE_STR, "ST_SETTING_COMBO");
 
-    UT_STR_EQUAL(STATE_STR, "ST_SETTING_COMBO");
-
     lock_pressKey('1');
     lock_pressKey('2');
     lock_pressKey('3');
     UT_STR_EQUAL(STATE_STR, "ST_SETTING_COMBO");
 
     lock_pressKey(KEY_SET);
-
     UT_STR_EQUAL(STATE_STR, "ST_UNLOCKED");
 
     // Default state test.
     lock_pressKey(KEY_POWER);
-
     UT_STR_EQUAL(STATE_STR, "ST_DEAD");
 
     // Clean up.
     lock_destroy();
 }
 
-
-
-#include <sys/stat.h>   // stat
-
-bool file_exists (char *filename) {
-  struct stat   buffer;   
-  return (stat (filename, &buffer) == 0);
-}
 /////////////////////////////////////////////////////////////////////////////
 UT_SUITE(SM_DOT, "Test the dot file creation.")
 {
@@ -93,12 +82,12 @@ UT_SUITE(SM_DOT, "Test the dot file creation.")
     // Convert to image.
     const char* cmd = "dot -Tpng sm.gv -o sm.png";
     int r = system(cmd);
-    UT_EQUAL(0, r);
+    UT_EQUAL(r, 0);
 
     struct stat buffer;
     int ifp = stat("sm.png", &buffer);
-    UT_EQUAL(0, ifp);
-    UT_EQUAL(40985, buffer.st_size);
+    UT_EQUAL(ifp, 0);
+    UT_EQUAL(buffer.st_size, 40985);
 
     lock_destroy();
 }

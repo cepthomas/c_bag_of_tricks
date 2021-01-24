@@ -16,7 +16,7 @@ typedef void (*func_t)(void);
 /// Translate a state or event to readable.
 /// @param id The state or event id.
 /// @return String version of id. 
-typedef const char* (*xlat_t)(int id);
+typedef const char* (*xlat_t)(unsigned int id);
 
 /// Create a state machine. Client must sm_destroy() it.
 /// Currently this is NOT thread-safe.
@@ -25,7 +25,7 @@ typedef const char* (*xlat_t)(int id);
 /// @param defState The default state id.
 /// @param defEvent The default event id.
 /// @return The opaque pointer used in all functions. 
-sm_t* sm_create(FILE* fp, xlat_t xlat, int defState, int defEvent);
+sm_t* sm_create(FILE* fp, xlat_t xlat, unsigned int defState, unsigned int defEvent);
 
 /// Clean up all resources including the state machine.
 /// @param sm Pertinent state machine.
@@ -35,19 +35,19 @@ void sm_destroy(sm_t* sm);
 /// @param sm Pertinent state machine.
 /// @param stateId State name.
 /// @param func Optional entry function to call.
-void sm_addState(sm_t* sm, int stateId, const func_t func);
+void sm_addState(sm_t* sm, unsigned int stateId, const func_t func);
 
 /// Add a transition to the current state.
 /// @param sm Pertinent state machine.
 /// @param eventId Event that causes the transition.
 /// @param func Optional transition function to call.
 /// @param nextState State to go to. Can be ST_SAME to stay in the same state.
-void sm_addTransition(sm_t* sm, int eventId, const func_t func, int nextState);
+void sm_addTransition(sm_t* sm, unsigned int eventId, const func_t func, unsigned int nextState);
 
 /// Process the event in the argument.
 /// @param sm Pertinent state machine.
 /// @param eventId Specific event id.
-void sm_processEvent(sm_t* sm, int eventId);
+void sm_processEvent(sm_t* sm, unsigned int eventId);
 
 /// Get the current state.
 /// @param sm Pertinent state machine.
@@ -57,7 +57,7 @@ int sm_getState(sm_t* sm);
 /// Reset a machine.
 /// @param sm Pertinent state machine.
 /// @param stateId State to set to.
-void sm_reset(sm_t* sm, int stateId);
+void sm_reset(sm_t* sm, unsigned int stateId);
 
 /// Dump contents of the loaded state machine as a dot file.
 /// @param sm Pertinent state machine.
@@ -66,7 +66,8 @@ void sm_toDot(sm_t* sm, FILE* fp);
 
 /// Debug logging function.
 /// @param sm Pertinent state machine.
+/// @param line Line number.
 /// @param format Format string followed by args.
-void sm_trace(sm_t* sm, const char* format, ...);
+void sm_trace(sm_t* sm, int line, const char* format, ...);
 
 #endif // STATE_MACHINE_H

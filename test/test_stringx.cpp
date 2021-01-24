@@ -43,11 +43,11 @@ UT_SUITE(STR_BASIC, "Test basic stringx functions.")
     UT_FALSE(stringx_endswith(s2, "xxx", CASE_SENS));
     UT_FALSE(stringx_endswith(s2, "xxx", CASE_INSENS));
 
-    UT_EQUAL(6, stringx_contains(s1, "and squ", CASE_SENS));
-    UT_EQUAL(-1, stringx_contains(s1, "anD squ", CASE_SENS));
-    UT_EQUAL(8, stringx_contains(s1, "D squ", CASE_INSENS));
-    UT_EQUAL(-1, stringx_contains(s1, "xxx", CASE_SENS));
-    UT_EQUAL(-1, stringx_contains(s1, "xxx", CASE_INSENS));
+    UT_EQUAL(stringx_contains(s1, "and squ", CASE_SENS), 6);
+    UT_EQUAL(stringx_contains(s1, "anD squ", CASE_SENS), -1);
+    UT_EQUAL(stringx_contains(s1, "D squ", CASE_INSENS), 8);
+    UT_EQUAL(stringx_contains(s1, "xxx", CASE_SENS), -1);
+    UT_EQUAL(stringx_contains(s1, "xxx", CASE_INSENS), -1);
 
     UT_TRUE(stringx_compare(s1, "round and square", CASE_SENS));
     UT_TRUE(stringx_compare(s1, "roUnd and sQuare", CASE_INSENS));

@@ -43,7 +43,7 @@ static char* p_scopy(const char* sinit);
 //--------------------------------------------------------//
 stringx_t* stringx_create(const char* sinit)
 {
-    CREATE_INST(s, stringx_t);
+    CREATE_INST(s, stringx_t); //TODO all checks!!! + CREATE_STR
     s->raw = NULL;
     // Copy the contents.
     p_assign(s, p_scopy(sinit));

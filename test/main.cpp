@@ -10,6 +10,7 @@ int main()
 
     whichSuites.emplace_back("STR");
     whichSuites.emplace_back("LIST");
+    whichSuites.emplace_back("DICT");
     whichSuites.emplace_back("SM");
     // whichSuites.emplace_back("PNUT");
 

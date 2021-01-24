@@ -2,10 +2,11 @@
 #ifndef LIST_H
 #define LIST_H
 
-#include "stdbool.h"
+// #include <stdbool.h>
 
 
-/// @brief Declaration of list thing.
+/// @brief Declaration of list thing. It's a double linked list implementation.
+
 
 //---------------- Public API ----------------------//
 
@@ -13,46 +14,51 @@
 typedef struct list list_t;
 
 /// Create a list.
-/// @return The opaque pointer used in all functions. 
-list_t* list_create();
+/// @return The opaque pointer used in all functions | PTR_ERR. 
+list_t* list_create(void);
 
 /// Deletes all nodes and associated data pointers.
-/// @param list List pointer.
-void list_clear(list_t* list);
+/// @param l List pointer.
+/// @return RET_PASS | RET_ERR.
+int list_clear(list_t* l);
 
 /// Deletes all nodes and frees associated data pointers, and the list struct.
-/// @param list List pointer.
-void list_destroy(list_t* list);
+/// @param l List pointer.
+/// @return RET_PASS | RET_ERR.
+int list_destroy(list_t* l);
 
 /// Add a node at the beginning.
-/// @param list List pointer.
+/// @param l List pointer.
 /// @param data Data to add.
-void list_push(list_t* list, void* data);
+/// @return RET_PASS | RET_ERR.
+int list_push(list_t* l, void* data);
 
 /// Add a node at the end.
-/// @param list List pointer.
+/// @param l List pointer.
 /// @param data Data to add.
-void list_append(list_t* list, void* data);
+/// @return RET_PASS | RET_ERR.
+int list_append(list_t* l, void* data);
 
 /// Remove and return the end. Returns false if at end.
-/// @param list List pointer.
+/// @param l List pointer.
 /// @param data Where to put the data pointer. Client takes ownership of it now!
-/// @return True if data is valid.
-bool list_pop(list_t* list, void** data);
+/// @return RET_PASS | RET_ERR | RET_FAIL.
+int list_pop(list_t* l, void** data);
 
 /// Size of the list.
-/// @param list List pointer.
-/// @return The size. 
-int list_count(list_t* list);
+/// @param l List pointer.
+/// @return The size or RET_ERR if error. 
+int list_count(list_t* l);
 
 /// Initialize iterator.
-/// @param list List pointer.
-void list_start(list_t* list);
+/// @param l List pointer.
+/// @return RET_PASS | RET_ERR.
+int list_start(list_t* l);
 
 /// Next iteration in list.
-/// @param list List pointer.
+/// @param l List pointer.
 /// @param data Where to put the data pointer.
-/// @return True if data is valid. Returns false if at end.
-bool list_next(list_t* list, void** data);
+/// @return RET_PASS | RET_ERR | RET_FAIL (if at end)
+int list_next(list_t* l, void** data);
 
 #endif // LIST_H

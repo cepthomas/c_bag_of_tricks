@@ -52,6 +52,6 @@ void lock_pressKey(char key);
 /// Readable version of defined state or event.
 /// @param id State or event id to translate.
 /// @return The corresponding string.
-const char* lock_xlat(int id);
+const char* lock_xlat(unsigned int id);
 
 #endif // LOCK_H

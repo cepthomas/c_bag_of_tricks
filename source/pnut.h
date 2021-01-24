@@ -210,28 +210,28 @@ if(testContext.Format == 'r')\
 }
 
 /// Checks whether the first argument is equal to the second.
-/// @param value1
-/// @param value2
-#define UT_EQUAL(value1, value2)\
+/// @param value
+/// @param expected
+#define UT_EQUAL(value, expected)\
 {\
-    if ((value1) != (value2))\
+    if ((value) != (expected))\
     {\
         std::ostringstream oss;\
-        oss << "[" << value1 << "] should equal " << "[" << value2 << "]";\
+        oss << "[" << value << "] should be " << "[" << expected << "]";\
         RecordResult(testContext, false,  __FILE__, __LINE__, oss.str());\
     }\
     PASS_COMMON\
 }
 
 /// Checks whether the first argument is not equal to the second.
-/// @param value1
-/// @param value2
-#define UT_NOT_EQUAL(value1, value2)\
+/// @param value
+/// @param unexpected
+#define UT_NOT_EQUAL(value, unexpected)\
 {\
-    if ((value1) == (value2))\
+    if ((value) == (unexpected))\
     {\
         std::ostringstream oss;\
-        oss << "[" << value1 << "] should not equal " << "[" << value2 << "]";\
+        oss << "[" << value << "] should not be " << "[" << unexpected << "]";\
         RecordResult(testContext, false,  __FILE__, __LINE__, oss.str());\
     }\
     PASS_COMMON\
@@ -310,28 +310,28 @@ if(testContext.Format == 'r')\
 }
 
 /// Checks whether the first string is equal to the second.
-/// @param value1
-/// @param value2
-#define UT_STR_EQUAL(value1, value2)\
+/// @param value
+/// @param expected
+#define UT_STR_EQUAL(value, expected)\
 {\
-    if (strcmp(value1, value2) != 0)\
+    if (strcmp(value, expected) != 0)\
     {\
         std::ostringstream oss;\
-        oss << "[" << value1 << "] should equal " << "[" << value2 << "]";\
+        oss << "[" << value << "] should be " << "[" << expected << "]";\
         RecordResult(testContext, false,  __FILE__, __LINE__, oss.str());\
     }\
     PASS_COMMON\
 }
 
 /// Checks whether the first string is not equal to the second.
-/// @param value1
-/// @param value2
-#define UT_STR_NOT_EQUAL(value1, value2)\
+/// @param value
+/// @param unexpected
+#define UT_STR_NOT_EQUAL(value, unexpected)\
 {\
-    if (strcmp(value1, value2) == 0)\
+    if (strcmp(value, unexpected) == 0)\
     {\
         std::ostringstream oss;\
-        oss << "[" << value1 << "] should not equal " << "[" << value2 << "]";\
+        oss << "[" << value << "] should not be " << "[" << unexpected << "]";\
         RecordResult(testContext, false,  __FILE__, __LINE__, oss.str());\
     }\
     PASS_COMMON\
