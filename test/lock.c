@@ -52,7 +52,7 @@ sm_t* lock_create(FILE* fp)
     // Initial combination is: 000
     CREATE_INST(k1, lockData_t); //TODO check these?
     k1->c = '0';
-    list_append(s_combination, k1);
+    list_append(s_combination, k1); //TODO check these?
 
     CREATE_INST(k2, lockData_t);
     k2->c = '0';
@@ -62,7 +62,7 @@ sm_t* lock_create(FILE* fp)
     k3->c = '0';
     list_append(s_combination, k3);
 
-    // Create the FSM.
+    // Create the FSM. TODO make all static?
     s_sm = sm_create(fp, lock_xlat, ST_DEFAULT, EVT_DEFAULT);
 
     sm_addState(s_sm, ST_INITIAL,               initialEnter);

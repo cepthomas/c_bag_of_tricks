@@ -10,7 +10,6 @@
 
 /// @brief Definition of state machine.
 
-//TODO should check all list func call returns.
 
 //---------------- Private --------------------------//
 
@@ -86,13 +85,12 @@ void sm_destroy(sm_t* sm)
 
     // Clean up sub-list.
     list_start(sm->stateDescs);
-    while(RET_PASS == list_next(sm->stateDescs, (void**)&st)) //TODO all these (void**) casts??
+    while(RET_PASS == list_next(sm->stateDescs, (void**)&st)) // TODO all these (void**) casts??
     {
         list_destroy(st->transDescs);
     }
 
     list_destroy(sm->stateDescs);
-
     list_destroy(sm->eventQueue);
 
     free(sm);
@@ -176,7 +174,7 @@ void sm_processEvent(sm_t* sm, unsigned int eventId)
     // Transition functions may generate new events so keep a queue.
     // This allows current execution to complete before handling new event.
 
-    CREATE_INST(ld, int);
+    CREATE_INST(ld, unsigned int);
 
     if(ld != NULL)
     {
@@ -192,7 +190,7 @@ void sm_processEvent(sm_t* sm, unsigned int eventId)
             int* qevt;
             while (RET_PASS == list_pop(sm->eventQueue, (void**)&qevt))
             {
-                int qevtid = *qevt;
+                unsigned int qevtid = *qevt;
                 free(qevt);
 
                 sm_trace(sm, __LINE__, "Process current state %s event %s\n",
