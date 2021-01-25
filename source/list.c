@@ -53,7 +53,7 @@ int list_push(list_t* pl, void* data)
 {
     int ret = RET_PASS;
 
-    if(pl != NULL && data != NULL) // TODO a lot of repeated boilerplate here and CREATE_INST
+    if(pl != NULL && data != NULL) // TODO a lot of repeated boilerplate here and CREATE_INST()
     {
         CREATE_INST(newNode, node_t);
 

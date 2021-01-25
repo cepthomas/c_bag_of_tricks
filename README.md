@@ -1,8 +1,8 @@
 
-
 # c-bag-of-tricks
-An ever-expanding collection of the C things I seem to use repeatedly. Of course there are
-lots of other ways to do this but I find most to be over-complicated.
+An ever-expanding collection of the C things I seem to use repeatedly. The primary focus is on
+utilities for embedded systems. There are lots of other ways to do this but I find most to be over-complicated.
+There is some dynamic allocation, maybe I can make it all static eventually.
 
 No dependencies on third party components.
 
@@ -14,22 +14,39 @@ A VS Code workspace using mingw and CMake is supplied. Your PATH needs to includ
 
 ![logo](felix.jpg)
 
-# state_machine
+# Components
+
+## state_machine
 - Semi-hierarchical state machine for C.
 - Generates diagrams via [dot](https://www.graphviz.org/).
 - See test_sm.cpp/lock.c for example of usage.
 
-# list
+## list
 - A simple doubly-linked list so we can have some rudimentary collections in C.
 - See test_list.cpp for example of usage.
 
-# stringx
+## dictionary
+- TODO doc
+
+## stringx
 - Higher level string manipulation.
 - See test_stringx.cpp for example of usage.
 
+# Error Handling
+In an embedded system, most real errors are considered unrecoverable. Things like handling comm timeouts should be considered
+normal behavior and handled accordingly. So cbot errors are very bad and usually result in hard crash/reset. This of course should never
+happen because they have all been caught in unit and integration testing. Right.
+
+Rather than add a whole new error handling system, cbot uses existing C patterns:
+- Functions that return pointers return NULL for errors.
+- Functions that return things like counts (0 is valid) return -1 for errors.
+- Functions that return status return -1 for errors, 0 for success, >0 for failure (logical not error).
+- When errors occur, cbot sets errno accordingly.
+- common.h defines some macros to assist in readability.
+
 # pnut
-Practically Nonexistent Unit Tester: A super lightweight unit test framework for C/C++. It has gone
-through many useful and successful iterations and may as well bring you joy also.
+Practically Nonexistent Unit Tester: A super lightweight unit test framework for C (or C++).
+It has gone through many useful and successful iterations and may as well bring you joy also.
 Inspired by [Quicktest](http://quicktest.sourceforge.net/) from long ago.
 
 Output is to stdout. There are two formats currently supported:

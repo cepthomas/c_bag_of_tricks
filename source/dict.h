@@ -27,4 +27,13 @@ int dict_destroy(dict_t* d);
 
 
 
+int dict_add_str(dict_t* d, char* key, void* data);
+int dict_add_int(dict_t* d, unsigned int key, void* data);
+int dict_get_str(dict_t* d, char* key, void** data);
+int dict_get_int(dict_t* d, unsigned int key, void** data);
+int dict_remove_str(dict_t* d, char* key);
+int dict_remove_int(dict_t* d, unsigned int key);
+// get keys
+
+
 #endif // DICT_H
