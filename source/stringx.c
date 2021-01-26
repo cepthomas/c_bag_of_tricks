@@ -43,7 +43,7 @@ static char* p_scopy(const char* sinit);
 //--------------------------------------------------------//
 stringx_t* stringx_create(const char* sinit)
 {
-    CREATE_INST(s, stringx_t); //TODO all checks!!! + CREATE_STR
+    CREATE_INST(s, stringx_t); //TODOE all checks!!! + CREATE_STR
     s->raw = NULL;
     // Copy the contents.
     p_assign(s, p_scopy(sinit));
@@ -281,7 +281,6 @@ bool stringx_format(stringx_t* s, unsigned int maxlen, const char* format, ...)
     return stat;
 }
 
-#ifdef HAVE_LIST
 //--------------------------------------------------------//
 list_t* stringx_split(stringx_t* s, const char* delim)
 {
@@ -303,7 +302,6 @@ list_t* stringx_split(stringx_t* s, const char* delim)
     free(cp);
     return parts;
 }
-#endif
 
 //---------------- Private Implementation --------------------------//
 

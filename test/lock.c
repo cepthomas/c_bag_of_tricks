@@ -33,16 +33,25 @@ static sm_t* s_sm;
 
 
 //////// Transition functions declarations ////////////
+/// Clear the lock.
 static void clearCurrentEntry(void);
+/// Initialize the lock
 static void initialEnter(void);
+/// Add a digit to the current sequence.
 static void lockedAddDigit(void);
+/// Locked transition function.
 static void lockedEnter(void);
+/// Try setting a new combination.
 static void setCombo(void);
+/// Add a digit to the current sequence.
 static void setComboAddDigit(void);
+/// Clear the lock
 static void tryDefault(void);
+/// Lock is unlocked now.
 static void unlockedEnter(void);
 
 
+//--------------------------------------------------------//
 sm_t* lock_create(FILE* fp)
 {
     s_isLocked = true;
@@ -50,9 +59,9 @@ sm_t* lock_create(FILE* fp)
     s_combination = list_create();
 
     // Initial combination is: 000
-    CREATE_INST(k1, lockData_t); //TODO check these?
+    CREATE_INST(k1, lockData_t); //TODOE check these?
     k1->c = '0';
-    list_append(s_combination, k1); //TODO check these?
+    list_append(s_combination, k1); //TODOE check these?
 
     CREATE_INST(k2, lockData_t);
     k2->c = '0';
@@ -62,7 +71,7 @@ sm_t* lock_create(FILE* fp)
     k3->c = '0';
     list_append(s_combination, k3);
 
-    // Create the FSM. TODO make all static?
+    // Build the FSM.
     s_sm = sm_create(fp, lock_xlat, ST_DEFAULT, EVT_DEFAULT);
 
     sm_addState(s_sm, ST_INITIAL,               initialEnter);
@@ -100,6 +109,7 @@ sm_t* lock_create(FILE* fp)
 
 //////// Interface functions definitions /////////
 
+//--------------------------------------------------------//
 void lock_destroy(void)
 {
     list_destroy(s_currentEntry);
@@ -108,6 +118,7 @@ void lock_destroy(void)
     sm_destroy(s_sm);
 }
 
+//--------------------------------------------------------//
 void lock_pressKey(char key)
 {
     sm_trace(s_sm, __LINE__, "Key pressed %c\n", key);
@@ -138,6 +149,7 @@ void lock_pressKey(char key)
     }
 }
 
+//--------------------------------------------------------//
 const char* lock_xlat(unsigned int id)
 {
     static char defId[100];
@@ -165,7 +177,7 @@ const char* lock_xlat(unsigned int id)
 
 //////// Transition functions ////////////
 
-/// Initialize the lock
+//--------------------------------------------------------//
 void initialEnter()
 {
     sm_trace(s_sm, __LINE__, "initialEnter()\n");
@@ -180,7 +192,7 @@ void initialEnter()
     }
 }
 
-/// Locked transition function.
+//--------------------------------------------------------//
 static void lockedEnter(void)
 {
     sm_trace(s_sm, __LINE__, "lockedEnter()\n");
@@ -188,14 +200,14 @@ static void lockedEnter(void)
     list_clear(s_currentEntry);
 }
 
-/// Clear the lock.
+//--------------------------------------------------------//
 static void clearCurrentEntry(void)
 {
     sm_trace(s_sm, __LINE__, "clearCurrentEntry()\n");
     list_clear(s_currentEntry);
 }
 
-/// Add a digit to the current sequence.
+//--------------------------------------------------------//
 static void lockedAddDigit(void)
 {
     sm_trace(s_sm, __LINE__, "lockedAddDigit()\n");
@@ -230,7 +242,7 @@ static void lockedAddDigit(void)
     }
 }
 
-/// Add a digit to the current sequence.
+//--------------------------------------------------------//
 static void setComboAddDigit(void)
 {
     sm_trace(s_sm, __LINE__, "setComboAddDigit()\n");
@@ -240,7 +252,7 @@ static void setComboAddDigit(void)
     list_append(s_currentEntry, data);
 }
 
-/// Try setting a new combination.
+//--------------------------------------------------------//
 static void setCombo(void)
 {
     sm_trace(s_sm, __LINE__, "setCombo()\n");
@@ -270,14 +282,14 @@ static void setCombo(void)
     }
 }
 
-/// Lock is unlocked now.
+//--------------------------------------------------------//
 static void unlockedEnter(void)
 {
     sm_trace(s_sm, __LINE__, "unlockedEnter()\n");
     s_isLocked = false;
 }
 
-/// Clear the lock
+//--------------------------------------------------------//
 static void tryDefault(void)
 {
     sm_trace(s_sm, __LINE__, "tryDefault()\n");

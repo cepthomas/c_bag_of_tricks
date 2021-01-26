@@ -21,9 +21,9 @@ typedef struct node
 /// Double linked list definition.
 struct list
 {
-    node_t* head;  ///< Linked list head.
-    node_t* tail;  ///< Linked list tail.
-    node_t* iter;  ///< Internal pointer for iteration operations.
+    node_t* head;       ///< Linked list head.
+    node_t* tail;       ///< Linked list tail.
+    node_t* iter;       ///< Internal pointer for iteration operations.
 };
 
 //---------------- Public API Implementation -------------//
@@ -53,7 +53,7 @@ int list_push(list_t* pl, void* data)
 {
     int ret = RET_PASS;
 
-    if(pl != NULL && data != NULL) // TODO a lot of repeated boilerplate here and CREATE_INST()
+    if(pl != NULL && data != NULL) // TODOE a lot of repeated boilerplate here and CREATE_INST()
     {
         CREATE_INST(newNode, node_t);
 

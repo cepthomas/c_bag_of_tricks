@@ -85,7 +85,7 @@ void sm_destroy(sm_t* sm)
 
     // Clean up sub-list.
     list_start(sm->stateDescs);
-    while(RET_PASS == list_next(sm->stateDescs, (void**)&st)) // TODO all these (void**) casts??
+    while(RET_PASS == list_next(sm->stateDescs, (void**)&st))
     {
         list_destroy(st->transDescs);
     }
@@ -143,7 +143,7 @@ void sm_addState(sm_t* sm, unsigned int stateId, const func_t func)
     }
     else
     {
-        //TODO ret = RET_ERR;
+        ret = RET_ERR;
         errno = ENOMEM;
     }
 }
@@ -163,7 +163,7 @@ void sm_addTransition(sm_t* sm, unsigned int eventId, const func_t func, unsigne
     }
     else
     {
-        //TODO ret = RET_ERR;
+        ret = RET_ERR;
         errno = ENOMEM;
     }
 }
@@ -290,7 +290,7 @@ void sm_processEvent(sm_t* sm, unsigned int eventId)
     }
     else
     {
-        //TODO ret = RET_ERR;
+        ret = RET_ERR;
         errno = ENOMEM;
     }
     

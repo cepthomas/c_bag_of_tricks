@@ -1,16 +1,13 @@
 
 # c-bag-of-tricks
-An ever-expanding collection of the C things I seem to use repeatedly. The primary focus is on
-utilities for embedded systems. There are lots of other ways to do this but I find most to be over-complicated.
-There is some dynamic allocation, maybe I can make it all static eventually.
-
-No dependencies on third party components.
-
-They all (except pnut) use the opaque pointer (pimpl) idiom.
-
-Runtime components are plain C99 so should build and run on any win or nx platform using any compiler.
-
-A VS Code workspace using mingw and CMake is supplied. Your PATH needs to include mingw.
+- An ever-expanding collection of the C things I seem to use repeatedly. The primary focus is on
+  utilities for embedded systems. There are lots of other ways to do this but I find most to be over-complicated.
+- There is some dynamic allocation, maybe I can make it all static eventually. No assert() used. Or monitor for overflow? TODO
+- No dependencies on third party components.
+- They all (except pnut) use the opaque pointer (pimpl) idiom.
+- Runtime components are plain C99 so should build and run on any win or nx platform using any compiler.
+- Only cpp style comments supported.
+- A VS Code workspace using mingw and CMake is supplied. Your PATH needs to include mingw.
 
 ![logo](felix.jpg)
 
@@ -35,7 +32,7 @@ A VS Code workspace using mingw and CMake is supplied. Your PATH needs to includ
 # Error Handling
 In an embedded system, most real errors are considered unrecoverable. Things like handling comm timeouts should be considered
 normal behavior and handled accordingly. So cbot errors are very bad and usually result in hard crash/reset. This of course should never
-happen because they have all been caught in unit and integration testing. Right.
+happen because they have all been caught in unit and integration testing, right?
 
 Rather than add a whole new error handling system, cbot uses existing C patterns:
 - Functions that return pointers return NULL for errors.

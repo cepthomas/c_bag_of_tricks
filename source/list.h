@@ -7,6 +7,8 @@
 
 /// @brief Declaration of list thing. It's a double linked list implementation.
 
+ // TODO all the void** and void* casts?? Also in dict.
+
 
 //---------------- Public API ----------------------//
 

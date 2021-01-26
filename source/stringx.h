@@ -4,6 +4,7 @@
 
 #include <stdbool.h>
 #include <string.h>
+#include "list.h"
 
 
 /// @brief Declaration of string thing.
@@ -108,13 +109,10 @@ void stringx_append(stringx_t* s, stringx_t* sapp);
 /// @return True - Not used right now but in future could check arg validity.
 bool stringx_format(stringx_t* s, unsigned int maxlen, const char* format, ...);
 
-#ifdef HAVE_LIST
-#include "list.h"
 /// Split the string into parts by token.
 /// @param s Source stringx.
 /// @param delim Like strtok.
 /// @return List of string parts. Client is responsible for this now.
 list_t* stringx_split(stringx_t* s, const char* delim);
-#endif
 
 #endif // STRINGX_H

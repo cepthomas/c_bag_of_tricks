@@ -2,9 +2,12 @@
 #ifndef DICT_H
 #define DICT_H
 
+#include "list.h"
 
-/// @brief Declaration of a dictionary thing.
 
+/// @brief Declaration of a rudimentary dictionary thing.
+
+////#define NUM_BINS 51
 
 //---------------- Public API ----------------------//
 
@@ -26,14 +29,17 @@ int dict_clear(dict_t* d);
 int dict_destroy(dict_t* d);
 
 
+// add or replace value. if data is null, it is removed.
+int dict_set_str(dict_t* d, char* key, void* data);
+int dict_set_int(dict_t* d, unsigned int key, void* data);
 
-int dict_add_str(dict_t* d, char* key, void* data);
-int dict_add_int(dict_t* d, unsigned int key, void* data);
 int dict_get_str(dict_t* d, char* key, void** data);
 int dict_get_int(dict_t* d, unsigned int key, void** data);
-int dict_remove_str(dict_t* d, char* key);
-int dict_remove_int(dict_t* d, unsigned int key);
-// get keys
+
+// client must destroy list
+list_t* dict_get_str_keys(void);
+list_t* dict_get_int_keys(void);
+
 
 
 #endif // DICT_H
