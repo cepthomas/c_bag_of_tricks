@@ -7,7 +7,7 @@
 #include "common.h"
 #include "stringx.h"
 
-/// @brief Definition of string thing.
+/// @brief Definition of string thing. TODO needs error checking everywhere.
 
 
 
@@ -16,8 +16,8 @@
 /// Internal data definition.
 struct stringx
 {
-    char* raw;   ///< The owned string. Can be NULL which means empty.
-    //bool valid;  ///< For lifetime management.
+    char* raw;      ///< The owned string. Can be NULL which means empty.
+    //bool valid;   ///< For lifetime management.
 };
 
 /// (Re)assign the underlying char pointer. Takes ownership of the string.

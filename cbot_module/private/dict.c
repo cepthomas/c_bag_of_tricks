@@ -38,11 +38,15 @@ struct dict
     // node_t* iter;  ///< Internal pointer for iteration operations.
 };
 
+static key_t s_kt;
+
 //---------------- Public API Implementation -------------//
 
 //--------------------------------------------------------//
-dict_t* dict_create(void)
+dict_t* dict_create(key_t kt)
 {
+    s_kt = kt;
+    
     CREATE_INST(d, dict_t);
     if(d != NULL)
     {

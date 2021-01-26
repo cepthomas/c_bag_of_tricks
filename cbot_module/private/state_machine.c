@@ -13,7 +13,7 @@
 
 //---------------- Private --------------------------//
 
-#define MAX_LOG_LINE 100
+#define MAX_TRACE 100
 
 
 /// One transition in a state.
@@ -143,7 +143,7 @@ void sm_addState(sm_t* sm, unsigned int stateId, const func_t func)
     }
     else
     {
-        ret = RET_ERR;
+        //TOOOE ret = RET_ERR;
         errno = ENOMEM;
     }
 }
@@ -163,7 +163,7 @@ void sm_addTransition(sm_t* sm, unsigned int eventId, const func_t func, unsigne
     }
     else
     {
-        ret = RET_ERR;
+        //TOOOE ret = RET_ERR;
         errno = ENOMEM;
     }
 }
@@ -290,7 +290,7 @@ void sm_processEvent(sm_t* sm, unsigned int eventId)
     }
     else
     {
-        ret = RET_ERR;
+        //TOOOE ret = RET_ERR;
         errno = ENOMEM;
     }
     
@@ -306,10 +306,10 @@ void sm_trace(sm_t* sm, int line, const char* format, ...)
         va_list args;
         va_start(args, format);
 
-        char sfmt[MAX_LOG_LINE];
-        vsnprintf(sfmt, MAX_LOG_LINE-1, format, args);
+        char sfmt[MAX_TRACE];
+        vsnprintf(sfmt, MAX_TRACE-1, format, args);
         va_end(args);
-        
+
         fprintf(sm->fp, "SM(%d): %s", line, sfmt);
     }
 }

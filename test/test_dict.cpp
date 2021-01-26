@@ -30,7 +30,7 @@ UT_SUITE(DICT_ALL, "Test all dict functions.")
     // test_struct_t st5 { .anumber = 55, .astring = "Ajay5" };
 
     // Make a dict.
-    dict_t* mydict = dict_create();
+    dict_t* mydict = dict_create(KEY_STRING);
 
 
     // Remove everything.

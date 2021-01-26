@@ -35,18 +35,25 @@ static sm_t* s_sm;
 //////// Transition functions declarations ////////////
 /// Clear the lock.
 static void clearCurrentEntry(void);
+
 /// Initialize the lock
 static void initialEnter(void);
+
 /// Add a digit to the current sequence.
 static void lockedAddDigit(void);
+
 /// Locked transition function.
 static void lockedEnter(void);
+
 /// Try setting a new combination.
 static void setCombo(void);
+
 /// Add a digit to the current sequence.
 static void setComboAddDigit(void);
+
 /// Clear the lock
 static void tryDefault(void);
+
 /// Lock is unlocked now.
 static void unlockedEnter(void);
 
@@ -74,31 +81,31 @@ sm_t* lock_create(FILE* fp)
     // Build the FSM.
     s_sm = sm_create(fp, lock_xlat, ST_DEFAULT, EVT_DEFAULT);
 
-    sm_addState(s_sm, ST_INITIAL,               initialEnter);
-    sm_addTransition(s_sm, EVT_IS_LOCKED,              NULL,                   ST_LOCKED);
-    sm_addTransition(s_sm, EVT_IS_UNLOCKED,            NULL,                   ST_UNLOCKED);
+    sm_addState(s_sm, ST_INITIAL,                   initialEnter);
+    sm_addTransition(s_sm, EVT_IS_LOCKED,           NULL,                   ST_LOCKED);
+    sm_addTransition(s_sm, EVT_IS_UNLOCKED,         NULL,                   ST_UNLOCKED);
 
-    sm_addState(s_sm, ST_LOCKED,                lockedEnter);
-    sm_addTransition(s_sm, EVT_DIGIT_KEY_PRESSED,      lockedAddDigit,         ST_LOCKED);
-    sm_addTransition(s_sm, EVT_RESET,                  clearCurrentEntry,      ST_LOCKED);
-    sm_addTransition(s_sm, EVT_VALID_COMBO,            NULL,                   ST_UNLOCKED);
-    sm_addTransition(s_sm, EVT_DEFAULT,                clearCurrentEntry,      ST_LOCKED);
+    sm_addState(s_sm, ST_LOCKED,                    lockedEnter);
+    sm_addTransition(s_sm, EVT_DIGIT_KEY_PRESSED,   lockedAddDigit,         ST_LOCKED);
+    sm_addTransition(s_sm, EVT_RESET,               clearCurrentEntry,      ST_LOCKED);
+    sm_addTransition(s_sm, EVT_VALID_COMBO,         NULL,                   ST_UNLOCKED);
+    sm_addTransition(s_sm, EVT_DEFAULT,             clearCurrentEntry,      ST_LOCKED);
 
-    sm_addState(s_sm, ST_UNLOCKED,              unlockedEnter);
-    sm_addTransition(s_sm, EVT_RESET,                  clearCurrentEntry,      ST_LOCKED);
-    sm_addTransition(s_sm, EVT_SET_COMBO,              clearCurrentEntry,      ST_SETTING_COMBO);
-    sm_addTransition(s_sm, EVT_DEFAULT,                clearCurrentEntry,      ST_UNLOCKED);
+    sm_addState(s_sm, ST_UNLOCKED,                  unlockedEnter);
+    sm_addTransition(s_sm, EVT_RESET,               clearCurrentEntry,      ST_LOCKED);
+    sm_addTransition(s_sm, EVT_SET_COMBO,           clearCurrentEntry,      ST_SETTING_COMBO);
+    sm_addTransition(s_sm, EVT_DEFAULT,             clearCurrentEntry,      ST_UNLOCKED);
  
-    sm_addState(s_sm, ST_SETTING_COMBO,         clearCurrentEntry);
-    sm_addTransition(s_sm, EVT_DIGIT_KEY_PRESSED,      setComboAddDigit,       ST_SETTING_COMBO);
-    sm_addTransition(s_sm, EVT_SET_COMBO,              setCombo,               ST_UNLOCKED);
-    sm_addTransition(s_sm, EVT_RESET,                  clearCurrentEntry,      ST_UNLOCKED);
+    sm_addState(s_sm, ST_SETTING_COMBO,             clearCurrentEntry);
+    sm_addTransition(s_sm, EVT_DIGIT_KEY_PRESSED,   setComboAddDigit,       ST_SETTING_COMBO);
+    sm_addTransition(s_sm, EVT_SET_COMBO,           setCombo,               ST_UNLOCKED);
+    sm_addTransition(s_sm, EVT_RESET,               clearCurrentEntry,      ST_UNLOCKED);
  
-    sm_addState(s_sm, ST_DEAD,                  NULL);
+    sm_addState(s_sm, ST_DEAD,                      NULL);
     // Empty state. Maybe call it ST_SARTRE?
 
-    sm_addState(s_sm, ST_DEFAULT,               NULL);
-    sm_addTransition(s_sm, EVT_SHUT_DOWN,              tryDefault,             ST_DEAD);
+    sm_addState(s_sm, ST_DEFAULT,                   NULL);
+    sm_addTransition(s_sm, EVT_SHUT_DOWN,           tryDefault,             ST_DEAD);
 
     // Set our initial state.
     sm_reset(s_sm, ST_INITIAL);
@@ -106,8 +113,6 @@ sm_t* lock_create(FILE* fp)
     return s_sm;
 }
 
-
-//////// Interface functions definitions /////////
 
 //--------------------------------------------------------//
 void lock_destroy(void)
