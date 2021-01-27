@@ -2,16 +2,17 @@
 # c-bag-of-tricks
 - An ever-expanding collection of the C things I seem to use repeatedly. The primary focus is on
   utilities for embedded systems. There are lots of other ways to do this but I find most to be over-complicated.
-- There is some dynamic allocation, maybe I can make it all static eventually. No assert() used. Or monitor for overflow? TODO
+- There is some dynamic allocation, maybe I can make it all static eventually. No assert() are used.
 - No dependencies on third party components.
 - They all (except pnut) use the opaque pointer (pimpl) idiom.
 - Runtime components are plain C99 so should build and run on any win or nx platform using any compiler.
-- Only cpp style comments supported.
 - A VS Code workspace using mingw and CMake is supplied. Your PATH needs to include mingw.
 
 ![logo](felix.jpg)
 
 # Components
+- The components in this collection generally follow the model put forth in [c-modular](https://github.com/cepthomas/c-modular).
+- If a function returns a pointer, the client now owns it and is responsible for destroying it. This doesn't apply to const pointers.
 
 ## state_machine
 - Semi-hierarchical state machine for C.
@@ -23,7 +24,7 @@
 - See test_list.cpp for example of usage.
 
 ## dictionary
-- TODO doc
+- TODO dict doc
 
 ## stringx
 - Higher level string manipulation.
@@ -39,7 +40,11 @@ Rather than add a whole new error handling system, cbot uses existing C patterns
 - Functions that return things like counts (0 is valid) return -1 for errors.
 - Functions that return status return -1 for errors, 0 for success, >0 for failure (logical not error).
 - When errors occur, cbot sets errno accordingly.
-- common.h defines some macros to assist in readability.
+- common.h defines some macros:
+    - Return values for ints and ponters.
+    - Macros for creating typed objects - CREATE_INST(), CREATE_STR().
+    - Macros for validating pointers - VALIDATE_PTR1(), VALIDATE_PTR2(). Note that these use early returns to keep the if-nesting reasonable.
+      Normally I hate early returns but in this case the pluses outweigh.
 
 # pnut
 Practically Nonexistent Unit Tester: A super lightweight unit test framework for C (or C++).

@@ -16,7 +16,7 @@
 typedef struct list list_t;
 
 /// Create a list.
-/// @return The opaque pointer used in all functions | PTR_ERR. 
+/// @return The opaque pointer used in all functions | PTR_ERR.
 list_t* list_create(void);
 
 /// Deletes all nodes and associated data pointers.

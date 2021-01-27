@@ -2,6 +2,8 @@
 #define STATE_MACHINE_H
 
 #include <stdio.h>
+#include "common.h"
+
 
 /// @brief Declaration of state machine.
 
@@ -24,12 +26,13 @@ typedef const char* (*xlat_t)(unsigned int id);
 /// @param xlat Optional translator for id tracing.
 /// @param defState The default state id.
 /// @param defEvent The default event id.
-/// @return The opaque pointer used in all functions. 
+/// @return The opaque pointer used in all functions | PTR_ERR.
 sm_t* sm_create(FILE* fp, xlat_t xlat, unsigned int defState, unsigned int defEvent);
 
 /// Clean up all resources including the state machine.
 /// @param sm Pertinent state machine.
-void sm_destroy(sm_t* sm);
+/// @return RET_PASS | RET_ERR.
+int sm_destroy(sm_t* sm);
 
 /// Add a new state - sets to current state.
 /// @param sm Pertinent state machine.
@@ -47,27 +50,31 @@ void sm_addTransition(sm_t* sm, unsigned int eventId, const func_t func, unsigne
 /// Process the event in the argument.
 /// @param sm Pertinent state machine.
 /// @param eventId Specific event id.
-void sm_processEvent(sm_t* sm, unsigned int eventId);
+/// @return RET_PASS | RET_ERR.
+int sm_processEvent(sm_t* sm, unsigned int eventId);
 
 /// Get the current state.
 /// @param sm Pertinent state machine.
-/// @return Current state id. 
+/// @return Current state id | RET_ERR.
 int sm_getState(sm_t* sm);
 
 /// Reset a machine.
 /// @param sm Pertinent state machine.
 /// @param stateId State to set to.
-void sm_reset(sm_t* sm, unsigned int stateId);
+/// @return RET_PASS | RET_ERR.
+int sm_reset(sm_t* sm, unsigned int stateId);
 
 /// Dump contents of the loaded state machine as a dot file.
 /// @param sm Pertinent state machine.
 /// @param fp Output stream.
-void sm_toDot(sm_t* sm, FILE* fp);
+/// @return RET_PASS | RET_ERR.
+int sm_toDot(sm_t* sm, FILE* fp);
 
 /// Debug logging function.
 /// @param sm Pertinent state machine.
 /// @param line Line number.
 /// @param format Format string followed by args.
-void sm_trace(sm_t* sm, int line, const char* format, ...);
+/// @return RET_PASS | RET_ERR.
+int sm_trace(sm_t* sm, int line, const char* format, ...);
 
 #endif // STATE_MACHINE_H

@@ -7,21 +7,16 @@
 
 //-------------------------- Typed lifetime -----------------------------//
 
-/// Make an instance of a thing, set to 0.
+/// Make an instance of a typed thing with all bytes set to 0. Client is responsible for free().
 /// @param V Thing variable name.
 /// @param T The thing type.
-/// @return Typed pointer to the new thing.
+/// @param E Error value to return in case of failure.
 #define CREATE_INST(V, T) T* V = (T*)calloc(1, sizeof(T))
 
-/// Make a standard char buff.
+/// Make a standard char buff. Client is responsible for free().
 /// @param V String variable name.
 /// @param N String length. We add room for trailing 0.
-/// @return char*.
 #define CREATE_STR(V, N) char* V = (char*)calloc(N + 1, sizeof(char))
-
-/// Delete one of the things created above.
-/// @param V Thing variable name.
-#define DESTROY(V) free(V)
 
 
 //-------------------------- Error handling -----------------------------//
@@ -35,7 +30,18 @@
 /// Defines success for a function that returns a status int.
 #define RET_PASS 0
 
-/// Defines failure (not an error - invalid index, etc) for a function that returns a status int.
+/// Defines failure (expected, end of iteration, etc) for a function that returns a status int.
 #define RET_FAIL 1
+
+/// Validate function pointer arguments. If fails, sets errno and early returns error.
+/// @param ptr Pointer.
+/// @param eret What to return if error.
+#define VALIDATE_PTR1(ptr, eret) if(ptr == NULL) { errno = EINVAL; return eret; }
+
+/// Validate function pointer arguments. If fails, sets errno and early returns error.
+/// @param ptr1 Pointer.
+/// @param ptr2 Pointer.
+/// @param eret What to return if error.
+#define VALIDATE_PTR2(ptr1, ptr2, eret) if(ptr1 == NULL || ptr2 == NULL) { errno = EINVAL; return eret; }
 
 #endif // COMMON_H

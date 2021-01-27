@@ -8,8 +8,9 @@
 
 /// @brief Definition of dictionary thing.
 
-#ifndef NUM_BINS
-#define NUM_BINS 51
+/// Prime number.
+#ifndef NUM_DICT_BINS
+#define NUM_DICT_BINS 53
 #endif
 
 //---------------- Private --------------------------//
@@ -38,15 +39,15 @@ struct dict
     // node_t* iter;  ///< Internal pointer for iteration operations.
 };
 
-static key_t s_kt;
+static key_t p_kt;
 
 //---------------- Public API Implementation -------------//
 
 //--------------------------------------------------------//
 dict_t* dict_create(key_t kt)
 {
-    s_kt = kt;
-    
+    p_kt = kt;
+
     CREATE_INST(d, dict_t);
     if(d != NULL)
     {
@@ -77,11 +78,36 @@ int dict_clear(dict_t* d)
 //--------------------------------------------------------//
 int dict_destroy(dict_t* d)
 {
-    int ret = RET_ERR;
-    dict_clear(d);
-    free(d);
+    int ret = RET_PASS;
+    // dict_clear(d);
+    // free(d);
     return ret;
 }
+
+//--------------------------------------------------------//
+int dict_set(dict_t* d, void* key, void* data)
+{
+    int ret = RET_PASS;
+
+    return ret;
+}
+
+//--------------------------------------------------------//
+int dict_get(dict_t* d, void* key, void** data)
+{
+    int ret = RET_PASS;
+    
+    return ret;
+}
+
+//--------------------------------------------------------//
+list_t* dict_get_keys(dict_t* d)
+{
+    
+    return PTR_ERR;
+}
+
+
 
 /*
 

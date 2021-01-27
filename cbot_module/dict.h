@@ -3,11 +3,12 @@
 #define DICT_H
 
 #include "list.h"
+// Optionally define NUM_DICT_BINS as some-prime-number
+#include "dict.h"
 
 
 /// @brief Declaration of a rudimentary dictionary thing.
 
-////>>> #define NUM_BINS 51
 
 //---------------- Public API ----------------------//
 
@@ -15,11 +16,7 @@
 typedef struct dict dict_t;
 
 /// Supported key types.
-typedef enum
-{
-    KEY_INT,
-    KEY_STRING
-} key_t;
+typedef enum { KEY_INT, KEY_STRING } key_t;
 
 /// Create a dict.
 /// @param kt Key type.

@@ -17,19 +17,19 @@ typedef struct
 
 
 /// State of the lock.
-static bool s_isLocked;
+static bool p_isLocked;
 
 /// Current input being processed.
-static char s_currentKey;
+static char p_currentKey;
 
 /// Current combination.
-static list_t* s_combination;
+static list_t* p_combination;
 
 /// Where we are in the sequence.
-static list_t* s_currentEntry;
+static list_t* p_currentEntry;
 
 /// The machine engine.
-static sm_t* s_sm;
+static sm_t* p_sm;
 
 
 //////// Transition functions declarations ////////////
@@ -61,96 +61,107 @@ static void unlockedEnter(void);
 //--------------------------------------------------------//
 sm_t* lock_create(FILE* fp)
 {
-    s_isLocked = true;
-    s_currentEntry = list_create();
-    s_combination = list_create();
+    p_isLocked = true;
+    p_currentEntry = list_create();
+    p_combination = list_create();
 
     // Initial combination is: 000
-    CREATE_INST(k1, lockData_t); //TODOE check these?
+    CREATE_INST(k1, lockData_t);
+    VALIDATE_PTR1(k1, PTR_ERR);
     k1->c = '0';
-    list_append(s_combination, k1); //TODOE check these?
+    list_append(p_combination, k1);
 
     CREATE_INST(k2, lockData_t);
+    VALIDATE_PTR1(k2, PTR_ERR);
     k2->c = '0';
-    list_append(s_combination, k2);
+    list_append(p_combination, k2);
 
     CREATE_INST(k3, lockData_t);
+    VALIDATE_PTR1(k3, PTR_ERR);
     k3->c = '0';
-    list_append(s_combination, k3);
+    list_append(p_combination, k3);
 
     // Build the FSM.
-    s_sm = sm_create(fp, lock_xlat, ST_DEFAULT, EVT_DEFAULT);
+    p_sm = sm_create(fp, lock_xlat, ST_DEFAULT, EVT_DEFAULT);
+    VALIDATE_PTR1(p_sm, PTR_ERR);
 
-    sm_addState(s_sm, ST_INITIAL,                   initialEnter);
-    sm_addTransition(s_sm, EVT_IS_LOCKED,           NULL,                   ST_LOCKED);
-    sm_addTransition(s_sm, EVT_IS_UNLOCKED,         NULL,                   ST_UNLOCKED);
+    sm_addState(p_sm, ST_INITIAL,                   initialEnter);
+    sm_addTransition(p_sm, EVT_IS_LOCKED,           NULL,                   ST_LOCKED);
+    sm_addTransition(p_sm, EVT_IS_UNLOCKED,         NULL,                   ST_UNLOCKED);
 
-    sm_addState(s_sm, ST_LOCKED,                    lockedEnter);
-    sm_addTransition(s_sm, EVT_DIGIT_KEY_PRESSED,   lockedAddDigit,         ST_LOCKED);
-    sm_addTransition(s_sm, EVT_RESET,               clearCurrentEntry,      ST_LOCKED);
-    sm_addTransition(s_sm, EVT_VALID_COMBO,         NULL,                   ST_UNLOCKED);
-    sm_addTransition(s_sm, EVT_DEFAULT,             clearCurrentEntry,      ST_LOCKED);
+    sm_addState(p_sm, ST_LOCKED,                    lockedEnter);
+    sm_addTransition(p_sm, EVT_DIGIT_KEY_PRESSED,   lockedAddDigit,         ST_LOCKED);
+    sm_addTransition(p_sm, EVT_RESET,               clearCurrentEntry,      ST_LOCKED);
+    sm_addTransition(p_sm, EVT_VALID_COMBO,         NULL,                   ST_UNLOCKED);
+    sm_addTransition(p_sm, EVT_DEFAULT,             clearCurrentEntry,      ST_LOCKED);
 
-    sm_addState(s_sm, ST_UNLOCKED,                  unlockedEnter);
-    sm_addTransition(s_sm, EVT_RESET,               clearCurrentEntry,      ST_LOCKED);
-    sm_addTransition(s_sm, EVT_SET_COMBO,           clearCurrentEntry,      ST_SETTING_COMBO);
-    sm_addTransition(s_sm, EVT_DEFAULT,             clearCurrentEntry,      ST_UNLOCKED);
+    sm_addState(p_sm, ST_UNLOCKED,                  unlockedEnter);
+    sm_addTransition(p_sm, EVT_RESET,               clearCurrentEntry,      ST_LOCKED);
+    sm_addTransition(p_sm, EVT_SET_COMBO,           clearCurrentEntry,      ST_SETTING_COMBO);
+    sm_addTransition(p_sm, EVT_DEFAULT,             clearCurrentEntry,      ST_UNLOCKED);
  
-    sm_addState(s_sm, ST_SETTING_COMBO,             clearCurrentEntry);
-    sm_addTransition(s_sm, EVT_DIGIT_KEY_PRESSED,   setComboAddDigit,       ST_SETTING_COMBO);
-    sm_addTransition(s_sm, EVT_SET_COMBO,           setCombo,               ST_UNLOCKED);
-    sm_addTransition(s_sm, EVT_RESET,               clearCurrentEntry,      ST_UNLOCKED);
+    sm_addState(p_sm, ST_SETTING_COMBO,             clearCurrentEntry);
+    sm_addTransition(p_sm, EVT_DIGIT_KEY_PRESSED,   setComboAddDigit,       ST_SETTING_COMBO);
+    sm_addTransition(p_sm, EVT_SET_COMBO,           setCombo,               ST_UNLOCKED);
+    sm_addTransition(p_sm, EVT_RESET,               clearCurrentEntry,      ST_UNLOCKED);
  
-    sm_addState(s_sm, ST_DEAD,                      NULL);
+    sm_addState(p_sm, ST_DEAD,                      NULL);
     // Empty state. Maybe call it ST_SARTRE?
 
-    sm_addState(s_sm, ST_DEFAULT,                   NULL);
-    sm_addTransition(s_sm, EVT_SHUT_DOWN,           tryDefault,             ST_DEAD);
+    sm_addState(p_sm, ST_DEFAULT,                   NULL);
+    sm_addTransition(p_sm, EVT_SHUT_DOWN,           tryDefault,             ST_DEAD);
 
     // Set our initial state.
-    sm_reset(s_sm, ST_INITIAL);
+    sm_reset(p_sm, ST_INITIAL);
 
-    return s_sm;
+    return p_sm;
 }
 
 
 //--------------------------------------------------------//
 void lock_destroy(void)
 {
-    list_destroy(s_currentEntry);
-    list_destroy(s_combination);
+    list_destroy(p_currentEntry);
+    list_destroy(p_combination);
 
-    sm_destroy(s_sm);
+    sm_destroy(p_sm);
 }
 
 //--------------------------------------------------------//
 void lock_pressKey(char key)
 {
-    sm_trace(s_sm, __LINE__, "Key pressed %c\n", key);
+    sm_trace(p_sm, __LINE__, "Key pressed %c\n", key);
 
-    s_currentKey = key;
+    p_currentKey = key;
+
+    int ret = RET_PASS;
 
     switch (key)
     {
         case KEY_RESET:
-            sm_processEvent(s_sm, EVT_RESET);
+            ret = sm_processEvent(p_sm, EVT_RESET);
             break;
 
         case KEY_SET:
-            sm_processEvent(s_sm, EVT_SET_COMBO);
+            ret = sm_processEvent(p_sm, EVT_SET_COMBO);
             break;
 
         case KEY_POWER:
-            sm_processEvent(s_sm, EVT_SHUT_DOWN);
+            ret = sm_processEvent(p_sm, EVT_SHUT_DOWN);
             break;
 
         default:
             if(key >= '0' && key <= '9')
             {
-                sm_processEvent(s_sm, EVT_DIGIT_KEY_PRESSED);
+                ret = sm_processEvent(p_sm, EVT_DIGIT_KEY_PRESSED);
             }
             // else ignore fat fingers.
             break;
+    }
+
+    if(ret != RET_PASS)
+    {
+        // TODO error - do something.
     }
 }
 
@@ -185,55 +196,55 @@ const char* lock_xlat(unsigned int id)
 //--------------------------------------------------------//
 void initialEnter()
 {
-    sm_trace(s_sm, __LINE__, "initialEnter()\n");
+    sm_trace(p_sm, __LINE__, "initialEnter()\n");
 
-    if (s_isLocked)
+    if (p_isLocked)
     {
-        sm_processEvent(s_sm, EVT_IS_LOCKED);
+        sm_processEvent(p_sm, EVT_IS_LOCKED);
     }
     else
     {
-        sm_processEvent(s_sm, EVT_IS_UNLOCKED);
+        sm_processEvent(p_sm, EVT_IS_UNLOCKED);
     }
 }
 
 //--------------------------------------------------------//
 static void lockedEnter(void)
 {
-    sm_trace(s_sm, __LINE__, "lockedEnter()\n");
-    s_isLocked = true;
-    list_clear(s_currentEntry);
+    sm_trace(p_sm, __LINE__, "lockedEnter()\n");
+    p_isLocked = true;
+    list_clear(p_currentEntry);
 }
 
 //--------------------------------------------------------//
 static void clearCurrentEntry(void)
 {
-    sm_trace(s_sm, __LINE__, "clearCurrentEntry()\n");
-    list_clear(s_currentEntry);
+    sm_trace(p_sm, __LINE__, "clearCurrentEntry()\n");
+    list_clear(p_currentEntry);
 }
 
 //--------------------------------------------------------//
 static void lockedAddDigit(void)
 {
-    sm_trace(s_sm, __LINE__, "lockedAddDigit()\n");
+    sm_trace(p_sm, __LINE__, "lockedAddDigit()\n");
 
     CREATE_INST(data, lockData_t);
-    data->c = s_currentKey;
-    list_append(s_currentEntry, data);
+    data->c = p_currentKey;
+    list_append(p_currentEntry, data);
 
     // Test to see if it matches the stored combination.
     lockData_t* dcomb;
     lockData_t* dentry;
 
-    list_start(s_combination);
-    list_start(s_currentEntry);
+    list_start(p_combination);
+    list_start(p_currentEntry);
 
-    bool ok = list_count(s_combination) == list_count(s_currentEntry);
+    bool ok = list_count(p_combination) == list_count(p_currentEntry);
 
-    for(int i = 0; i < list_count(s_combination) && ok; i++)
+    for(int i = 0; i < list_count(p_combination) && ok; i++)
     {
-        list_next(s_combination, (void**)&dcomb);
-        list_next(s_currentEntry, (void**)&dentry);
+        list_next(p_combination, (void**)&dcomb);
+        list_next(p_currentEntry, (void**)&dentry);
 
         if(dcomb != NULL && dentry != NULL)
         {
@@ -243,39 +254,39 @@ static void lockedAddDigit(void)
 
     if (ok)
     {
-        sm_processEvent(s_sm, EVT_VALID_COMBO);
+        sm_processEvent(p_sm, EVT_VALID_COMBO);
     }
 }
 
 //--------------------------------------------------------//
 static void setComboAddDigit(void)
 {
-    sm_trace(s_sm, __LINE__, "setComboAddDigit()\n");
+    sm_trace(p_sm, __LINE__, "setComboAddDigit()\n");
 
     CREATE_INST(data, lockData_t);
-    data->c = s_currentKey;
-    list_append(s_currentEntry, data);
+    data->c = p_currentKey;
+    list_append(p_currentEntry, data);
 }
 
 //--------------------------------------------------------//
 static void setCombo(void)
 {
-    sm_trace(s_sm, __LINE__, "setCombo()\n");
+    sm_trace(p_sm, __LINE__, "setCombo()\n");
 
-    if (list_count(s_currentEntry) > 0)
+    if (list_count(p_currentEntry) > 0)
     {
-        list_clear(s_combination);
+        list_clear(p_combination);
 
         // Copy data over.
-        list_start(s_currentEntry);
+        list_start(p_currentEntry);
         bool done = false;
         lockData_t* data;
         while (!done)
         {
-            if(list_next(s_currentEntry, (void**)&data))
+            if(list_next(p_currentEntry, (void**)&data))
             {
                 CREATE_INST(data2, lockData_t);
-                list_append(s_combination, data2);
+                list_append(p_combination, data2);
             }
             else
             {
@@ -283,21 +294,21 @@ static void setCombo(void)
             }
         }
 
-        list_clear(s_currentEntry);
+        list_clear(p_currentEntry);
     }
 }
 
 //--------------------------------------------------------//
 static void unlockedEnter(void)
 {
-    sm_trace(s_sm, __LINE__, "unlockedEnter()\n");
-    s_isLocked = false;
+    sm_trace(p_sm, __LINE__, "unlockedEnter()\n");
+    p_isLocked = false;
 }
 
 //--------------------------------------------------------//
 static void tryDefault(void)
 {
-    sm_trace(s_sm, __LINE__, "tryDefault()\n");
-    s_isLocked = true;
-    list_clear(s_currentEntry);
+    sm_trace(p_sm, __LINE__, "tryDefault()\n");
+    p_isLocked = true;
+    list_clear(p_currentEntry);
 }

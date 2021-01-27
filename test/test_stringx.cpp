@@ -18,7 +18,7 @@ UT_SUITE(STR_BASIC, "Test basic stringx functions.")
     UT_EQUAL(stringx_len(s1), 20);
     UT_STR_EQUAL(stringx_content(s1), "  round and square  ");
 
-    stringx_t* s2 = stringx_create(NULL);
+    stringx_t* s2 = stringx_create("");
     UT_NOT_NULL(stringx_content(s2));
     UT_EQUAL(stringx_len(s2), 0);
     UT_STR_EQUAL(stringx_content(s2), "");
@@ -31,17 +31,17 @@ UT_SUITE(STR_BASIC, "Test basic stringx functions.")
     stringx_trim(s1);
     UT_STR_EQUAL(stringx_content(s1), "round and square");
 
-    UT_TRUE(stringx_startswith(s1, "round", CASE_SENS));
-    UT_FALSE(stringx_startswith(s1, "Round", CASE_SENS));
-    UT_TRUE(stringx_startswith(s1, "Round", CASE_INSENS));
-    UT_FALSE(stringx_startswith(s1, "xxx", CASE_SENS));
-    UT_FALSE(stringx_startswith(s1, "xxx", CASE_INSENS));
+    UT_EQUAL(stringx_startswith(s1, "round", CASE_SENS), RET_PASS);
+    UT_EQUAL(stringx_startswith(s1, "Round", CASE_SENS), RET_FAIL);
+    UT_EQUAL(stringx_startswith(s1, "Round", CASE_INSENS), RET_PASS);
+    UT_EQUAL(stringx_startswith(s1, "xxx", CASE_SENS), RET_FAIL);
+    UT_EQUAL(stringx_startswith(s1, "xxx", CASE_INSENS), RET_FAIL);
 
-    UT_FALSE(stringx_endswith(s2, "bush", CASE_SENS));
-    UT_TRUE(stringx_endswith(s2, "Bush", CASE_SENS));
-    UT_TRUE(stringx_endswith(s2, "bush", CASE_INSENS));
-    UT_FALSE(stringx_endswith(s2, "xxx", CASE_SENS));
-    UT_FALSE(stringx_endswith(s2, "xxx", CASE_INSENS));
+    UT_EQUAL(stringx_endswith(s2, "bush", CASE_SENS), RET_FAIL);
+    UT_EQUAL(stringx_endswith(s2, "Bush", CASE_SENS), RET_PASS);
+    UT_EQUAL(stringx_endswith(s2, "bush", CASE_INSENS), RET_PASS);
+    UT_EQUAL(stringx_endswith(s2, "xxx", CASE_SENS), RET_FAIL);
+    UT_EQUAL(stringx_endswith(s2, "xxx", CASE_INSENS), RET_FAIL);
 
     UT_EQUAL(stringx_contains(s1, "and squ", CASE_SENS), 6);
     UT_EQUAL(stringx_contains(s1, "anD squ", CASE_SENS), -1);
@@ -49,22 +49,22 @@ UT_SUITE(STR_BASIC, "Test basic stringx functions.")
     UT_EQUAL(stringx_contains(s1, "xxx", CASE_SENS), -1);
     UT_EQUAL(stringx_contains(s1, "xxx", CASE_INSENS), -1);
 
-    UT_TRUE(stringx_compare(s1, "round and square", CASE_SENS));
-    UT_TRUE(stringx_compare(s1, "roUnd and sQuare", CASE_INSENS));
-    UT_FALSE(stringx_compare(s1, "roUnd and sQuare", CASE_SENS));
-    UT_FALSE(stringx_compare(s1, "xxx", CASE_SENS));
-    UT_FALSE(stringx_compare(s1, "xxx", CASE_INSENS));
+    UT_EQUAL(stringx_compare(s1, "round and square", CASE_SENS), RET_PASS);
+    UT_EQUAL(stringx_compare(s1, "roUnd and sQuare", CASE_INSENS), RET_PASS);
+    UT_EQUAL(stringx_compare(s1, "roUnd and sQuare", CASE_SENS), RET_FAIL);
+    UT_EQUAL(stringx_compare(s1, "xxx", CASE_SENS), RET_FAIL);
+    UT_EQUAL(stringx_compare(s1, "xxx", CASE_INSENS), RET_FAIL);
 
     stringx_toupper(s1);
-    UT_TRUE(stringx_compare(s1, "ROUND AND SQUARE", CASE_SENS));
+    UT_EQUAL(stringx_compare(s1, "ROUND AND SQUARE", CASE_SENS), RET_PASS);
     stringx_tolower(s1);
-    UT_TRUE(stringx_compare(s1, "round and square", CASE_SENS));
+    UT_EQUAL(stringx_compare(s1, "round and square", CASE_SENS), RET_PASS);
 
     // Copy ops.
     stringx_t* s3 = stringx_copy(s1);
     UT_NOT_NULL(s3);
     UT_NOT_NULL(stringx_content(s3));
-    UT_TRUE(stringx_compare(s3, "round and square", CASE_SENS));
+    UT_EQUAL(stringx_compare(s3, "round and square", CASE_SENS), RET_PASS);
 
     stringx_t* s4 = stringx_left(s2, 6);  //"The Mulberry Bush"
     UT_NOT_NULL(s4);

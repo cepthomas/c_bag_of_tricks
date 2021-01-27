@@ -88,7 +88,7 @@ UT_SUITE(LIST_ALL, "Test all list functions.")
     UT_EQUAL(data->anumber, 33);
     UT_STR_EQUAL(data->astring, "Ajay3");
     // I own this now so clean up.
-    DESTROY(data);
+    free(data);
 
     // Add another.
     UT_EQUAL(list_push(mylist, &st5), RET_PASS);
@@ -100,7 +100,7 @@ UT_SUITE(LIST_ALL, "Test all list functions.")
     UT_EQUAL(data->anumber, 11);
     UT_STR_EQUAL(data->astring, "Ajay1");
     // I own this now so clean up.
-    DESTROY(data);
+    free(data);
 
     // Remove everything.
     UT_EQUAL(list_clear(mylist), RET_PASS);
