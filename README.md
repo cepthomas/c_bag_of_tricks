@@ -24,7 +24,9 @@
 - See test_list.cpp for example of usage.
 
 ## dictionary
-- TODO dict doc
+- A simple dictionary that supports either string or int keys and arbitrary value types.
+- You can change the default bin size at compile time to match your data quantity and/or available space.
+- See test_dict.cpp for example of usage.
 
 ## stringx
 - Higher level string manipulation.
@@ -36,12 +38,12 @@ normal behavior and handled accordingly. So cbot errors are very bad and usually
 happen because they have all been caught in unit and integration testing, right?
 
 Rather than add a whole new error handling system, cbot uses existing C patterns:
-- Functions that return pointers return NULL for errors.
-- Functions that return things like counts (0 is valid) return -1 for errors.
-- Functions that return status return -1 for errors, 0 for success, >0 for failure (logical not error).
+- Functions that return pointers return RET_PTR_ERR (NULL) for errors.
+- Functions that return things like counts (where 0 is valid) return RET_ERR (-1) for errors.
+- Functions that return status return RET_ERR (-1) for errors, RET_PASS (0) for success, RET_FAIL (-2) for failure (logical not error).
 - When errors occur, cbot sets errno accordingly.
 - common.h defines some macros:
-    - Return values for ints and ponters.
+    - Return values for ints and pointers.
     - Macros for creating typed objects - CREATE_INST(), CREATE_STR().
     - Macros for validating pointers - VALIDATE_PTR1(), VALIDATE_PTR2(). Note that these use early returns to keep the if-nesting reasonable.
       Normally I hate early returns but in this case the pluses outweigh.

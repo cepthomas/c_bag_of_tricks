@@ -25,7 +25,7 @@ typedef struct stringx stringx_t;
 
 /// Create an empty string.
 /// @param sinit Optional initial value. If NULL, content will be "".
-/// @return The opaque pointer used in all functions | PTR_ERR.
+/// @return The opaque pointer used in all functions | RET_PTR_ERR.
 stringx_t* stringx_create(const char* sinit);
 
 /// Frees all data pointers, and the string struct.
@@ -35,7 +35,7 @@ int stringx_destroy(stringx_t* s);
 
 /// Get the contained data.
 /// @param s Source stringx.
-/// @return The char pointer | PTR_ERR.
+/// @return The char pointer | RET_PTR_ERR.
 const char* stringx_content(stringx_t* s);
 
 /// Size of the string.
@@ -89,13 +89,13 @@ int stringx_contains(stringx_t* s1, const char* s2, csens_t csens);
 
 /// Copy a stringx.
 /// @param s Source stringx.
-/// @return The copied string | PTR_ERR.
+/// @return The copied string | RET_PTR_ERR.
 stringx_t* stringx_copy(stringx_t* s);
 
 /// Removes left chars as a new stringx.
 /// @param s Source stringx.
 /// @param num Number to remove.
-/// @return The left part or empty if num > len(s) | PTR_ERR
+/// @return The left part or empty if num > len(s) | RET_PTR_ERR
 stringx_t* stringx_left(stringx_t* s, unsigned int num);
 
 /// Trim whitespace from both ends IN PLACE.
@@ -119,7 +119,7 @@ int stringx_format(stringx_t* s, unsigned int maxlen, const char* format, ...);
 /// Split the string into parts by token.
 /// @param s Source stringx.
 /// @param delim Like strtok.
-/// @return List of string parts | PTR_ERR.
+/// @return List of string parts | RET_PTR_ERR.
 list_t* stringx_split(stringx_t* s, const char* delim);
 
 #endif // STRINGX_H

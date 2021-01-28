@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "common.h"
+#include "list.h"
 #include "dict.h"
 
 
@@ -13,33 +14,37 @@
 #define NUM_DICT_BINS 53
 #endif
 
+
 //---------------- Private --------------------------//
 
+/// Bin definition.
+typedef struct binItem
+{
 
-// /// List node definition.
-// typedef struct node
-// {
-//     void* data;         ///< Client specific data. Client must cast.
-//     struct node* prev;  ///< Linked list previous node.
-//     struct node* next;  ///< Linked list next node.
-// } node_t;
+    // void* data;         ///< Client specific data. Client must cast.
+    // struct node* prev;  ///< Linked list previous node.
+    // struct node* next;  ///< Linked list next node.
 
-// /// Doubly-linked list definition.
-// struct list
-// {
-//     node_t* head;  ///< Linked list head.
-//     node_t* tail;  ///< Linked list tail.
-//     node_t* iter;  ///< Internal pointer for iteration operations.
-// };
+} binItem_t;
+
 
 struct dict
 {
+    list_t* bins[NUM_DICT_BINS];
+
     // node_t* head;  ///< Linked list head.
     // node_t* tail;  ///< Linked list tail.
     // node_t* iter;  ///< Internal pointer for iteration operations.
+
 };
 
+
+
 static key_t p_kt;
+
+
+static unsigned int p_hash(char* s);
+
 
 //---------------- Public API Implementation -------------//
 
@@ -49,20 +54,12 @@ dict_t* dict_create(key_t kt)
     p_kt = kt;
 
     CREATE_INST(d, dict_t);
-    if(d != NULL)
-    {
-        
-        // initialize...
+    VALIDATE_PTR1(d, RET_PTR_ERR);
 
-        // d->head = NULL;
-        // d->tail = NULL;
-        // d->iter = NULL;
-    }
-    else
-    {
-        // rs.code = SC_YYY;
-        // rs.extra = __LINE__;
-    }
+    // initialize...
+    // d->head = NULL;
+    // d->tail = NULL;
+    // d->iter = NULL;
 
     return d;
 }
@@ -89,6 +86,8 @@ int dict_set(dict_t* d, void* key, void* data)
 {
     int ret = RET_PASS;
 
+    p_hash("999");
+
     return ret;
 }
 
@@ -104,75 +103,31 @@ int dict_get(dict_t* d, void* key, void** data)
 list_t* dict_get_keys(dict_t* d)
 {
     
-    return PTR_ERR;
+    return RET_PTR_ERR;
 }
 
+//---------------- Private Implementation --------------------------//
 
-
-/*
-
-static uint64_t
-hash_string(char* str)
+//--------------------------------------------------------//
+unsigned int p_hash(char* s)
 {
-    uint64_t hash = 5381;
-    char c;
-
-    while ((c = *str++))
-        hash = ((hash << 5) + hash) + c; // hash * 33 + c 
-
-    return hash % DS_HASHMAP_BUCKETS;
-}
-
-static uint64_t
-hash_int(int32_t integer)
-{
-    return (uint64_t) integer % DS_HASHMAP_BUCKETS;
-}
-
-
-
-//////// Taken from http://www.cse.yorku.ca/~oz/hash.html
-
-djb2
-this algorithm (k=33) was first reported by dan bernstein many years ago in comp.lang.c. 
-another version of this algorithm (now favored by bernstein) uses xor: hash(i) = hash(i - 1) * 33 ^ str[i];
-the magic of number 33 (why it works better than many other constants, prime or not) has never been adequately explained.
-
-unsigned long
-hash(unsigned char *str)
-{
+    // Lifted from http://www.cse.yorku.ca/~oz/hash.html.
     unsigned long hash = 5381;
+    // bool done = false;
     int c;
 
-    while (c = *str++)
+    while ((c = *s++))
+    {
+        // djb2
         hash = ((hash << 5) + hash) + c; // hash * 33 + c 
+        // djb2 revised
+        // hash = hash(i - 1) * 33 ^ str[i];
+        // sdbm
+        // hash = c + (hash << 6) + (hash << 16) - hash;
+    }
 
-    return hash;
+    return (unsigned int)(hash % NUM_DICT_BINS);
 }
-    
-
-
-sdbm
-this algorithm was created for sdbm (a public-domain reimplementation of ndbm) database library. it was found to do well in scrambling bits,
-causing better distribution of the keys and fewer splits. it also happens to be a good general hashing function with good distribution.
-the actual function is hash(i) = hash(i - 1) * 65599 + str[i]; what is included below is the faster version used in gawk.
-there is even a faster, duff-device version] the magic constant 65599 was picked out of thin air while experimenting with different constants,
-and turns out to be a prime. this is one of the algorithms used in berkeley db (see sleepycat) and elsewhere.
-
-static unsigned long
-sdbm(str)
-unsigned char *str;
-{
-    unsigned long hash = 0;
-    int c;
-
-    while (c = *str++)
-        hash = c + (hash << 6) + (hash << 16) - hash;
-
-    return hash;
-}
-
-*/
 
 
 // Section 6.6 of The C Programming Language presents a simple dictionary (hashtable) data structure.

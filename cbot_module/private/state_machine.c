@@ -12,6 +12,7 @@
 
 //---------------- Private --------------------------//
 
+/// For debugging if enabled.
 #define MAX_TRACE 100
 
 /// One transition in a state.
@@ -49,11 +50,12 @@ struct sm
 
 //---------------- Public API Implementation -------------//
 
+
 //--------------------------------------------------------//
 sm_t* sm_create(FILE* fp, xlat_t xlat, unsigned int defState, unsigned int defEvent)
 {
     CREATE_INST(sm, sm_t);
-    VALIDATE_PTR1(sm, PTR_ERR);
+    VALIDATE_PTR1(sm, RET_PTR_ERR);
 
     sm->fp = fp;
     sm->xlat = xlat;

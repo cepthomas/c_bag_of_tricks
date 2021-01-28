@@ -67,23 +67,23 @@ sm_t* lock_create(FILE* fp)
 
     // Initial combination is: 000
     CREATE_INST(k1, lockData_t);
-    VALIDATE_PTR1(k1, PTR_ERR);
+    VALIDATE_PTR1(k1, RET_PTR_ERR);
     k1->c = '0';
     list_append(p_combination, k1);
 
     CREATE_INST(k2, lockData_t);
-    VALIDATE_PTR1(k2, PTR_ERR);
+    VALIDATE_PTR1(k2, RET_PTR_ERR);
     k2->c = '0';
     list_append(p_combination, k2);
 
     CREATE_INST(k3, lockData_t);
-    VALIDATE_PTR1(k3, PTR_ERR);
+    VALIDATE_PTR1(k3, RET_PTR_ERR);
     k3->c = '0';
     list_append(p_combination, k3);
 
     // Build the FSM.
     p_sm = sm_create(fp, lock_xlat, ST_DEFAULT, EVT_DEFAULT);
-    VALIDATE_PTR1(p_sm, PTR_ERR);
+    VALIDATE_PTR1(p_sm, RET_PTR_ERR);
 
     sm_addState(p_sm, ST_INITIAL,                   initialEnter);
     sm_addTransition(p_sm, EVT_IS_LOCKED,           NULL,                   ST_LOCKED);

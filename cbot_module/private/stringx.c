@@ -34,7 +34,7 @@ static bool p_match(char c1, char c2, csens_t csens);
 
 /// Copy a const string.
 /// @param sinit String to copy. If NULL, a valid empty string is created.
-/// @return The new mutable string | PTR_ERR.
+/// @return The new mutable string | RET_PTR_ERR.
 static char* p_scopy(const char* sinit);
 
 
@@ -45,7 +45,7 @@ static char* p_scopy(const char* sinit);
 stringx_t* stringx_create(const char* sinit)
 {
     CREATE_INST(s, stringx_t);
-    VALIDATE_PTR1(s, PTR_ERR);
+    VALIDATE_PTR1(s, RET_PTR_ERR);
 
     // Copy the contents.
     p_assign(s, p_scopy(sinit));
@@ -193,13 +193,13 @@ int stringx_contains(stringx_t* s1, const char* s2, csens_t csens)
         stringx_destroy(cs2);
     }
 
-    return index == -1 ? RET_FAIL : RET_PASS;
+    return index >= 0 ? index : RET_FAIL;
 }
 
 //--------------------------------------------------------//
 stringx_t* stringx_copy(stringx_t* s)
 {
-    VALIDATE_PTR1(s, PTR_ERR);
+    VALIDATE_PTR1(s, RET_PTR_ERR);
 
     stringx_t* copy = stringx_create(s->raw);
 
@@ -209,7 +209,7 @@ stringx_t* stringx_copy(stringx_t* s)
 //--------------------------------------------------------//
 stringx_t* stringx_left(stringx_t* s, unsigned int num)
 {
-    VALIDATE_PTR1(s, PTR_ERR);
+    VALIDATE_PTR1(s, RET_PTR_ERR);
 
     stringx_t* left = stringx_create("");
 
@@ -217,8 +217,8 @@ stringx_t* stringx_left(stringx_t* s, unsigned int num)
     {
         CREATE_STR(sleft, num);
         CREATE_STR(sresid, stringx_len(s) - num);
-        VALIDATE_PTR1(sleft, PTR_ERR);
-        VALIDATE_PTR1(sresid, PTR_ERR);
+        VALIDATE_PTR1(sleft, RET_PTR_ERR);
+        VALIDATE_PTR1(sresid, RET_PTR_ERR);
 
         strncpy(sleft, s->raw, num);
         strncpy(sresid, s->raw + num, stringx_len(s) - num);
@@ -339,20 +339,20 @@ int stringx_format(stringx_t* s, unsigned int maxlen, const char* format, ...)
 //--------------------------------------------------------//
 list_t* stringx_split(stringx_t* s, const char* delim)
 {
-    VALIDATE_PTR2(s, delim, PTR_ERR);
+    VALIDATE_PTR2(s, delim, RET_PTR_ERR);
    
     list_t* parts = list_create();
 
     // Make writable copy and tokenize it.
     CREATE_STR(cp, strlen(s->raw));
-    VALIDATE_PTR1(cp, PTR_ERR);
+    VALIDATE_PTR1(cp, RET_PTR_ERR);
     strcpy(cp, s->raw);
 
     char* token = strtok(cp, delim);
     while(token != NULL)
     {
         CREATE_STR(ctoken, strlen(token));
-        VALIDATE_PTR1(ctoken, PTR_ERR);
+        VALIDATE_PTR1(ctoken, RET_PTR_ERR);
         strcpy(ctoken, token);
         list_append(parts, ctoken);
         token = strtok(NULL, delim);
@@ -364,6 +364,7 @@ list_t* stringx_split(stringx_t* s, const char* delim)
 
 //---------------- Private Implementation --------------------------//
 
+//--------------------------------------------------------//
 int p_assign(stringx_t* s, char* cs)
 {
     VALIDATE_PTR2(s, cs, RET_ERR);
@@ -383,7 +384,7 @@ int p_assign(stringx_t* s, char* cs)
 //--------------------------------------------------------//
 char* p_scopy(const char* sinit)
 {
-    VALIDATE_PTR1(sinit, PTR_ERR);
+    VALIDATE_PTR1(sinit, RET_PTR_ERR);
 
     char* retbuff;
 
@@ -391,7 +392,7 @@ char* p_scopy(const char* sinit)
     if(sinit != NULL)
     {
         CREATE_STR(buff, strlen(sinit));
-        VALIDATE_PTR1(buff, PTR_ERR);
+        VALIDATE_PTR1(buff, RET_PTR_ERR);
         strcpy(buff, sinit);
         retbuff = buff;
     }

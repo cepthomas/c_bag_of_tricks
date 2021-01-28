@@ -20,7 +20,7 @@ typedef enum { KEY_INT, KEY_STRING } key_t;
 
 /// Create a dict.
 /// @param kt Key type.
-/// @return The dictionary opaque pointer used in all functions | PTR_ERR. 
+/// @return The dictionary opaque pointer used in all functions | RET_PTR_ERR. 
 dict_t* dict_create(key_t kt);
 
 /// Deletes all nodes and associated data pointers.

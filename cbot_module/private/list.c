@@ -31,27 +31,27 @@ struct list
 //--------------------------------------------------------//
 list_t* list_create(void)
 {
-    CREATE_INST(pl, list_t);
-    VALIDATE_PTR1(pl, PTR_ERR);
+    CREATE_INST(l, list_t);
+    VALIDATE_PTR1(l, RET_PTR_ERR);
 
-    return pl;
+    return l;
 }
 
 //--------------------------------------------------------//
-int list_destroy(list_t* pl)
+int list_destroy(list_t* l)
 {
-    VALIDATE_PTR1(pl, RET_ERR);
+    VALIDATE_PTR1(l, RET_ERR);
 
-    int ret = list_clear(pl);
-    free(pl);
+    int ret = list_clear(l);
+    free(l);
 
     return ret;
 }
 
 //--------------------------------------------------------//
-int list_push(list_t* pl, void* data)
+int list_push(list_t* l, void* data)
 {
-    VALIDATE_PTR2(pl, data, RET_ERR);
+    VALIDATE_PTR2(l, data, RET_ERR);
 
     int ret = RET_PASS;
 
@@ -61,37 +61,37 @@ int list_push(list_t* pl, void* data)
     newNode->data = data;
 
     // Get current head. Could be null if empty.
-    node_t* chead = pl->head;
+    node_t* chead = l->head;
 
     if(chead != NULL) // insert
     {
         chead->prev = newNode;
         newNode->next = chead;
-        pl->head = newNode;
+        l->head = newNode;
     }
     else // init
     {
-        pl->head = newNode;
+        l->head = newNode;
     }
     
     // Clean up tail also.
-    if(pl->tail == NULL)
+    if(l->tail == NULL)
     {
-        pl->tail = newNode;
+        l->tail = newNode;
     }
 
     return ret;
 }
 
 //--------------------------------------------------------//
-int list_append(list_t* pl, void* data)
+int list_append(list_t* l, void* data)
 {
-    VALIDATE_PTR2(pl, data, RET_ERR);
+    VALIDATE_PTR2(l, data, RET_ERR);
 
     int ret = RET_PASS;
 
     // Get current tail. Can be null.
-    node_t* ctail = pl->tail;
+    node_t* ctail = l->tail;
 
     CREATE_INST(newNode, node_t);
     VALIDATE_PTR1(newNode, RET_ERR);
@@ -106,26 +106,26 @@ int list_append(list_t* pl, void* data)
     newNode->next = NULL; // last
     newNode->prev = ctail;
 
-    pl->tail = newNode;
+    l->tail = newNode;
 
     // Init.
-    if(pl->head == NULL)
+    if(l->head == NULL)
     {
-        pl->head  = newNode;
+        l->head  = newNode;
     }
 
     return ret;
 }
 
 //--------------------------------------------------------//
-int list_pop(list_t* pl, void** data)
+int list_pop(list_t* l, void** data)
 {
-    VALIDATE_PTR2(pl, *data, RET_ERR);
+    VALIDATE_PTR2(l, data, RET_ERR);
 
     int ret = RET_PASS;
 
     // Get current tail.
-    node_t* ctail = pl->tail;
+    node_t* ctail = l->tail;
 
     if(ctail != NULL)
     {
@@ -135,13 +135,13 @@ int list_pop(list_t* pl, void** data)
         // Update neighbors.
         if(ctail->prev == NULL) // special processing for the first element
         {
-           pl->head = NULL;
-           pl->tail = NULL;
+           l->head = NULL;
+           l->tail = NULL;
         }
         else
         {
-           pl->tail = ctail->prev;
-           pl->tail->next = NULL;
+           l->tail = ctail->prev;
+           l->tail->next = NULL;
         }
 
         // Remove the node.
@@ -157,14 +157,14 @@ int list_pop(list_t* pl, void** data)
 }
 
 //--------------------------------------------------------//
-int list_count(list_t* pl)
+int list_count(list_t* l)
 {
-    VALIDATE_PTR1(pl, RET_ERR);
+    VALIDATE_PTR1(l, RET_ERR);
 
     int ret = RET_PASS;
 
     ret = 0;
-    node_t* iter = pl->head;
+    node_t* iter = l->head;
     while(iter != NULL)
     {
         ret++;
@@ -175,28 +175,28 @@ int list_count(list_t* pl)
 }
 
 //--------------------------------------------------------//
-int list_start(list_t* pl)
+int list_start(list_t* l)
 {
-    VALIDATE_PTR1(pl, RET_ERR);
+    VALIDATE_PTR1(l, RET_ERR);
 
     int ret = RET_PASS;
 
-    pl->iter = pl->head;
+    l->iter = l->head;
 
     return ret;
 }
 
 //--------------------------------------------------------//
-int list_next(list_t* pl, void** data)
+int list_next(list_t* l, void** data)
 {
-    VALIDATE_PTR2(pl, *data, RET_ERR);
+    VALIDATE_PTR2(l, data, RET_ERR);
 
     int ret = RET_PASS;
 
-    node_t* nt = pl->iter;
+    node_t* nt = l->iter;
     if(nt != NULL)
     {
-        pl->iter = nt->next;
+        l->iter = nt->next;
         *data = nt->data;
     }
     else
@@ -208,14 +208,14 @@ int list_next(list_t* pl, void** data)
 }
 
 //--------------------------------------------------------//
-int list_clear(list_t* pl)
+int list_clear(list_t* l)
 {
-    VALIDATE_PTR1(pl, RET_ERR);
+    VALIDATE_PTR1(l, RET_ERR);
 
     int ret = RET_PASS;
 
     // Remove all nodes and corresponding data.
-    node_t* iter = pl->head;
+    node_t* iter = l->head;
     while(iter != NULL)
     {
         node_t* next = iter->next;
@@ -228,9 +228,9 @@ int list_clear(list_t* pl)
         iter = next;
     }
 
-    pl->head = NULL;
-    pl->tail = NULL;
-    pl->iter = NULL;
+    l->head = NULL;
+    l->tail = NULL;
+    l->iter = NULL;
 
     return ret;
 }

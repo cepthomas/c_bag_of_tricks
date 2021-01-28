@@ -44,10 +44,10 @@ UT_SUITE(STR_BASIC, "Test basic stringx functions.")
     UT_EQUAL(stringx_endswith(s2, "xxx", CASE_INSENS), RET_FAIL);
 
     UT_EQUAL(stringx_contains(s1, "and squ", CASE_SENS), 6);
-    UT_EQUAL(stringx_contains(s1, "anD squ", CASE_SENS), -1);
+    UT_EQUAL(stringx_contains(s1, "anD squ", CASE_SENS), RET_FAIL);
     UT_EQUAL(stringx_contains(s1, "D squ", CASE_INSENS), 8);
-    UT_EQUAL(stringx_contains(s1, "xxx", CASE_SENS), -1);
-    UT_EQUAL(stringx_contains(s1, "xxx", CASE_INSENS), -1);
+    UT_EQUAL(stringx_contains(s1, "xxx", CASE_SENS), RET_FAIL);
+    UT_EQUAL(stringx_contains(s1, "xxx", CASE_INSENS), RET_FAIL);
 
     UT_EQUAL(stringx_compare(s1, "round and square", CASE_SENS), RET_PASS);
     UT_EQUAL(stringx_compare(s1, "roUnd and sQuare", CASE_INSENS), RET_PASS);
@@ -107,8 +107,8 @@ UT_SUITE(STR_FANCY, "Test fancier stringx functions.")
     double d = 44.99;
     const char* s = "xyzzy oooo";
 
-    UT_TRUE(stringx_format(s2, 100, "i:%d I am a GOOD formatted string with d:%f s:%s x:%0X", i, d, s, i));
-    UT_TRUE(stringx_compare(s2, "i:123 I am a GOOD formatted string with d:44.990000 s:xyzzy oooo x:7B", CASE_SENS));
+    UT_EQUAL(stringx_format(s2, 100, "i:%d I am a GOOD formatted string with d:%f s:%s x:%0X", i, d, s, i), RET_PASS);
+    UT_EQUAL(stringx_compare(s2, "i:123 I am a GOOD formatted string with d:44.990000 s:xyzzy oooo x:7B", CASE_SENS), RET_PASS);
 
 
     // Clean up.

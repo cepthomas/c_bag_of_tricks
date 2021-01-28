@@ -22,7 +22,7 @@
 //-------------------------- Error handling -----------------------------//
 
 /// Defines an error (allocation, iniitialization, etc) for a function that returns a pointer.
-#define PTR_ERR NULL
+#define RET_PTR_ERR NULL
 
 /// Defines an error (memory, invalid data, etc) for a function that returns a status int.
 #define RET_ERR -1
@@ -31,7 +31,7 @@
 #define RET_PASS 0
 
 /// Defines failure (expected, end of iteration, etc) for a function that returns a status int.
-#define RET_FAIL 1
+#define RET_FAIL -2
 
 /// Validate function pointer arguments. If fails, sets errno and early returns error.
 /// @param ptr Pointer.
