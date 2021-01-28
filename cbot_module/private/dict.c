@@ -1,6 +1,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "common.h"
 #include "list.h"
@@ -10,152 +11,154 @@
 /// @brief Definition of dictionary thing.
 
 /// Prime number.
-#ifndef NUM_DICT_BINS
-#define NUM_DICT_BINS 53
+#ifndef DICT_NUM_BINS
+#define DICT_NUM_BINS 53
 #endif
 
 
 //---------------- Private --------------------------//
 
-/// Bin definition.
-typedef struct binItem
-{
 
-    // void* data;         ///< Client specific data. Client must cast.
-    // struct node* prev;  ///< Linked list previous node.
-    // struct node* next;  ///< Linked list next node.
-
-} binItem_t;
-
-
+/// One instance of a dictionary.
 struct dict
 {
-    list_t* bins[NUM_DICT_BINS];
-
-    // node_t* head;  ///< Linked list head.
-    // node_t* tail;  ///< Linked list tail.
-    // node_t* iter;  ///< Internal pointer for iteration operations.
-
+    keyType_t kt;                   ///> The key type.
+    list_t* bins[DICT_NUM_BINS];    ///> List data is kv_t.
 };
 
+/// Make hash from string and bin it.
+/// @param s The string.
+/// @return Hash value between 0 and DICT_NUM_BINS.
+static unsigned int p_hashString(char* s);
 
+/// Make hash from int and bin it.
+/// @param i The int.
+/// @return Hash value between 0 and DICT_NUM_BINS.
+static unsigned int p_hashInt(int i);
 
-static key_t p_kt;
-
-
-static unsigned int p_hash(char* s);
+//TODO check returns from list funcs.
 
 
 //---------------- Public API Implementation -------------//
 
+
 //--------------------------------------------------------//
-dict_t* dict_create(key_t kt)
+dict_t* dict_create(keyType_t kt)
 {
-    p_kt = kt;
-
     CREATE_INST(d, dict_t);
-    VALIDATE_PTR1(d, RET_PTR_ERR);
+    VALPTR_PTR(d);
 
-    // initialize...
-    // d->head = NULL;
-    // d->tail = NULL;
-    // d->iter = NULL;
+    // Initialize.
+    d->kt = kt;
+
+    for(int i = 0; i < DICT_NUM_BINS; i++)
+    {
+        list_t* l = list_create();
+        VALPTR_PTR(l);
+        d->bins[i] = l;
+    }
 
     return d;
 }
 
 //--------------------------------------------------------//
-int dict_clear(dict_t* d)
-{
-    int ret = RET_ERR;
-
-    return ret;
-}
-
-//--------------------------------------------------------//
 int dict_destroy(dict_t* d)
 {
-    int ret = RET_PASS;
-    // dict_clear(d);
-    // free(d);
-    return ret;
-}
+    int ret = RS_PASS;
 
-//--------------------------------------------------------//
-int dict_set(dict_t* d, void* key, void* data)
-{
-    int ret = RET_PASS;
+    // Clean up user data.
+    dict_clear(d);
 
-    p_hash("999");
-
-    return ret;
-}
-
-//--------------------------------------------------------//
-int dict_get(dict_t* d, void* key, void** data)
-{
-    int ret = RET_PASS;
-    
-    return ret;
-}
-
-//--------------------------------------------------------//
-list_t* dict_get_keys(dict_t* d)
-{
-    
-    return RET_PTR_ERR;
-}
-
-//---------------- Private Implementation --------------------------//
-
-//--------------------------------------------------------//
-unsigned int p_hash(char* s)
-{
-    // Lifted from http://www.cse.yorku.ca/~oz/hash.html.
-    unsigned long hash = 5381;
-    // bool done = false;
-    int c;
-
-    while ((c = *s++))
+    // Remove all bins.
+    for(int i = 0; i < DICT_NUM_BINS; i++)
     {
-        // djb2
-        hash = ((hash << 5) + hash) + c; // hash * 33 + c 
-        // djb2 revised
-        // hash = hash(i - 1) * 33 ^ str[i];
-        // sdbm
-        // hash = c + (hash << 6) + (hash << 16) - hash;
+        list_destroy(d->bins[i]);
     }
 
-    return (unsigned int)(hash % NUM_DICT_BINS);
+    free(d);
+
+    return ret;
 }
 
+//--------------------------------------------------------//
+int dict_clear(dict_t* d)
+{
+    int ret = RS_PASS;
 
-// Section 6.6 of The C Programming Language presents a simple dictionary (hashtable) data structure.
+    for(int i = 0; i < DICT_NUM_BINS; i++)
+    {
+        list_t* pl = d->bins[i]; // shorthand
 
-// Note that if the hashes of two strings collide, it may lead to an O(n) lookup time. You can reduce the likelihood of collisions
-// by increasing the value of HASHSIZE. For a complete discussion of the data structure, please consult the bo
-// Note that the K&R C hashing algorithm is an appalling hash algorithm. See: programmers.stackexchange.com/questions/49550/… 
-// for details on how truly terrible is really is.
+        // Remove user data.
+        kv_t* kv;
+        list_iterStart(pl);
+        while(RS_PASS == list_iterNext(pl, (void**)&kv))
+        {
+            VALPTR_RS(kv);
+            if(d->kt == KEY_STRING && kv->key.ks != NULL)
+            {
+                free(kv->key.ks);
+            }
+        }
+    }
 
-// struct nlist { /* table entry: */
-//     struct nlist *next; /* next entry in chain */
-//     char *name; /* defined name */
-//     char *defn; /* replacement text */
-// };
+    return ret;
+}
 
-// #define HASHSIZE 101
-// static struct nlist *hashtab[HASHSIZE]; /* pointer table */
+//--------------------------------------------------------//
+int dict_set(dict_t* d, kv_t* kv)
+{
+    VALPTR_RS(d);
+    VALPTR_RS(kv);
+    VALPTR_RS(kv->key.ks);
 
-// /* hash: form hash value for string s */
-// unsigned hash(char *s)
-// {
-//     unsigned hashval;
-//     for (hashval = 0; *s != '\0'; s++)
-//       hashval = *s + 31 * hashval;
-//     return hashval % HASHSIZE;
-// }
+    int ret = RS_PASS;
 
-// /* lookup: look for s in hashtab */
+    unsigned int bin = d->kt == KEY_STRING ? p_hashString(kv->key.ks) : p_hashInt(kv->key.ki);
+
+    // Is it in the bin already?
+    list_t* pl = d->bins[bin]; // shorthand
+    list_iterStart(pl);
+    kv_t* lkv;
+    bool found = false;
+
+    while(RS_PASS == list_iterNext(pl, (void**)&lkv) && !found)
+    {
+        VALPTR_RS(lkv);
+
+        if(d->kt == KEY_STRING)
+        {
+            if(strcmp(lkv->key.ks, kv->key.ks) == 0)
+            {
+                strcpy(lkv->key.ks, kv->key.ks);
+                found = true;
+            }
+        }
+        else // KEY_INT
+        {
+            if(lkv->key.ki == kv->key.ki)
+            {
+                lkv->key.ki = kv->key.ki;
+                found = true;
+            }
+        }
+    }
+
+    if(!found) // new addition
+    {
+        list_append(pl, (void**)kv);
+    }
+
+    return ret;
+}
+
+//--------------------------------------------------------//
+int dict_get(dict_t* d, kv_t* kv)//, void** data)
+{
+    int ret = RS_PASS;
+    
+    return ret;
+}
 // struct nlist *lookup(char *s)
 // {
 //     struct nlist *np;
@@ -165,35 +168,61 @@ unsigned int p_hash(char* s)
 //     return NULL; /* not found */
 // }
 
-// char *strdup(char *);
-// /* install: put (name, defn) in hashtab */
-// struct nlist *install(char *name, char *defn)
-// {
-//     struct nlist *np;
-//     unsigned hashval;
-//     if ((np = lookup(name)) == NULL) 
-//      { /* not found */
-//         np = (struct nlist *) malloc(sizeof(*np));
-//         if (np == NULL || (np->name = strdup(name)) == NULL)
-//           return NULL;
-//         hashval = hash(name);
-//         np->next = hashtab[hashval];
-//         hashtab[hashval] = np;
-//     }
-//      else /* already there */
-//    {
-//         free((void *) np->defn); /*free previous defn */
-//     }
-//     if ((np->defn = strdup(defn)) == NULL)
-//        return NULL;
-//     return np;
-// }
+//--------------------------------------------------------//
+list_t* dict_get_keys(dict_t* d)
+{
+    
+    return BAD_PTR;
+}
 
-// char *strdup(char *s) /* make a duplicate of s */
-// {
-//     char *p;
-//     p = (char *) malloc(strlen(s)+1); /* +1 for ’\0’ */
-//     if (p != NULL)
-//        strcpy(p, s);
-//     return p;
-// }
+//--------------------------------------------------------//
+int dict_dump(dict_t* d, FILE* fp)
+{
+    VALPTR_RS(d);
+    VALPTR_RS(fp);
+
+    int ret = RS_PASS;
+
+    fprintf(fp, "type,bin,numvals,k0,k1,k2\n");
+
+    for(int i = 0; i < DICT_NUM_BINS; i++)
+    {
+        list_t* pl = d->bins[i]; // shorthand
+
+        fprintf(fp, "%d,%d,%d", d->kt, i, list_count(pl));
+
+
+    }
+
+    return ret;
+}
+
+//---------------- Private Implementation --------------------------//
+
+//--------------------------------------------------------//
+unsigned int p_hashString(char* s)
+{
+    // Lifted from http://www.cse.yorku.ca/~oz/hash.html.
+    unsigned long long hash = 5381;
+    int c;
+
+    while ((c = *s++))
+    {
+        // djb2
+        hash = ((hash << 5) + hash) + c; // aka: hash * 33 + c 
+
+        // djb2 revised
+        // hash = hash(i - 1) * 33 ^ str[i];
+
+        // sdbm
+        // hash = c + (hash << 6) + (hash << 16) - hash;
+    }
+
+    return (unsigned int)(hash % DICT_NUM_BINS);
+}
+
+//--------------------------------------------------------//
+unsigned int p_hashInt(int i)
+{
+    return (unsigned int)(i % DICT_NUM_BINS);
+}

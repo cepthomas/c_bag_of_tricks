@@ -22,26 +22,23 @@
 //-------------------------- Error handling -----------------------------//
 
 /// Defines an error (allocation, iniitialization, etc) for a function that returns a pointer.
-#define RET_PTR_ERR NULL
+#define BAD_PTR NULL
 
-/// Defines an error (memory, invalid data, etc) for a function that returns a status int.
-#define RET_ERR -1
+/// Defines an error (memory, invalid data, etc) for a function that returns status int.
+#define RS_ERR -1
 
-/// Defines success for a function that returns a status int.
-#define RET_PASS 0
+/// Defines success for a function that returns status int.
+#define RS_PASS 0
 
-/// Defines failure (expected, end of iteration, etc) for a function that returns a status int.
-#define RET_FAIL -2
+/// Defines failure (expected, end of iteration, etc) for a function that returns status int.
+#define RS_FAIL -2
 
-/// Validate function pointer arguments. If fails, sets errno and early returns error.
+/// Validate pointer. If fails, sets errno and early returns BAD_PTR.
 /// @param ptr Pointer.
-/// @param eret What to return if error.
-#define VALIDATE_PTR1(ptr, eret) if(ptr == NULL) { errno = EINVAL; return eret; }
+#define VALPTR_PTR(ptr) if(ptr == NULL) { errno = EINVAL; return BAD_PTR; }
 
-/// Validate function pointer arguments. If fails, sets errno and early returns error.
-/// @param ptr1 Pointer.
-/// @param ptr2 Pointer.
-/// @param eret What to return if error.
-#define VALIDATE_PTR2(ptr1, ptr2, eret) if(ptr1 == NULL || ptr2 == NULL) { errno = EINVAL; return eret; }
+/// Validate pointer. If fails, sets errno and early returns RS_ERR.
+/// @param ptr Pointer.
+#define VALPTR_RS(ptr) if(ptr == NULL) { errno = EINVAL; return RS_ERR; }
 
 #endif // COMMON_H

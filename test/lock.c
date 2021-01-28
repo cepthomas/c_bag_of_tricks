@@ -67,23 +67,23 @@ sm_t* lock_create(FILE* fp)
 
     // Initial combination is: 000
     CREATE_INST(k1, lockData_t);
-    VALIDATE_PTR1(k1, RET_PTR_ERR);
+    VALPTR_PTR(k1);
     k1->c = '0';
     list_append(p_combination, k1);
 
     CREATE_INST(k2, lockData_t);
-    VALIDATE_PTR1(k2, RET_PTR_ERR);
+    VALPTR_PTR(k2);
     k2->c = '0';
     list_append(p_combination, k2);
 
     CREATE_INST(k3, lockData_t);
-    VALIDATE_PTR1(k3, RET_PTR_ERR);
+    VALPTR_PTR(k3);
     k3->c = '0';
     list_append(p_combination, k3);
 
     // Build the FSM.
     p_sm = sm_create(fp, lock_xlat, ST_DEFAULT, EVT_DEFAULT);
-    VALIDATE_PTR1(p_sm, RET_PTR_ERR);
+    VALPTR_PTR(p_sm);
 
     sm_addState(p_sm, ST_INITIAL,                   initialEnter);
     sm_addTransition(p_sm, EVT_IS_LOCKED,           NULL,                   ST_LOCKED);
@@ -134,7 +134,7 @@ void lock_pressKey(char key)
 
     p_currentKey = key;
 
-    int ret = RET_PASS;
+    int ret = RS_PASS;
 
     switch (key)
     {
@@ -159,7 +159,7 @@ void lock_pressKey(char key)
             break;
     }
 
-    if(ret != RET_PASS)
+    if(ret != RS_PASS)
     {
         // TODO error - do something.
     }
@@ -236,15 +236,15 @@ static void lockedAddDigit(void)
     lockData_t* dcomb;
     lockData_t* dentry;
 
-    list_start(p_combination);
-    list_start(p_currentEntry);
+    list_iterStart(p_combination);
+    list_iterStart(p_currentEntry);
 
     bool ok = list_count(p_combination) == list_count(p_currentEntry);
 
     for(int i = 0; i < list_count(p_combination) && ok; i++)
     {
-        list_next(p_combination, (void**)&dcomb);
-        list_next(p_currentEntry, (void**)&dentry);
+        list_iterNext(p_combination, (void**)&dcomb);
+        list_iterNext(p_currentEntry, (void**)&dentry);
 
         if(dcomb != NULL && dentry != NULL)
         {
@@ -278,12 +278,12 @@ static void setCombo(void)
         list_clear(p_combination);
 
         // Copy data over.
-        list_start(p_currentEntry);
+        list_iterStart(p_currentEntry);
         bool done = false;
         lockData_t* data;
         while (!done)
         {
-            if(list_next(p_currentEntry, (void**)&data))
+            if(list_iterNext(p_currentEntry, (void**)&data))
             {
                 CREATE_INST(data2, lockData_t);
                 list_append(p_combination, data2);

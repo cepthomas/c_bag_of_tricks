@@ -2,12 +2,9 @@
 #ifndef LIST_H
 #define LIST_H
 
-// #include <stdbool.h>
-
-
 /// @brief Declaration of list thing. It's a double linked list implementation.
 
- // TODO all the void** and void* casts?? Also in dict.
+ // TODO clean up all the void** and void* casts?? Also in dict.
 
 
 //---------------- Public API ----------------------//
@@ -16,7 +13,7 @@
 typedef struct list list_t;
 
 /// Create a list.
-/// @return The opaque pointer used in all functions | RET_PTR_ERR.
+/// @return The opaque pointer used in all functions | BAD_PTR.
 list_t* list_create(void);
 
 /// Deletes all nodes and associated data pointers.
@@ -24,7 +21,7 @@ list_t* list_create(void);
 /// @return RET_PASS | RET_ERR.
 int list_clear(list_t* l);
 
-/// Deletes all nodes and frees associated data pointers, and the list struct.
+/// Deletes all nodes and frees associated data pointers, frees the list struct.
 /// @param l The list opaque pointer.
 /// @return RET_PASS | RET_ERR.
 int list_destroy(list_t* l);
@@ -55,12 +52,12 @@ int list_count(list_t* l);
 /// Initialize iterator.
 /// @param l The list opaque pointer.
 /// @return RET_PASS | RET_ERR.
-int list_start(list_t* l);
+int list_iterStart(list_t* l);
 
 /// Next iteration in list.
 /// @param l The list opaque pointer.
 /// @param data Where to put the data.
 /// @return RET_PASS | RET_ERR | RET_FAIL (if at end)
-int list_next(list_t* l, void** data);
+int list_iterNext(list_t* l, void** data);
 
 #endif // LIST_H

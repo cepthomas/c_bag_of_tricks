@@ -55,7 +55,7 @@ struct sm
 sm_t* sm_create(FILE* fp, xlat_t xlat, unsigned int defState, unsigned int defEvent)
 {
     CREATE_INST(sm, sm_t);
-    VALIDATE_PTR1(sm, RET_PTR_ERR);
+    VALPTR_PTR(sm);
 
     sm->fp = fp;
     sm->xlat = xlat;
@@ -74,15 +74,15 @@ sm_t* sm_create(FILE* fp, xlat_t xlat, unsigned int defState, unsigned int defEv
 //--------------------------------------------------------//
 int sm_destroy(sm_t* sm)
 {
-    VALIDATE_PTR1(sm, RET_ERR);
+    VALPTR_RS(sm);
 
-    int ret = RET_PASS;
+    int ret = RS_PASS;
 
     stateDesc_t* st;
 
     // Clean up sub-list.
-    list_start(sm->stateDescs);
-    while(RET_PASS == list_next(sm->stateDescs, (void**)&st))
+    list_iterStart(sm->stateDescs);
+    while(RS_PASS == list_iterNext(sm->stateDescs, (void**)&st))
     {
         list_destroy(st->transDescs);
     }
@@ -98,16 +98,16 @@ int sm_destroy(sm_t* sm)
 //--------------------------------------------------------//
 int sm_reset(sm_t* sm, unsigned int stateId)
 {
-    VALIDATE_PTR1(sm, RET_ERR);
+    VALPTR_RS(sm);
 
-    int ret = RET_PASS;
+    int ret = RS_PASS;
 
     stateDesc_t* st;
 
-    list_start(sm->stateDescs);
-    while(RET_PASS == list_next(sm->stateDescs, (void**)&st))
+    list_iterStart(sm->stateDescs);
+    while(RS_PASS == list_iterNext(sm->stateDescs, (void**)&st))
     {
-        VALIDATE_PTR1(st, RET_ERR);
+        VALPTR_RS(st);
         if(st->stateId == stateId) // found it
         {
             sm->currentState = st;
@@ -125,7 +125,7 @@ int sm_reset(sm_t* sm, unsigned int stateId)
 //--------------------------------------------------------//
 int sm_getState(sm_t* sm)
 {
-    VALIDATE_PTR1(sm, RET_ERR);
+    VALPTR_RS(sm);
 
     return sm->currentState->stateId;
 }
@@ -179,14 +179,14 @@ void sm_addTransition(sm_t* sm, unsigned int eventId, const func_t func, unsigne
 //--------------------------------------------------------//
 int sm_processEvent(sm_t* sm, unsigned int eventId)
 {
-    VALIDATE_PTR1(sm, RET_ERR);
+    VALPTR_RS(sm);
 
-    int ret = RET_PASS;
+    int ret = RS_PASS;
 
     // Transition functions may generate new events so keep a queue.
     // This allows current execution to complete before handling new event.
     CREATE_INST(ld, unsigned int);
-    VALIDATE_PTR1(ld, RET_ERR);
+    VALPTR_RS(ld);
     *ld = eventId;
     list_push(sm->eventQueue, ld);
 
@@ -197,9 +197,9 @@ int sm_processEvent(sm_t* sm, unsigned int eventId)
 
         // Process all events in the event queue.
         int* qevt;
-        while (RET_PASS == list_pop(sm->eventQueue, (void**)&qevt))
+        while (RS_PASS == list_pop(sm->eventQueue, (void**)&qevt))
         {
-            VALIDATE_PTR1(qevt, RET_ERR);
+            VALPTR_RS(qevt);
             unsigned int qevtid = *qevt;
             free(qevt);
 
@@ -214,8 +214,8 @@ int sm_processEvent(sm_t* sm, unsigned int eventId)
             if(sm->defaultState != NULL)
             {
                 transDesc_t* trans = NULL;
-                list_start(sm->defaultState->transDescs);
-                while(RET_PASS == list_next(sm->defaultState->transDescs, (void**)&trans))
+                list_iterStart(sm->defaultState->transDescs);
+                while(RS_PASS == list_iterNext(sm->defaultState->transDescs, (void**)&trans))
                 {
                     if(trans->eventId == qevtid) // found it
                     {
@@ -228,8 +228,8 @@ int sm_processEvent(sm_t* sm, unsigned int eventId)
             if(transDesc == NULL)
             {
                 transDesc_t* trans = NULL;
-                list_start(sm->currentState->transDescs);
-                while(RET_PASS == list_next(sm->currentState->transDescs, (void**)&trans))
+                list_iterStart(sm->currentState->transDescs);
+                while(RS_PASS == list_iterNext(sm->currentState->transDescs, (void**)&trans))
                 {
                     if(trans->eventId == qevtid) // found it
                     {
@@ -261,9 +261,9 @@ int sm_processEvent(sm_t* sm, unsigned int eventId)
                     // State is changing. Find the new state.
                     stateDesc_t* st = NULL;
                     stateDesc_t* nextState = NULL;
-                    list_start(sm->stateDescs);
+                    list_iterStart(sm->stateDescs);
 
-                    while(RET_PASS == list_next(sm->stateDescs, (void**)&st))
+                    while(RS_PASS == list_iterNext(sm->stateDescs, (void**)&st))
                     {
                         if(st->stateId == transDesc->nextStateId) // found it
                         {
@@ -309,9 +309,10 @@ int sm_processEvent(sm_t* sm, unsigned int eventId)
 //--------------------------------------------------------//
 int sm_trace(sm_t* sm, int line, const char* format, ...)
 {
-    VALIDATE_PTR2(sm, format, RET_ERR);
+    VALPTR_RS(sm);
+    VALPTR_RS(format);
 
-    int ret = RET_PASS;
+    int ret = RS_PASS;
 
     if(sm->fp != NULL)
     {
@@ -331,9 +332,10 @@ int sm_trace(sm_t* sm, int line, const char* format, ...)
 //--------------------------------------------------------//
 int sm_toDot(sm_t* sm, FILE* fp)
 {
-    VALIDATE_PTR2(sm, fp, RET_ERR);
+    VALPTR_RS(sm);
+    VALPTR_RS(fp);
 
-    int ret = RET_PASS;
+    int ret = RS_PASS;
 
     // Init attributes for dot.
     fprintf(fp, "digraph StateDiagram {\n");
@@ -359,13 +361,13 @@ int sm_toDot(sm_t* sm, FILE* fp)
     // Iterate all states.
     stateDesc_t* st = NULL;
     transDesc_t* trans = NULL;
-    list_start(sm->stateDescs);
+    list_iterStart(sm->stateDescs);
     
-    while(RET_PASS == list_next(sm->stateDescs, (void**)&st))
+    while(RS_PASS == list_iterNext(sm->stateDescs, (void**)&st))
     {
         // Iterate through the state transitions.
-        list_start(st->transDescs);
-        while(RET_PASS == list_next(st->transDescs, (void**)&trans))
+        list_iterStart(st->transDescs);
+        while(RS_PASS == list_iterNext(st->transDescs, (void**)&trans))
         {
             fprintf(fp, "        \"%s\" -> \"%s\" [label=\"%s\"];\n",
                     sm->xlat(st->stateId),

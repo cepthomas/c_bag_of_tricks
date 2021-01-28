@@ -32,7 +32,7 @@ struct list
 list_t* list_create(void)
 {
     CREATE_INST(l, list_t);
-    VALIDATE_PTR1(l, RET_PTR_ERR);
+    VALPTR_PTR(l);
 
     return l;
 }
@@ -40,7 +40,7 @@ list_t* list_create(void)
 //--------------------------------------------------------//
 int list_destroy(list_t* l)
 {
-    VALIDATE_PTR1(l, RET_ERR);
+    VALPTR_RS(l);
 
     int ret = list_clear(l);
     free(l);
@@ -49,14 +49,43 @@ int list_destroy(list_t* l)
 }
 
 //--------------------------------------------------------//
+int list_clear(list_t* l)
+{
+    VALPTR_RS(l);
+
+    int ret = RS_PASS;
+
+    // Remove all nodes and corresponding data.
+    node_t* iter = l->head;
+    while(iter != NULL)
+    {
+        node_t* next = iter->next;
+        if(iter->data != NULL)
+        {
+            free(iter->data);
+            iter->data = NULL;
+        }
+        free(iter);
+        iter = next;
+    }
+
+    l->head = NULL;
+    l->tail = NULL;
+    l->iter = NULL;
+
+    return ret;
+}
+
+//--------------------------------------------------------//
 int list_push(list_t* l, void* data)
 {
-    VALIDATE_PTR2(l, data, RET_ERR);
+    VALPTR_RS(l);
+    VALPTR_RS(data);
 
-    int ret = RET_PASS;
+    int ret = RS_PASS;
 
     CREATE_INST(newNode, node_t);
-    VALIDATE_PTR1(newNode, RET_ERR);
+    VALPTR_RS(newNode);
 
     newNode->data = data;
 
@@ -86,15 +115,16 @@ int list_push(list_t* l, void* data)
 //--------------------------------------------------------//
 int list_append(list_t* l, void* data)
 {
-    VALIDATE_PTR2(l, data, RET_ERR);
+    VALPTR_RS(l);
+    VALPTR_RS(data);
 
-    int ret = RET_PASS;
+    int ret = RS_PASS;
 
     // Get current tail. Can be null.
     node_t* ctail = l->tail;
 
     CREATE_INST(newNode, node_t);
-    VALIDATE_PTR1(newNode, RET_ERR);
+    VALPTR_RS(newNode);
 
     newNode->data = data;
 
@@ -120,9 +150,10 @@ int list_append(list_t* l, void* data)
 //--------------------------------------------------------//
 int list_pop(list_t* l, void** data)
 {
-    VALIDATE_PTR2(l, data, RET_ERR);
+    VALPTR_RS(l);
+    VALPTR_RS(data);
 
-    int ret = RET_PASS;
+    int ret = RS_PASS;
 
     // Get current tail.
     node_t* ctail = l->tail;
@@ -150,7 +181,7 @@ int list_pop(list_t* l, void** data)
     }
     else // no data there
     {
-        ret = RET_FAIL;
+        ret = RS_FAIL;
     }
 
     return ret;
@@ -159,9 +190,9 @@ int list_pop(list_t* l, void** data)
 //--------------------------------------------------------//
 int list_count(list_t* l)
 {
-    VALIDATE_PTR1(l, RET_ERR);
+    VALPTR_RS(l);
 
-    int ret = RET_PASS;
+    int ret = RS_PASS;
 
     ret = 0;
     node_t* iter = l->head;
@@ -175,11 +206,11 @@ int list_count(list_t* l)
 }
 
 //--------------------------------------------------------//
-int list_start(list_t* l)
+int list_iterStart(list_t* l)
 {
-    VALIDATE_PTR1(l, RET_ERR);
+    VALPTR_RS(l);
 
-    int ret = RET_PASS;
+    int ret = RS_PASS;
 
     l->iter = l->head;
 
@@ -187,11 +218,12 @@ int list_start(list_t* l)
 }
 
 //--------------------------------------------------------//
-int list_next(list_t* l, void** data)
+int list_iterNext(list_t* l, void** data)
 {
-    VALIDATE_PTR2(l, data, RET_ERR);
+    VALPTR_RS(l);
+    VALPTR_RS(data);
 
-    int ret = RET_PASS;
+    int ret = RS_PASS;
 
     node_t* nt = l->iter;
     if(nt != NULL)
@@ -201,36 +233,8 @@ int list_next(list_t* l, void** data)
     }
     else
     {
-        ret = RET_FAIL;
+        ret = RS_FAIL;
     }
-
-    return ret;
-}
-
-//--------------------------------------------------------//
-int list_clear(list_t* l)
-{
-    VALIDATE_PTR1(l, RET_ERR);
-
-    int ret = RET_PASS;
-
-    // Remove all nodes and corresponding data.
-    node_t* iter = l->head;
-    while(iter != NULL)
-    {
-        node_t* next = iter->next;
-        if(iter->data != NULL)
-        {
-            free(iter->data);
-            iter->data = NULL;
-        }
-        free(iter);
-        iter = next;
-    }
-
-    l->head = NULL;
-    l->tail = NULL;
-    l->iter = NULL;
 
     return ret;
 }

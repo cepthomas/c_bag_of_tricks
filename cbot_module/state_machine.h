@@ -26,7 +26,7 @@ typedef const char* (*xlat_t)(unsigned int id);
 /// @param xlat Optional translator for id tracing.
 /// @param defState The default state id.
 /// @param defEvent The default event id.
-/// @return The opaque pointer used in all functions | RET_PTR_ERR.
+/// @return The opaque pointer used in all functions | BAD_PTR.
 sm_t* sm_create(FILE* fp, xlat_t xlat, unsigned int defState, unsigned int defEvent);
 
 /// Clean up all resources including the state machine.

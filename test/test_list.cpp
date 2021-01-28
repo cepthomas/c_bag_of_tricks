@@ -32,25 +32,25 @@ UT_SUITE(LIST_ALL, "Test all list functions.")
     UT_NOT_NULL(mylist);
 
     // Add a node at the beginning.
-    UT_EQUAL(list_push(mylist, &st1), RET_PASS);
+    UT_EQUAL(list_push(mylist, &st1), RS_PASS);
 
     // Add a node at the beginning.
-    UT_EQUAL(list_push(mylist, &st2), RET_PASS);
+    UT_EQUAL(list_push(mylist, &st2), RS_PASS);
 
     // Add a node at the end.
-    UT_EQUAL(list_append(mylist, &st3), RET_PASS);
+    UT_EQUAL(list_append(mylist, &st3), RS_PASS);
 
     // Add a node at the beginning.
-    UT_EQUAL(list_push(mylist, &st4), RET_PASS);
+    UT_EQUAL(list_push(mylist, &st4), RS_PASS);
 
     UT_EQUAL(list_count(mylist), 4);
 
     // Iterate through list.
     test_struct_t* data;
-    UT_EQUAL(list_start(mylist), RET_PASS);
+    UT_EQUAL(list_iterStart(mylist), RS_PASS);
     int state = 0;
 
-    while(RET_PASS == list_next(mylist, (void**)&data))
+    while(RS_PASS == list_iterNext(mylist, (void**)&data))
     {
         UT_NOT_NULL(data);
 
@@ -79,10 +79,10 @@ UT_SUITE(LIST_ALL, "Test all list functions.")
     }
 
     // Try to take one more.
-    UT_EQUAL(list_next(mylist, (void**)&data), RET_FAIL);
+    UT_EQUAL(list_iterNext(mylist, (void**)&data), RS_FAIL);
 
     // Test pop.
-    UT_EQUAL(list_pop(mylist, (void**)&data), RET_PASS);
+    UT_EQUAL(list_pop(mylist, (void**)&data), RS_PASS);
     UT_EQUAL(list_count(mylist), 3);
     UT_NOT_NULL(data);
     UT_EQUAL(data->anumber, 33);
@@ -91,10 +91,10 @@ UT_SUITE(LIST_ALL, "Test all list functions.")
     free(data);
 
     // Add another.
-    UT_EQUAL(list_push(mylist, &st5), RET_PASS);
+    UT_EQUAL(list_push(mylist, &st5), RS_PASS);
 
     // Test pop.
-    UT_EQUAL(list_pop(mylist, (void**)&data), RET_PASS);
+    UT_EQUAL(list_pop(mylist, (void**)&data), RS_PASS);
     UT_EQUAL(list_count(mylist), 3);
     UT_NOT_NULL(data);
     UT_EQUAL(data->anumber, 11);
@@ -103,19 +103,20 @@ UT_SUITE(LIST_ALL, "Test all list functions.")
     free(data);
 
     // Remove everything.
-    UT_EQUAL(list_clear(mylist), RET_PASS);
+    UT_EQUAL(list_clear(mylist), RS_PASS);
     UT_NOT_NULL(mylist);
     UT_EQUAL(list_count(mylist), 0);
-    UT_EQUAL(list_destroy(mylist), RET_PASS);
+    UT_EQUAL(list_destroy(mylist), RS_PASS);
 
     // Bad container.
     list_t* badlist = NULL;
-    UT_EQUAL(list_push(badlist, &st1), RET_ERR);
-    UT_EQUAL(list_append(badlist, &st3), RET_ERR);
-    UT_EQUAL(list_push(badlist, &st4), RET_ERR);
-    UT_EQUAL(list_count(badlist), RET_ERR);
-    UT_EQUAL(list_next(badlist, (void**)&data), RET_ERR);
-    UT_EQUAL(list_pop(badlist, (void**)&data), RET_ERR);
-    UT_EQUAL(list_clear(badlist), RET_ERR);
-    UT_EQUAL(list_destroy(badlist), RET_ERR);
+    UT_EQUAL(list_push(badlist, &st1), RS_ERR);
+    UT_EQUAL(list_append(badlist, &st3), RS_ERR);
+    UT_EQUAL(list_push(badlist, &st4), RS_ERR);
+    UT_EQUAL(list_count(badlist), RS_ERR);
+    UT_EQUAL(list_iterStart(badlist), RS_ERR);
+    UT_EQUAL(list_iterNext(badlist, (void**)&data), RS_ERR);
+    UT_EQUAL(list_pop(badlist, (void**)&data), RS_ERR);
+    UT_EQUAL(list_clear(badlist), RS_ERR);
+    UT_EQUAL(list_destroy(badlist), RS_ERR);
 }

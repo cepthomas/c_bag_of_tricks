@@ -38,14 +38,14 @@ normal behavior and handled accordingly. So cbot errors are very bad and usually
 happen because they have all been caught in unit and integration testing, right?
 
 Rather than add a whole new error handling system, cbot uses existing C patterns:
-- Functions that return pointers return RET_PTR_ERR (NULL) for errors.
-- Functions that return things like counts (where 0 is valid) return RET_ERR (-1) for errors.
-- Functions that return status return RET_ERR (-1) for errors, RET_PASS (0) for success, RET_FAIL (-2) for failure (logical not error).
+- Functions that return pointers return BAD_PTR (NULL) for errors.
+- Functions that return things like counts (where 0 is valid) return RS_ERR (-1) for errors.
+- Functions that return status return RS_ERR (-1) for errors, RS_PASS (0) for success, RS_FAIL (-2) for failure (logical not error).
 - When errors occur, cbot sets errno accordingly.
 - common.h defines some macros:
     - Return values for ints and pointers.
     - Macros for creating typed objects - CREATE_INST(), CREATE_STR().
-    - Macros for validating pointers - VALIDATE_PTR1(), VALIDATE_PTR2(). Note that these use early returns to keep the if-nesting reasonable.
+    - Macros for validating pointers - VALPTR_PTR(), VALPTR_RS(). Note that these use early returns to keep the if-nesting reasonable.
       Normally I hate early returns but in this case the pluses outweigh.
 
 # pnut
