@@ -31,6 +31,11 @@ UT_SUITE(LIST_ALL, "Test all list functions.")
     list_t* mylist = list_create();
     UT_NOT_NULL(mylist);
 
+    // Try to iterate an empty list.
+    test_struct_t* data;
+    UT_EQUAL(list_iterStart(mylist), RS_FAIL);
+    UT_EQUAL(list_iterNext(mylist, (void**)&data), RS_FAIL);
+
     // Add a node at the beginning.
     UT_EQUAL(list_push(mylist, &st1), RS_PASS);
 
@@ -46,7 +51,6 @@ UT_SUITE(LIST_ALL, "Test all list functions.")
     UT_EQUAL(list_count(mylist), 4);
 
     // Iterate through list.
-    test_struct_t* data;
     UT_EQUAL(list_iterStart(mylist), RS_PASS);
     int state = 0;
 

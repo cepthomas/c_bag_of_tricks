@@ -35,45 +35,43 @@ dict_t* dict_create(keyType_t kt);
 
 /// Deletes all nodes and associated data pointers.
 /// @param d The dictionary opaque pointer.
-/// @return RET_PASS | RET_ERR.
+/// @return RS_PASS | RS_ERR.
 int dict_clear(dict_t* d);
 
 /// Deletes all nodes and frees associated data pointers, frees the dict struct.
 /// @param d The dictionary opaque pointer.
-/// @return RET_PASS | RET_ERR.
+/// @return RS_PASS | RS_ERR.
 int dict_destroy(dict_t* d);
 
-// /// Set a value using a key. Also used to remove.
-// /// @param d The dictionary opaque pointer.
-// /// @param key The key.
-// /// @param data Pointer to the associated data, or remove key if NULL.
-// /// @return RET_PASS | RET_ERR.
-// int dict_set(dict_t* d, void* key, void* data);
+/// Size of the dict.
+/// @param l The dict opaque pointer.
+/// @return The size | RS_ERR.
+int dict_count(dict_t* l);
 
 /// Set a value using a key. Also used to remove.
 /// @param d The dictionary opaque pointer.
 /// @param kv The key-value pair.
-/// @return RET_PASS | RET_ERR.
+/// @return RS_PASS | RS_ERR.
 int dict_set(dict_t* d, kv_t* kv);
 
 /// Get a value using a key.
 /// @param d The dictionary opaque pointer.
 /// @param kv The key.
 /// @param data Pointer to where to put the associated data.
-/// @return RET_PASS | RET_FAIL | RET_ERR.
+/// @return RS_PASS | RS_FAIL | RS_ERR.
 int dict_get(dict_t* d, kv_t* kv);//, void** data);
 
 /// Get a list of all key_t. NOTE - client must destroy the returned list.
 /// @param d The dictionary opaque pointer.
 /// @param key The key.
 /// @param data Pointer to where to put the associated data.
-/// @return RET_PASS | RET_FAIL | RET_ERR.
+/// @return RS_PASS | RS_FAIL | RS_ERR.
 list_t* dict_get_keys(dict_t* d);
 
 /// Dump contents of the dict to file.
 /// @param d Pertinent dictionary.
 /// @param fp Output stream.
-/// @return RET_PASS | RET_ERR.
+/// @return RS_PASS | RS_ERR.
 int dict_dump(dict_t* d, FILE* fp);
 
 #endif // DICT_H

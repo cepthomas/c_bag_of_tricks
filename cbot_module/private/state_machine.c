@@ -151,7 +151,7 @@ void sm_addState(sm_t* sm, unsigned int stateId, const func_t func)
     }
     else
     {
-        //TOOOE ret = RET_ERR;
+        //TOOOE ret = RS_ERR;
         errno = ENOMEM;
     }
 }
@@ -171,7 +171,7 @@ void sm_addTransition(sm_t* sm, unsigned int eventId, const func_t func, unsigne
     }
     else
     {
-        //TOOOE ret = RET_ERR;
+        //TOOOE ret = RS_ERR;
         errno = ENOMEM;
     }
 }

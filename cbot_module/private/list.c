@@ -62,7 +62,7 @@ int list_clear(list_t* l)
         node_t* next = iter->next;
         if(iter->data != NULL)
         {
-            free(iter->data);
+            free(iter->data); //TODO bad if pointer is to allocated memory - client needs to do that
             iter->data = NULL;
         }
         free(iter);
@@ -192,9 +192,7 @@ int list_count(list_t* l)
 {
     VALPTR_RS(l);
 
-    int ret = RS_PASS;
-
-    ret = 0;
+    int ret = 0;
     node_t* iter = l->head;
     while(iter != NULL)
     {
@@ -213,6 +211,12 @@ int list_iterStart(list_t* l)
     int ret = RS_PASS;
 
     l->iter = l->head;
+
+    node_t* nt = l->iter;
+    if(nt == NULL)
+    {
+        ret = RS_FAIL;
+    }
 
     return ret;
 }

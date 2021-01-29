@@ -30,7 +30,7 @@ stringx_t* stringx_create(const char* sinit);
 
 /// Frees all data pointers, and the string struct.
 /// @param s Source stringx. After this returns it is no longer valid.
-/// @return RET_PASS | RET_ERR.
+/// @return RS_PASS | RS_ERR.
 int stringx_destroy(stringx_t* s);
 
 /// Get the contained data.
@@ -40,51 +40,51 @@ const char* stringx_content(stringx_t* s);
 
 /// Size of the string.
 /// @param s Source stringx.
-/// @return The size | RET_ERR.
+/// @return The size | RS_ERR.
 int stringx_len(stringx_t* s);
 
 /// Set s to new value.
 /// @param s Source stringx.
 /// @param sinit The new value. If NULL, content will be "".
-/// @return RET_PASS | RET_ERR.
+/// @return RS_PASS | RS_ERR.
 int stringx_set(stringx_t* s, const char* sinit);
 
 /// Convert to upper case IN PLACE.
 /// @param s Source stringx.
-/// @return RET_PASS | RET_ERR.
+/// @return RS_PASS | RS_ERR.
 int stringx_toupper(stringx_t* s);
 
 /// Convert to lower case IN PLACE.
 /// @param s Source stringx.
-/// @return RET_PASS | RET_ERR.
+/// @return RS_PASS | RS_ERR.
 int stringx_tolower(stringx_t* s);
 
 /// Compare strings.
 /// @param s1 Source stringx.
 /// @param s2 The test value.
 /// @param csens Case sensitivity.
-/// @return RET_PASS if equal | RET_FAIL if not | RET_ERR.
+/// @return RS_PASS if equal | RS_FAIL if not | RS_ERR.
 int stringx_compare(stringx_t* s1, const char* s2, csens_t csens);
 
 /// Test if string starts with.
 /// @param s1 Source stringx.
 /// @param s2 The test value.
 /// @param csens Case sensitivity.
-/// @return RET_PASS if true | RET_FAIL if not | RET_ERR.
+/// @return RS_PASS if true | RS_FAIL if not | RS_ERR.
 int stringx_startswith(stringx_t* s1, const char* s2, csens_t csens);
 
 /// Test if string ends with.
 /// @param s1 Source stringx.
 /// @param s2 The test value.
 /// @param csens Case sensitivity.
-/// @return RET_PASS if true | RET_FAIL if not | RET_ERR.
+/// @return RS_PASS if true | RS_FAIL if not | RS_ERR.
 int stringx_endswith(stringx_t* s1, const char* s2, csens_t csens);
 
 /// Test if string contains.
 /// @param s1 Source stringx.
 /// @param s2 The test value.
 /// @param csens Case sensitivity.
-/// @return Index of match | RET_ERR.
+/// @return Index of match | RS_ERR.
 int stringx_contains(stringx_t* s1, const char* s2, csens_t csens);
 
 /// Copy a stringx.
@@ -100,20 +100,20 @@ stringx_t* stringx_left(stringx_t* s, unsigned int num);
 
 /// Trim whitespace from both ends IN PLACE.
 /// @param s Source stringx.
-/// @return RET_PASS | RET_ERR.
+/// @return RS_PASS | RS_ERR.
 int stringx_trim(stringx_t* s);
 
 /// Append a string to the stringx.
 /// @param s Source stringx.
 /// @param sapp String to append.
-/// @return RET_PASS | RET_ERR.
+/// @return RS_PASS | RS_ERR.
 int stringx_append(stringx_t* s, stringx_t* sapp);
 
 /// Format the string IN PLACE.
 /// @param s Source stringx.
 /// @param maxlen Client must give us a clue.
 /// @param format Standard format string and args.
-/// @return RET_PASS | RET_ERR. Not used right now but in future could check arg validity.
+/// @return RS_PASS | RS_ERR. Not used right now but in future could check arg validity.
 int stringx_format(stringx_t* s, unsigned int maxlen, const char* format, ...);
 
 /// Split the string into parts by token.

@@ -30,5 +30,4 @@ add_executable(cbot_test
 
 
 # Copy test files. TODO clean up when done.
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/test/hemingway.txt  DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/test/hemingway_short.txt  DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

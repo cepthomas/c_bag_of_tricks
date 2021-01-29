@@ -31,7 +31,7 @@ sm_t* sm_create(FILE* fp, xlat_t xlat, unsigned int defState, unsigned int defEv
 
 /// Clean up all resources including the state machine.
 /// @param sm Pertinent state machine.
-/// @return RET_PASS | RET_ERR.
+/// @return RS_PASS | RS_ERR.
 int sm_destroy(sm_t* sm);
 
 /// Add a new state - sets to current state.
@@ -50,31 +50,31 @@ void sm_addTransition(sm_t* sm, unsigned int eventId, const func_t func, unsigne
 /// Process the event in the argument.
 /// @param sm Pertinent state machine.
 /// @param eventId Specific event id.
-/// @return RET_PASS | RET_ERR.
+/// @return RS_PASS | RS_ERR.
 int sm_processEvent(sm_t* sm, unsigned int eventId);
 
 /// Get the current state.
 /// @param sm Pertinent state machine.
-/// @return Current state id | RET_ERR.
+/// @return Current state id | RS_ERR.
 int sm_getState(sm_t* sm);
 
 /// Reset a machine.
 /// @param sm Pertinent state machine.
 /// @param stateId State to set to.
-/// @return RET_PASS | RET_ERR.
+/// @return RS_PASS | RS_ERR.
 int sm_reset(sm_t* sm, unsigned int stateId);
 
 /// Dump contents of the loaded state machine as a dot file.
 /// @param sm Pertinent state machine.
 /// @param fp Output stream.
-/// @return RET_PASS | RET_ERR.
+/// @return RS_PASS | RS_ERR.
 int sm_toDot(sm_t* sm, FILE* fp);
 
 /// Debug logging function.
 /// @param sm Pertinent state machine.
 /// @param line Line number.
 /// @param format Format string followed by args.
-/// @return RET_PASS | RET_ERR.
+/// @return RS_PASS | RS_ERR.
 int sm_trace(sm_t* sm, int line, const char* format, ...);
 
 #endif // STATE_MACHINE_H

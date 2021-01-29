@@ -13,7 +13,8 @@
             // Set debug target as appropriate.
             "target": "${workspaceFolder}/build/cbot_test.exe",
             "cwd": "${workspaceFolder}/build",
-            "valuesFormatting": "parseText"
+            "valuesFormatting": "parseText",
+            //"terminal": ""
         }
     ]
 }
