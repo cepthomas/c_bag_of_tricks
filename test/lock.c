@@ -34,28 +34,28 @@ static sm_t* p_sm;
 
 //////// Transition functions declarations ////////////
 /// Clear the lock.
-static void clearCurrentEntry(void);
+static int clearCurrentEntry(void);
 
 /// Initialize the lock
-static void initialEnter(void);
+static int initialEnter(void);
 
 /// Add a digit to the current sequence.
-static void lockedAddDigit(void);
+static int lockedAddDigit(void);
 
 /// Locked transition function.
-static void lockedEnter(void);
+static int lockedEnter(void);
 
 /// Try setting a new combination.
-static void setCombo(void);
+static int setCombo(void);
 
 /// Add a digit to the current sequence.
-static void setComboAddDigit(void);
+static int setComboAddDigit(void);
 
 /// Clear the lock
-static void tryDefault(void);
+static int tryDefault(void);
 
 /// Lock is unlocked now.
-static void unlockedEnter(void);
+static int unlockedEnter(void);
 
 
 //--------------------------------------------------------//
@@ -66,24 +66,21 @@ sm_t* lock_create(FILE* fp)
     p_combination = list_create();
 
     // Initial combination is: 000
-    CREATE_INST(k1, lockData_t);
-    VALPTR_PTR(k1);
+    CREATE_INST(k1, lockData_t, BAD_PTR);
     k1->c = '0';
     list_append(p_combination, k1);
 
-    CREATE_INST(k2, lockData_t);
-    VALPTR_PTR(k2);
+    CREATE_INST(k2, lockData_t, BAD_PTR);
     k2->c = '0';
     list_append(p_combination, k2);
 
-    CREATE_INST(k3, lockData_t);
-    VALPTR_PTR(k3);
+    CREATE_INST(k3, lockData_t, BAD_PTR);
     k3->c = '0';
     list_append(p_combination, k3);
 
     // Build the FSM.
     p_sm = sm_create(fp, lock_xlat, ST_DEFAULT, EVT_DEFAULT);
-    VALPTR_PTR(p_sm);
+    VAL_PTR(p_sm, BAD_PTR);
 
     sm_addState(p_sm, ST_INITIAL,                   initialEnter);
     sm_addTransition(p_sm, EVT_IS_LOCKED,           NULL,                   ST_LOCKED);
@@ -119,22 +116,26 @@ sm_t* lock_create(FILE* fp)
 
 
 //--------------------------------------------------------//
-void lock_destroy(void)
+int lock_destroy(void)
 {
+    int ret = RS_PASS;
+
     list_destroy(p_currentEntry);
     list_destroy(p_combination);
 
     sm_destroy(p_sm);
+
+    return ret;
 }
 
 //--------------------------------------------------------//
-void lock_pressKey(char key)
+int lock_pressKey(char key)
 {
+    int ret = RS_PASS;
+
     sm_trace(p_sm, __LINE__, "Key pressed %c\n", key);
 
     p_currentKey = key;
-
-    int ret = RS_PASS;
 
     switch (key)
     {
@@ -159,10 +160,7 @@ void lock_pressKey(char key)
             break;
     }
 
-    if(ret != RS_PASS)
-    {
-        // TODO error - do something.
-    }
+    return ret;
 }
 
 //--------------------------------------------------------//
@@ -194,8 +192,10 @@ const char* lock_xlat(unsigned int id)
 //////// Transition functions ////////////
 
 //--------------------------------------------------------//
-void initialEnter()
+int initialEnter()
 {
+    int ret = RS_PASS;
+
     sm_trace(p_sm, __LINE__, "initialEnter()\n");
 
     if (p_isLocked)
@@ -206,29 +206,41 @@ void initialEnter()
     {
         sm_processEvent(p_sm, EVT_IS_UNLOCKED);
     }
+
+    return ret;
 }
 
 //--------------------------------------------------------//
-static void lockedEnter(void)
+int lockedEnter(void)
 {
+    int ret = RS_PASS;
+
     sm_trace(p_sm, __LINE__, "lockedEnter()\n");
     p_isLocked = true;
     list_clear(p_currentEntry);
+
+    return ret;
 }
 
 //--------------------------------------------------------//
-static void clearCurrentEntry(void)
+int clearCurrentEntry(void)
 {
+    int ret = RS_PASS;
+
     sm_trace(p_sm, __LINE__, "clearCurrentEntry()\n");
     list_clear(p_currentEntry);
+
+    return ret;
 }
 
 //--------------------------------------------------------//
-static void lockedAddDigit(void)
+int lockedAddDigit(void)
 {
+    int ret = RS_PASS;
+
     sm_trace(p_sm, __LINE__, "lockedAddDigit()\n");
 
-    CREATE_INST(data, lockData_t);
+    CREATE_INST(data, lockData_t, RS_ERR);
     data->c = p_currentKey;
     list_append(p_currentEntry, data);
 
@@ -256,21 +268,29 @@ static void lockedAddDigit(void)
     {
         sm_processEvent(p_sm, EVT_VALID_COMBO);
     }
+
+    return ret;
 }
 
 //--------------------------------------------------------//
-static void setComboAddDigit(void)
+int setComboAddDigit(void)
 {
+    int ret = RS_PASS;
+
     sm_trace(p_sm, __LINE__, "setComboAddDigit()\n");
 
-    CREATE_INST(data, lockData_t);
+    CREATE_INST(data, lockData_t, RS_ERR);
     data->c = p_currentKey;
     list_append(p_currentEntry, data);
+
+    return ret;
 }
 
 //--------------------------------------------------------//
-static void setCombo(void)
+int setCombo(void)
 {
+    int ret = RS_PASS;
+
     sm_trace(p_sm, __LINE__, "setCombo()\n");
 
     if (list_count(p_currentEntry) > 0)
@@ -285,7 +305,7 @@ static void setCombo(void)
         {
             if(list_iterNext(p_currentEntry, (void**)&data))
             {
-                CREATE_INST(data2, lockData_t);
+                CREATE_INST(data2, lockData_t, RS_ERR);
                 list_append(p_combination, data2);
             }
             else
@@ -296,19 +316,29 @@ static void setCombo(void)
 
         list_clear(p_currentEntry);
     }
+
+    return ret;
 }
 
 //--------------------------------------------------------//
-static void unlockedEnter(void)
+int unlockedEnter(void)
 {
+    int ret = RS_PASS;
+
     sm_trace(p_sm, __LINE__, "unlockedEnter()\n");
     p_isLocked = false;
+
+    return ret;
 }
 
 //--------------------------------------------------------//
-static void tryDefault(void)
+int tryDefault(void)
 {
+    int ret = RS_PASS;
+
     sm_trace(p_sm, __LINE__, "tryDefault()\n");
     p_isLocked = true;
     list_clear(p_currentEntry);
+
+    return ret;
 }

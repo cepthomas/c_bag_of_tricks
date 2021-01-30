@@ -73,7 +73,7 @@ UT_SUITE(SM_DOT, "Test the dot file creation.")
     FILE* fp = fopen("sm.gv", "w");
     UT_NOT_NULL(fp);
 
-    // Create a new lock.
+    // Create a lock sm.
     sm_t* sm = lock_create(NULL);
 
     sm_toDot(sm, fp);
@@ -89,5 +89,6 @@ UT_SUITE(SM_DOT, "Test the dot file creation.")
     UT_EQUAL(ifp, 0);
     UT_EQUAL(buffer.st_size, 40985);
 
+    // Clean up.
     lock_destroy();
 }

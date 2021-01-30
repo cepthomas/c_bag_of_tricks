@@ -8,15 +8,16 @@
 //-------------------------- Typed lifetime -----------------------------//
 
 /// Make an instance of a typed thing with all bytes set to 0. Client is responsible for free().
-/// @param V Thing variable name.
-/// @param T The thing type.
-/// @param E Error value to return in case of failure.
-#define CREATE_INST(V, T) T* V = (T*)calloc(1, sizeof(T))
+/// @param var Thing variable name.
+/// @param type The thing type.
+/// @param err Error value to return in case of failure.
+#define CREATE_INST(var, type, err) type* var = (type*)calloc(1, sizeof(type)); if(var == NULL) { errno = ENOMEM; return err; }
 
 /// Make a standard char buff. Client is responsible for free().
-/// @param V String variable name.
-/// @param N String length. We add room for trailing 0.
-#define CREATE_STR(V, N) char* V = (char*)calloc(N + 1, sizeof(char))
+/// @param var String variable name.
+/// @param len String length. We add room for trailing 0.
+/// @param err Error value to return in case of failure.
+#define CREATE_STR(var, len, err) char* var = (char*)calloc(len + 1, sizeof(char)); if(var == NULL) { errno = ENOMEM; return err; }
 
 
 //-------------------------- Error handling -----------------------------//
@@ -33,12 +34,17 @@
 /// Defines failure (expected, end of iteration, etc) for a function that returns status int.
 #define RS_FAIL -2
 
-/// Validate pointer. If fails, sets errno and early returns BAD_PTR.
+/// Validate pointer arg. If fails, sets errno and early returns.
 /// @param ptr Pointer.
-#define VALPTR_PTR(ptr) if(ptr == NULL) { errno = EINVAL; return BAD_PTR; }
+/// @param err Error value to return in case of failure.
+#define VAL_PTR(ptr, err) if(ptr == NULL) { errno = EINVAL; return err; }
 
-/// Validate pointer. If fails, sets errno and early returns RS_ERR.
-/// @param ptr Pointer.
-#define VALPTR_RS(ptr) if(ptr == NULL) { errno = EINVAL; return RS_ERR; }
+// /// Validate pointer arg. If fails, sets errno and early returns BAD_PTR.
+// /// @param ptr Pointer.
+// #define VALPTR_PTR(ptr) if(ptr == NULL) { errno = EINVAL; return BAD_PTR; }
+
+// /// Validate pointer arg. If fails, sets errno and early returns RS_ERR.
+// /// @param ptr Pointer.
+// #define VALPTR_RS(ptr) if(ptr == NULL) { errno = EINVAL; return RS_ERR; }
 
 #endif // COMMON_H

@@ -54,8 +54,7 @@ struct sm
 //--------------------------------------------------------//
 sm_t* sm_create(FILE* fp, xlat_t xlat, unsigned int defState, unsigned int defEvent)
 {
-    CREATE_INST(sm, sm_t);
-    VALPTR_PTR(sm);
+    CREATE_INST(sm, sm_t, BAD_PTR);
 
     sm->fp = fp;
     sm->xlat = xlat;
@@ -74,7 +73,7 @@ sm_t* sm_create(FILE* fp, xlat_t xlat, unsigned int defState, unsigned int defEv
 //--------------------------------------------------------//
 int sm_destroy(sm_t* sm)
 {
-    VALPTR_RS(sm);
+    VAL_PTR(sm, RS_ERR);
 
     int ret = RS_PASS;
 
@@ -98,7 +97,7 @@ int sm_destroy(sm_t* sm)
 //--------------------------------------------------------//
 int sm_reset(sm_t* sm, unsigned int stateId)
 {
-    VALPTR_RS(sm);
+    VAL_PTR(sm, RS_ERR);
 
     int ret = RS_PASS;
 
@@ -107,7 +106,7 @@ int sm_reset(sm_t* sm, unsigned int stateId)
     list_iterStart(sm->stateDescs);
     while(RS_PASS == list_iterNext(sm->stateDescs, (void**)&st))
     {
-        VALPTR_RS(st);
+        VAL_PTR(st, RS_ERR);
         if(st->stateId == stateId) // found it
         {
             sm->currentState = st;
@@ -125,68 +124,59 @@ int sm_reset(sm_t* sm, unsigned int stateId)
 //--------------------------------------------------------//
 int sm_getState(sm_t* sm)
 {
-    VALPTR_RS(sm);
+    VAL_PTR(sm, RS_ERR);
 
     return sm->currentState->stateId;
 }
 
 //--------------------------------------------------------//
-void sm_addState(sm_t* sm, unsigned int stateId, const func_t func)
+int sm_addState(sm_t* sm, unsigned int stateId, const func_t func)
 {
-    CREATE_INST(stateDesc, stateDesc_t);
+    int ret = RS_PASS;
 
-    if(stateDesc != NULL)
+    CREATE_INST(stateDesc, stateDesc_t, RS_ERR);
+
+    stateDesc->stateId = stateId;
+    stateDesc->func = func;
+    stateDesc->transDescs = list_create();
+
+    list_push(sm->stateDescs, stateDesc);
+    sm->currentState = stateDesc; // for adding transitions
+
+    if(stateId == sm->defState) // keep a reference to this one
     {
-        stateDesc->stateId = stateId;
-        stateDesc->func = func;
-        stateDesc->transDescs = list_create();
-
-        list_push(sm->stateDescs, stateDesc);
-        sm->currentState = stateDesc; // for adding transitions
-
-        if(stateId == sm->defState) // keep a reference to this one
-        {
-            sm->defaultState = stateDesc;
-        }
+        sm->defaultState = stateDesc;
     }
-    else
-    {
-        //TOOOE ret = RS_ERR;
-        errno = ENOMEM;
-    }
+
+    return ret;
 }
 
 //--------------------------------------------------------//
-void sm_addTransition(sm_t* sm, unsigned int eventId, const func_t func, unsigned int nextState)
+int sm_addTransition(sm_t* sm, unsigned int eventId, const func_t func, unsigned int nextState)
 {
-    CREATE_INST(transDesc, transDesc_t);
+    int ret = RS_PASS;
 
-    if(transDesc != NULL)
-    {
-        transDesc->eventId = eventId;
-        transDesc->func = func;
-        transDesc->nextStateId = nextState;
+    CREATE_INST(transDesc, transDesc_t, RS_ERR);
 
-        list_push(sm->currentState->transDescs, transDesc);
-    }
-    else
-    {
-        //TOOOE ret = RS_ERR;
-        errno = ENOMEM;
-    }
+    transDesc->eventId = eventId;
+    transDesc->func = func;
+    transDesc->nextStateId = nextState;
+
+    list_push(sm->currentState->transDescs, transDesc);
+
+    return ret;
 }
 
 //--------------------------------------------------------//
 int sm_processEvent(sm_t* sm, unsigned int eventId)
 {
-    VALPTR_RS(sm);
+    VAL_PTR(sm, RS_ERR);
 
     int ret = RS_PASS;
 
     // Transition functions may generate new events so keep a queue.
     // This allows current execution to complete before handling new event.
-    CREATE_INST(ld, unsigned int);
-    VALPTR_RS(ld);
+    CREATE_INST(ld, unsigned int, RS_ERR);
     *ld = eventId;
     list_push(sm->eventQueue, ld);
 
@@ -199,7 +189,7 @@ int sm_processEvent(sm_t* sm, unsigned int eventId)
         int* qevt;
         while (RS_PASS == list_pop(sm->eventQueue, (void**)&qevt))
         {
-            VALPTR_RS(qevt);
+            VAL_PTR(qevt, RS_ERR);
             unsigned int qevtid = *qevt;
             free(qevt);
 
@@ -309,8 +299,8 @@ int sm_processEvent(sm_t* sm, unsigned int eventId)
 //--------------------------------------------------------//
 int sm_trace(sm_t* sm, int line, const char* format, ...)
 {
-    VALPTR_RS(sm);
-    VALPTR_RS(format);
+    VAL_PTR(sm, RS_ERR);
+    VAL_PTR(format, RS_ERR);
 
     int ret = RS_PASS;
 
@@ -332,8 +322,8 @@ int sm_trace(sm_t* sm, int line, const char* format, ...)
 //--------------------------------------------------------//
 int sm_toDot(sm_t* sm, FILE* fp)
 {
-    VALPTR_RS(sm);
-    VALPTR_RS(fp);
+    VAL_PTR(sm, RS_ERR);
+    VAL_PTR(fp, RS_ERR);
 
     int ret = RS_PASS;
 

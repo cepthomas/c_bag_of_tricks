@@ -44,8 +44,7 @@ static char* p_scopy(const char* sinit);
 //--------------------------------------------------------//
 stringx_t* stringx_create(const char* sinit)
 {
-    CREATE_INST(s, stringx_t);
-    VALPTR_PTR(s);
+    CREATE_INST(s, stringx_t, BAD_PTR);
 
     // Copy the contents.
     p_assign(s, p_scopy(sinit));
@@ -56,7 +55,7 @@ stringx_t* stringx_create(const char* sinit)
 //--------------------------------------------------------//
 int stringx_destroy(stringx_t* s)
 {
-    VALPTR_RS(s);
+    VAL_PTR(s, RS_ERR);
 
     int ret = RS_PASS;
 
@@ -73,8 +72,8 @@ int stringx_destroy(stringx_t* s)
 //--------------------------------------------------------//
 int stringx_set(stringx_t* s, const char* sinit)
 {
-    VALPTR_RS(s);
-    VALPTR_RS(sinit);
+    VAL_PTR(s, RS_ERR);
+    VAL_PTR(sinit, RS_ERR);
 
     int ret = RS_PASS;
 
@@ -87,15 +86,14 @@ int stringx_set(stringx_t* s, const char* sinit)
 //--------------------------------------------------------//
 int stringx_append(stringx_t* s, stringx_t* sapp)
 {
-    VALPTR_RS(s);
-    VALPTR_RS(sapp);
+    VAL_PTR(s, RS_ERR);
+    VAL_PTR(sapp, RS_ERR);
 
     int ret = RS_PASS;
 
     // This is a bit crude. Need to make smarter internal buffer to support growing.
     int slen = stringx_len(s) + stringx_len(sapp);
-    CREATE_STR(snew, slen);
-    VALPTR_RS(snew);
+    CREATE_STR(snew, slen, RS_ERR);
     strcpy(snew, s->raw);
     strcpy(snew + stringx_len(s), sapp->raw);
     ret = p_assign(s, snew);
@@ -119,8 +117,8 @@ int stringx_len(stringx_t* s)
 //--------------------------------------------------------//
 int stringx_compare(stringx_t* s1, const char* s2, csens_t csens)
 {
-    VALPTR_RS(s1);
-    VALPTR_RS(s2);
+    VAL_PTR(s1, RS_ERR);
+    VAL_PTR(s2, RS_ERR);
 
     bool match = stringx_len(s1) == strlen(s2);
 
@@ -135,8 +133,8 @@ int stringx_compare(stringx_t* s1, const char* s2, csens_t csens)
 //--------------------------------------------------------//
 int stringx_startswith(stringx_t* s1, const char* s2, csens_t csens)
 {
-    VALPTR_RS(s1);
-    VALPTR_RS(s2);
+    VAL_PTR(s1, RS_ERR);
+    VAL_PTR(s2, RS_ERR);
 
     bool match = stringx_len(s1) >= strlen(s2);
 
@@ -151,8 +149,8 @@ int stringx_startswith(stringx_t* s1, const char* s2, csens_t csens)
 //--------------------------------------------------------//
 int stringx_endswith(stringx_t* s1, const char* s2, csens_t csens)
 {
-    VALPTR_RS(s1);
-    VALPTR_RS(s2);
+    VAL_PTR(s1, RS_ERR);
+    VAL_PTR(s2, RS_ERR);
 
     bool match = stringx_len(s1) >= strlen(s2);
     unsigned int ind1 = stringx_len(s1) - strlen(s2);
@@ -168,8 +166,8 @@ int stringx_endswith(stringx_t* s1, const char* s2, csens_t csens)
 //--------------------------------------------------------//
 int stringx_contains(stringx_t* s1, const char* s2, csens_t csens)
 {
-    VALPTR_RS(s1);
-    VALPTR_RS(s2);
+    VAL_PTR(s1, RS_ERR);
+    VAL_PTR(s2, RS_ERR);
 
     int index = -1;
 
@@ -205,7 +203,7 @@ int stringx_contains(stringx_t* s1, const char* s2, csens_t csens)
 //--------------------------------------------------------//
 stringx_t* stringx_copy(stringx_t* s)
 {
-    VALPTR_PTR(s);
+    VAL_PTR(s, BAD_PTR);
 
     stringx_t* copy = stringx_create(s->raw);
 
@@ -215,16 +213,14 @@ stringx_t* stringx_copy(stringx_t* s)
 //--------------------------------------------------------//
 stringx_t* stringx_left(stringx_t* s, unsigned int num)
 {
-    VALPTR_PTR(s);
+    VAL_PTR(s, BAD_PTR);
 
     stringx_t* left = stringx_create("");
 
     if(strlen(s->raw) >= num)
     {
-        CREATE_STR(sleft, num);
-        CREATE_STR(sresid, stringx_len(s) - num);
-        VALPTR_PTR(sleft);
-        VALPTR_PTR(sresid);
+        CREATE_STR(sleft, num, BAD_PTR);
+        CREATE_STR(sresid, stringx_len(s) - num, BAD_PTR);
 
         strncpy(sleft, s->raw, num);
         strncpy(sresid, s->raw + num, stringx_len(s) - num);
@@ -239,7 +235,7 @@ stringx_t* stringx_left(stringx_t* s, unsigned int num)
 //--------------------------------------------------------//
 int stringx_trim(stringx_t* s)
 {
-    VALPTR_RS(s);
+    VAL_PTR(s, RS_ERR);
 
     int ret = RS_PASS;
 
@@ -274,8 +270,7 @@ int stringx_trim(stringx_t* s)
         last = last >= 0 ? last : len - 1;
 
         unsigned int slen = (unsigned int)(last - first);
-        CREATE_STR(cs, slen);
-        VALPTR_RS(cs);
+        CREATE_STR(cs, slen, RS_ERR);
         memcpy(cs, s->raw + first, slen);
         cs[slen] = 0;
         p_assign(s, cs);
@@ -287,7 +282,7 @@ int stringx_trim(stringx_t* s)
 //--------------------------------------------------------//
 int stringx_toupper(stringx_t* s)
 {
-    VALPTR_RS(s);
+    VAL_PTR(s, RS_ERR);
 
     int ret = RS_PASS;
 
@@ -307,7 +302,7 @@ int stringx_toupper(stringx_t* s)
 //--------------------------------------------------------//
 int stringx_tolower(stringx_t* s)
 {
-    VALPTR_RS(s);
+    VAL_PTR(s, RS_ERR);
 
     int ret = RS_PASS;
 
@@ -327,13 +322,12 @@ int stringx_tolower(stringx_t* s)
 //--------------------------------------------------------//
 int stringx_format(stringx_t* s, unsigned int maxlen, const char* format, ...)
 {
-    VALPTR_RS(s);
-    VALPTR_RS(format);
+    VAL_PTR(s, RS_ERR);
+    VAL_PTR(format, RS_ERR);
 
     int ret = RS_PASS;
 
-    CREATE_STR(buff, maxlen);
-    VALPTR_RS(buff);
+    CREATE_STR(buff, maxlen, RS_ERR);
     va_list args;
     va_start(args, format);
     vsnprintf(buff, maxlen, format, args);
@@ -346,22 +340,20 @@ int stringx_format(stringx_t* s, unsigned int maxlen, const char* format, ...)
 //--------------------------------------------------------//
 list_t* stringx_split(stringx_t* s, const char* delim)
 {
-    VALPTR_PTR(s);
-    VALPTR_PTR(delim);
+    VAL_PTR(s, BAD_PTR);
+    VAL_PTR(delim, BAD_PTR);
    
     list_t* parts = list_create();
-    VALPTR_PTR(parts);
+    VAL_PTR(parts, BAD_PTR);
 
     // Make writable copy and tokenize it.
-    CREATE_STR(cp, strlen(s->raw));
-    VALPTR_PTR(cp);
+    CREATE_STR(cp, strlen(s->raw), BAD_PTR);
     strcpy(cp, s->raw);
 
     char* token = strtok(cp, delim);
     while(token != NULL)
     {
-        CREATE_STR(ctoken, strlen(token));
-        VALPTR_PTR(ctoken);
+        CREATE_STR(ctoken, strlen(token), BAD_PTR);
         strcpy(ctoken, token);
         list_append(parts, ctoken);
         token = strtok(NULL, delim);
@@ -376,8 +368,8 @@ list_t* stringx_split(stringx_t* s, const char* delim)
 //--------------------------------------------------------//
 int p_assign(stringx_t* s, char* cs)
 {
-    VALPTR_RS(s);
-    VALPTR_RS(cs);
+    VAL_PTR(s, RS_ERR);
+    VAL_PTR(cs, RS_ERR);
 
     // Flush old.
     if(s->raw != NULL)
@@ -394,15 +386,14 @@ int p_assign(stringx_t* s, char* cs)
 //--------------------------------------------------------//
 char* p_scopy(const char* sinit)
 {
-    VALPTR_PTR(sinit);
+    VAL_PTR(sinit, BAD_PTR);
 
     char* retbuff;
 
     // Copy the contents.
     if(sinit != NULL)
     {
-        CREATE_STR(buff, strlen(sinit));
-        VALPTR_PTR(buff);
+        CREATE_STR(buff, strlen(sinit), BAD_PTR);
         strcpy(buff, sinit);
         retbuff = buff;
     }

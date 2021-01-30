@@ -29,9 +29,11 @@ UT_SUITE(DICT_STR, "Test all dict functions using string key.")
     UT_NOT_NULL(mydict);
     UT_EQUAL(dict_count(mydict), 184);
 
-    CREATE_INST(kv, kv_t);
+    kv_t* kv = (kv_t*)calloc(1, sizeof(kv_t));
+
     // look at some
-    CREATE_STR(s, 10);
+    char* s = (char*)calloc(10, sizeof(char));
+
     // good
     strcpy(s, "SOMETHING");  
     kv->key.ks = s;
@@ -49,7 +51,7 @@ UT_SUITE(DICT_STR, "Test all dict functions using string key.")
     list_t* keys = dict_get_keys(mydict);
     UT_NOT_NULL(keys);
     UT_EQUAL(list_count(keys), 184);
-    // look at some TODO need random access....
+    // look at some TODO...
 
     // Remove everything.
     UT_EQUAL(dict_clear(mydict), RS_PASS);
@@ -61,7 +63,7 @@ UT_SUITE(DICT_STR, "Test all dict functions using string key.")
     dict_t* baddict = NULL;
     UT_EQUAL(dict_set(baddict, kv), RS_ERR);
     UT_EQUAL(dict_dump(baddict, NULL), RS_ERR);
-    UT_EQUAL(dict_get(baddict, kv), RS_ERR);////-1
+    UT_EQUAL(dict_get(baddict, kv), RS_ERR);
     UT_NULL(dict_get_keys(baddict));
     UT_EQUAL(dict_clear(baddict), RS_ERR);
     UT_EQUAL(dict_destroy(baddict), RS_ERR);
@@ -75,7 +77,8 @@ UT_SUITE(DICT_INT, "Test some dict functions using int key.")
     UT_NOT_NULL(mydict);
     UT_EQUAL(dict_count(mydict), 289);
 
-    CREATE_INST(kv, kv_t);
+    kv_t* kv = (kv_t*)calloc(1, sizeof(kv_t));
+
     // look at some
     // good
     kv->key.ki = 155;
@@ -92,7 +95,7 @@ UT_SUITE(DICT_INT, "Test some dict functions using int key.")
     list_t* keys = dict_get_keys(mydict);
     UT_NOT_NULL(keys);
     UT_EQUAL(list_count(keys), 289);
-    // look at some TODO need random access....
+    // look at some TODO...
 
     // Remove everything.
     UT_EQUAL(dict_clear(mydict), RS_PASS);
@@ -156,16 +159,16 @@ dict_t* create_str_dict(void)
                 if(buffind > 0)
                 {
                     buff[buffind] = 0;
-                    CREATE_INST(st1, test_struct_t);
-                    CREATE_STR(sv, 16);
+                    CREATE_INST(st1, test_struct_t, NULL);
+                    CREATE_STR(sv, 16, NULL);
                     st1->anumber = 100 + i;
                     sprintf(sv, "str%d", st1->anumber);
                     st1->astring = sv;
-                    CREATE_STR(sk, strlen(buff));
+                    CREATE_STR(sk, strlen(buff), NULL);
                     strcpy(sk, buff);
                     i++;
 
-                    CREATE_INST(kv, kv_t);
+                    CREATE_INST(kv, kv_t, NULL);
                     kv->key.ks = sk;
                     kv->value = st1;
 
@@ -203,12 +206,12 @@ dict_t* create_int_dict(void)
     // Add some values.
     for(int k = 0; k < 290; k++)
     {
-        CREATE_INST(st1, test_struct_t);
+        test_struct_t* st1 = (test_struct_t*)calloc(1, sizeof(test_struct_t));
         st1->anumber = 1000 + k;
-        CREATE_STR(s, 10);
+        char* s = (char*)calloc(10, sizeof(char));
         sprintf(s, "str%d", k);
         st1->astring = s;
-        CREATE_INST(kv, kv_t);
+        kv_t* kv = (kv_t*)calloc(1, sizeof(kv_t));
         kv->key.ki = k;
         kv->value = st1;
         dict_set(d, kv);

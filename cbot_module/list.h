@@ -3,6 +3,9 @@
 #define LIST_H
 
 /// @brief Declaration of list thing. It's a double linked list implementation.
+/// You can use the data pointers for your own application any way you like.
+/// Note that clear() and destroy() will free() them for you but if your data
+/// type contains other pointers you will have to manually free those yourself first.
 
  // TODO clean up all the void** and void* casts?? Also in dict.
 

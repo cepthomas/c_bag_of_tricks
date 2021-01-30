@@ -45,7 +45,7 @@ Rather than add a whole new error handling system, cbot uses existing C patterns
 - common.h defines some macros:
     - Return values for ints and pointers.
     - Macros for creating typed objects - CREATE_INST(), CREATE_STR().
-    - Macros for validating pointers - VALPTR_PTR(), VALPTR_RS(). Note that these use early returns to keep the if-nesting reasonable.
+    - Macros for validating arg pointers - VAL_PTR(). Note that these use early returns to keep the if-nesting reasonable.
       Normally I hate early returns but in this case the pluses outweigh.
 
 # pnut

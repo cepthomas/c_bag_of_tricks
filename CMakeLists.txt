@@ -4,7 +4,7 @@ project(cbot_test)
 set(CMAKE_C_STANDARD 99)
 # set(CMAKE_CXX_STANDARD 11)
 
-# needs -g to debug. TODO clean up flags when done.
+# needs -g to debug. TODO clean up flags when done. -Wno-unused-variable
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall -Werror -Wno-unused-variable")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wno-unused-variable")
 
@@ -29,5 +29,5 @@ add_executable(cbot_test
     )
 
 
-# Copy test files. TODO clean up when done.
+# Copy test files.
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/test/hemingway_short.txt  DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

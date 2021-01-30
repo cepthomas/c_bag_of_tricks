@@ -13,7 +13,8 @@
 typedef struct sm sm_t;
 
 /// Transition function type.
-typedef void (*func_t)(void);
+/// @return Status code.
+typedef int (*func_t)(void);
 
 /// Translate a state or event to readable.
 /// @param id The state or event id.
@@ -38,14 +39,14 @@ int sm_destroy(sm_t* sm);
 /// @param sm Pertinent state machine.
 /// @param stateId State name.
 /// @param func Optional entry function to call.
-void sm_addState(sm_t* sm, unsigned int stateId, const func_t func);
+int sm_addState(sm_t* sm, unsigned int stateId, const func_t func);
 
 /// Add a transition to the current state.
 /// @param sm Pertinent state machine.
 /// @param eventId Event that causes the transition.
 /// @param func Optional transition function to call.
 /// @param nextState State to go to. Can be ST_SAME to stay in the same state.
-void sm_addTransition(sm_t* sm, unsigned int eventId, const func_t func, unsigned int nextState);
+int sm_addTransition(sm_t* sm, unsigned int eventId, const func_t func, unsigned int nextState);
 
 /// Process the event in the argument.
 /// @param sm Pertinent state machine.

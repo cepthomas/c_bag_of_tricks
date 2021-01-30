@@ -43,11 +43,11 @@
 sm_t* lock_create(FILE* fp);
 
 /// Normal destructor.
-void lock_destroy(void);
+int lock_destroy(void);
 
 /// Process input from the keypad.
 /// @param key Specific key pressed.
-void lock_pressKey(char key);
+int lock_pressKey(char key);
 
 /// Readable version of defined state or event.
 /// @param id State or event id to translate.

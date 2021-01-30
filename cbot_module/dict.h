@@ -3,11 +3,14 @@
 #define DICT_H
 
 #include "list.h"
-// Optionally define DICT_NUM_BINS as some-prime-number here.
+// Optionally define DICT_NUM_BINS as some prime number here.
 #include "dict.h"
 
 
 /// @brief Declaration of a rudimentary dictionary thing.
+/// You can use the value pointers for your own application any way you like.
+/// Note that clear() and destroy() will free() them for you but if your data
+/// type contains other pointers you will have to manually free those yourself first.
 
 
 //---------------- Public API ----------------------//
@@ -59,7 +62,7 @@ int dict_set(dict_t* d, kv_t* kv);
 /// @param kv The key.
 /// @param data Pointer to where to put the associated data.
 /// @return RS_PASS | RS_FAIL | RS_ERR.
-int dict_get(dict_t* d, kv_t* kv);//, void** data);
+int dict_get(dict_t* d, kv_t* kv);
 
 /// Get a list of all key_t. NOTE - client must destroy the returned list.
 /// @param d The dictionary opaque pointer.

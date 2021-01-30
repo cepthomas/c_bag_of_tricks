@@ -46,8 +46,7 @@ static unsigned int p_hashInt(int i);
 //--------------------------------------------------------//
 dict_t* dict_create(keyType_t kt)
 {
-    CREATE_INST(d, dict_t);
-    VALPTR_PTR(d);
+    CREATE_INST(d, dict_t, BAD_PTR);
 
     // Initialize.
     d->kt = kt;
@@ -55,7 +54,7 @@ dict_t* dict_create(keyType_t kt)
     for(int i = 0; i < DICT_NUM_BINS; i++)
     {
         list_t* l = list_create();
-        VALPTR_PTR(l);
+        VAL_PTR(l, BAD_PTR);
         d->bins[i] = l;
     }
 
@@ -65,7 +64,7 @@ dict_t* dict_create(keyType_t kt)
 //--------------------------------------------------------//
 int dict_destroy(dict_t* d)
 {
-    VALPTR_RS(d);
+    VAL_PTR(d, RS_ERR);
 
     int ret = RS_PASS;
 
@@ -86,7 +85,7 @@ int dict_destroy(dict_t* d)
 //--------------------------------------------------------//
 int dict_clear(dict_t* d)
 {
-    VALPTR_RS(d);
+    VAL_PTR(d, RS_ERR);
 
     int ret = RS_PASS;
 
@@ -99,7 +98,7 @@ int dict_clear(dict_t* d)
         list_iterStart(pl);
         while(RS_PASS == list_iterNext(pl, (void**)&kv))
         {
-            VALPTR_RS(kv);
+            VAL_PTR(kv, RS_ERR);
             if(d->kt == KEY_STRING && kv->key.ks != NULL)
             {
                 free(kv->key.ks);
@@ -115,7 +114,7 @@ int dict_clear(dict_t* d)
 //--------------------------------------------------------//
 int dict_count(dict_t* d)
 {
-    VALPTR_RS(d);
+    VAL_PTR(d, RS_ERR);
 
     int ret = 0;
     for(int i = 0; i < DICT_NUM_BINS; i++)
@@ -129,13 +128,13 @@ int dict_count(dict_t* d)
 //--------------------------------------------------------//
 int dict_set(dict_t* d, kv_t* kv)
 {
-    VALPTR_RS(d);
-    VALPTR_RS(kv);
-    VALPTR_RS(kv->key.ks);
+    VAL_PTR(d, RS_ERR);
+    VAL_PTR(kv, RS_ERR);
+    VAL_PTR(kv->key.ks, RS_ERR);
 
     int ret = RS_PASS;
 
-    // Is it in the bin already?
+    // If it is in a bin already, replace the value.
     unsigned int bin = d->kt == KEY_STRING ? p_hashString(kv->key.ks) : p_hashInt(kv->key.ki);
     list_t* pl = d->bins[bin]; // shorthand
     list_iterStart(pl);
@@ -144,13 +143,13 @@ int dict_set(dict_t* d, kv_t* kv)
 
     while(RS_PASS == list_iterNext(pl, (void**)&lkv) && !found)
     {
-        VALPTR_RS(lkv);
+        VAL_PTR(lkv, RS_ERR);
 
         if(d->kt == KEY_STRING)
         {
             if(strcmp(lkv->key.ks, kv->key.ks) == 0)
             {
-                strcpy(lkv->key.ks, kv->key.ks);
+                lkv->value = kv->value;
                 found = true;
             }
         }
@@ -158,13 +157,14 @@ int dict_set(dict_t* d, kv_t* kv)
         {
             if(lkv->key.ki == kv->key.ki)
             {
-                lkv->key.ki = kv->key.ki;
+                lkv->value = kv->value;
                 found = true;
             }
         }
     }
 
-    if(!found) // new addition
+    // Not in a bin so add.
+    if(!found)
     {
         list_append(pl, (void**)kv);
     }
@@ -175,8 +175,8 @@ int dict_set(dict_t* d, kv_t* kv)
 //--------------------------------------------------------//
 int dict_get(dict_t* d, kv_t* kv)//, void** data)
 {
-    VALPTR_RS(d);
-    VALPTR_RS(kv);
+    VAL_PTR(d, RS_ERR);
+    VAL_PTR(kv, RS_ERR);
 
     int ret = RS_FAIL;
     kv->value = NULL;
@@ -190,7 +190,7 @@ int dict_get(dict_t* d, kv_t* kv)//, void** data)
 
     while(RS_PASS == list_iterNext(pl, (void**)&lkv) && !found)
     {
-        VALPTR_RS(lkv);
+        VAL_PTR(lkv, RS_ERR);
 
         if(d->kt == KEY_STRING)
         {
@@ -218,7 +218,7 @@ int dict_get(dict_t* d, kv_t* kv)//, void** data)
 //--------------------------------------------------------//
 list_t* dict_get_keys(dict_t* d)
 {
-    VALPTR_PTR(d);
+    VAL_PTR(d, BAD_PTR);
 
     list_t* l = list_create();
     
@@ -232,18 +232,18 @@ list_t* dict_get_keys(dict_t* d)
 
         while(RS_PASS == list_iterNext(pl, (void**)&kv))
         {
-            VALPTR_PTR(kv);
+            VAL_PTR(kv, BAD_PTR);
             if(d->kt == KEY_STRING)
             {
                 // Copy only.
-                VALPTR_PTR(kv->key.ks);
-                CREATE_STR(s, strlen(kv->key.ks));
+                VAL_PTR(kv->key.ks, BAD_PTR);
+                CREATE_STR(s, strlen(kv->key.ks), BAD_PTR);
                 strcpy(s, kv->key.ks);
                 list_append(l, s);
             }
             else // KEY_INT
             {
-                CREATE_INST(pi, int);
+                CREATE_INST(pi, int, BAD_PTR);
                 list_append(l, pi);
             }
             
@@ -256,8 +256,8 @@ list_t* dict_get_keys(dict_t* d)
 //--------------------------------------------------------//
 int dict_dump(dict_t* d, FILE* fp)
 {
-    VALPTR_RS(d);
-    VALPTR_RS(fp);
+    VAL_PTR(d, RS_ERR);
+    VAL_PTR(fp, RS_ERR);
 
     int ret = RS_PASS;
 
