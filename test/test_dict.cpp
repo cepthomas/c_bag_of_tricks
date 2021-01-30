@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <cstring>
 
-#include "common.h"
+#include "common.h" //TODO no
 
 #include "pnut.h"
 
@@ -29,10 +29,10 @@ UT_SUITE(DICT_STR, "Test all dict functions using string key.")
     UT_NOT_NULL(mydict);
     UT_EQUAL(dict_count(mydict), 184);
 
-    kv_t* kv = (kv_t*)calloc(1, sizeof(kv_t));
+    CREATE_INST(kv, kv_t, RS_ERR);
 
     // look at some
-    char* s = (char*)calloc(10, sizeof(char));
+    CREATE_STR(s, 16, RS_ERR);
 
     // good
     strcpy(s, "SOMETHING");  
@@ -67,6 +67,8 @@ UT_SUITE(DICT_STR, "Test all dict functions using string key.")
     UT_NULL(dict_get_keys(baddict));
     UT_EQUAL(dict_clear(baddict), RS_ERR);
     UT_EQUAL(dict_destroy(baddict), RS_ERR);
+
+    return 0;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -77,7 +79,7 @@ UT_SUITE(DICT_INT, "Test some dict functions using int key.")
     UT_NOT_NULL(mydict);
     UT_EQUAL(dict_count(mydict), 289);
 
-    kv_t* kv = (kv_t*)calloc(1, sizeof(kv_t));
+    CREATE_INST(kv, kv_t, RS_ERR);
 
     // look at some
     // good
@@ -102,6 +104,8 @@ UT_SUITE(DICT_INT, "Test some dict functions using int key.")
     UT_NOT_NULL(mydict);
     UT_EQUAL(dict_count(mydict), 0);
     UT_EQUAL(dict_destroy(mydict), RS_PASS);
+
+    return 0;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -130,6 +134,8 @@ UT_SUITE(DICT_DUMP, "Test the dump file creation.")
     dict_destroy(mydict);
 
     // TODO need some actual test.
+
+    return 0;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -161,9 +167,9 @@ dict_t* create_str_dict(void)
                     buff[buffind] = 0;
                     CREATE_INST(st1, test_struct_t, NULL);
                     CREATE_STR(sv, 16, NULL);
-                    st1->anumber = 100 + i;
-                    sprintf(sv, "str%d", st1->anumber);
+                    sprintf(sv, "Ajay_%d", st1->anumber);
                     st1->astring = sv;
+                    st1->anumber = 100 + i;
                     CREATE_STR(sk, strlen(buff), NULL);
                     strcpy(sk, buff);
                     i++;
@@ -206,12 +212,12 @@ dict_t* create_int_dict(void)
     // Add some values.
     for(int k = 0; k < 290; k++)
     {
-        test_struct_t* st1 = (test_struct_t*)calloc(1, sizeof(test_struct_t));
+        CREATE_INST(st1, test_struct_t, BAD_PTR);
         st1->anumber = 1000 + k;
-        char* s = (char*)calloc(10, sizeof(char));
+        CREATE_STR(s, 16, BAD_PTR);
         sprintf(s, "str%d", k);
         st1->astring = s;
-        kv_t* kv = (kv_t*)calloc(1, sizeof(kv_t));
+        CREATE_INST(kv, kv_t, BAD_PTR);
         kv->key.ki = k;
         kv->value = st1;
         dict_set(d, kv);

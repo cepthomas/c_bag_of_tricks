@@ -75,7 +75,7 @@ public:
 
     /// All test suite specifications must supply this execution function.
     /// @param context The TestContext struct.
-    virtual void Run(TestContext& context) = 0;
+    virtual int Run(TestContext& context) = 0;
 
     /// Compliance.
     virtual ~TestSuite();
@@ -122,10 +122,10 @@ public:\
     {\
         TestManager::Instance().AddSuite(this);\
     }\
-    void Run(TestContext&);\
+    int Run(TestContext&);\
     ~id##_TestSuite(){} \
 }id##_Instance;\
-void id##_TestSuite::Run(TestContext& testContext)
+int id##_TestSuite::Run(TestContext& testContext)
 
 /// Common code.
 #define PASS_COMMON \

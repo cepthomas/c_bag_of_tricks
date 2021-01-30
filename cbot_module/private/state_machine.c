@@ -89,7 +89,7 @@ int sm_destroy(sm_t* sm)
     list_destroy(sm->stateDescs);
     list_destroy(sm->eventQueue);
 
-    free(sm);
+    FREE(sm);
 
     return ret;
 }
@@ -191,7 +191,7 @@ int sm_processEvent(sm_t* sm, unsigned int eventId)
         {
             VAL_PTR(qevt, RS_ERR);
             unsigned int qevtid = *qevt;
-            free(qevt);
+            FREE(qevt);
 
             sm_trace(sm, __LINE__, "Process current state %s event %s\n",
                      sm->xlat(sm->currentState->stateId), sm->xlat(qevtid));

@@ -30,6 +30,8 @@ UT_SUITE(PNUT_1, "Test basic check macros")
     p = malloc(100);
     UT_NOT_NULL(p);
     free(p);
+
+    return 0;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -80,4 +82,6 @@ UT_SUITE(PNUT_2, "The remaining tests for pnut.h. Some will fail deliberately.")
 
     UT_INFO("Should fail", ">>>");
     UT_CLOSE(1.500, 1.499, 0.0009);
+
+    return 0;
 }

@@ -31,7 +31,7 @@ struct list
 //--------------------------------------------------------//
 list_t* list_create(void)
 {
-    CREATE_INST(l, list_t, BAD_PTR);
+    CREATE_INST(l, list_t, BAD_PTR);//<<<<<<< Unfreed memory
 
     return l;
 }
@@ -42,7 +42,7 @@ int list_destroy(list_t* l)
     VAL_PTR(l, RS_ERR);
 
     int ret = list_clear(l);
-    free(l);
+    FREE(l);
 
     return ret;
 }
@@ -61,10 +61,10 @@ int list_clear(list_t* l)
         node_t* next = iter->next;
         if(iter->data != NULL)
         {
-            free(iter->data);
+            FREE(iter->data);//<<<<<<< Freeing invalid pointer 
             iter->data = NULL;
         }
-        free(iter);
+        FREE(iter);
         iter = next;
     }
 
@@ -120,7 +120,7 @@ int list_append(list_t* l, void* data)
     // Get current tail. Can be null.
     node_t* ctail = l->tail;
 
-    CREATE_INST(newNode, node_t, RS_ERR);
+    CREATE_INST(newNode, node_t, RS_ERR);//<<<<<<< Unfreed memory
     newNode->data = data;
 
     if(ctail != NULL)
@@ -133,7 +133,7 @@ int list_append(list_t* l, void* data)
 
     l->tail = newNode;
 
-    // Init.
+    // Init if first.
     if(l->head == NULL)
     {
         l->head  = newNode;
@@ -171,7 +171,7 @@ int list_pop(list_t* l, void** data)
         }
 
         // Remove the node.
-        free(ctail);
+        FREE(ctail);
         ctail = NULL;
     }
     else // no data there

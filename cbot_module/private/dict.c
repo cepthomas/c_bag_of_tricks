@@ -77,7 +77,7 @@ int dict_destroy(dict_t* d)
         list_destroy(d->bins[i]);
     }
 
-    free(d);
+    FREE(d);
 
     return ret;
 }
@@ -101,7 +101,7 @@ int dict_clear(dict_t* d)
             VAL_PTR(kv, RS_ERR);
             if(d->kt == KEY_STRING && kv->key.ks != NULL)
             {
-                free(kv->key.ks);
+                FREE(kv->key.ks);
             }
         }
 

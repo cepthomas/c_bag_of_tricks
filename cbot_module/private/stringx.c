@@ -44,6 +44,7 @@ static char* p_scopy(const char* sinit);
 //--------------------------------------------------------//
 stringx_t* stringx_create(const char* sinit)
 {
+    VAL_PTR(sinit, BAD_PTR);
     CREATE_INST(s, stringx_t, BAD_PTR);
 
     // Copy the contents.
@@ -61,10 +62,10 @@ int stringx_destroy(stringx_t* s)
 
     if(s->raw != NULL)
     {
-        free(s->raw);
+        FREE(s->raw);
         s->raw = NULL;
     }
-    free(s);
+    FREE(s);
 
     return ret;
 }
@@ -359,7 +360,7 @@ list_t* stringx_split(stringx_t* s, const char* delim)
         token = strtok(NULL, delim);
     }
 
-    free(cp);
+    FREE(cp);
     return parts;
 }
 
@@ -374,13 +375,13 @@ int p_assign(stringx_t* s, char* cs)
     // Flush old.
     if(s->raw != NULL)
     {
-        free(s->raw);
+        FREE(s->raw);
     }
 
     s->raw = cs == NULL ? NULL : cs;
     // s->valid = true;
 
-    return RS_ERR;
+    return RS_PASS;
 }
 
 //--------------------------------------------------------//
@@ -390,17 +391,9 @@ char* p_scopy(const char* sinit)
 
     char* retbuff;
 
-    // Copy the contents.
-    if(sinit != NULL)
-    {
-        CREATE_STR(buff, strlen(sinit), BAD_PTR);
-        strcpy(buff, sinit);
-        retbuff = buff;
-    }
-    else // make it a valid empty string
-    {
-        retbuff = (char*)calloc(1, sizeof(char));
-    }
+    CREATE_STR(buff, strlen(sinit), BAD_PTR);
+    strcpy(buff, sinit);
+    retbuff = buff;
 
     return retbuff;
 }

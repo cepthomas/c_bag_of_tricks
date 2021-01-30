@@ -63,6 +63,8 @@ UT_SUITE(SM_MAIN, "Test the full state machine using a real world example.")
 
     // Clean up.
     lock_destroy();
+
+    return 0;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -91,4 +93,6 @@ UT_SUITE(SM_DOT, "Test the dot file creation.")
 
     // Clean up.
     lock_destroy();
+
+    return 0;
 }

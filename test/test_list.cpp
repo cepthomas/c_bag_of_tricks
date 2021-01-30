@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <cstring>
 
-#include "common.h"
+#include "common.h" //TODO no
 
 #include "pnut.h"
 
@@ -21,11 +21,18 @@ typedef struct
 /////////////////////////////////////////////////////////////////////////////
 UT_SUITE(LIST_ALL, "Test all list functions.")
 {
-    test_struct_t st1 { .anumber = 11, .astring = "Ajay1" };
-    test_struct_t st2 { .anumber = 22, .astring = "Ajay2" };
-    test_struct_t st3 { .anumber = 33, .astring = "Ajay3" };
-    test_struct_t st4 { .anumber = 44, .astring = "Ajay4" };
-    test_struct_t st5 { .anumber = 55, .astring = "Ajay5" };
+    const int NUM_TS = 5;
+    test_struct_t* ts[NUM_TS];
+
+    for(int i = 0; i < NUM_TS; i++)
+    {
+        CREATE_INST(st, test_struct_t, RS_ERR);
+        CREATE_STR(sv, 16, RS_ERR);
+        st->anumber = 11 * (i + 1);
+        sprintf(sv, "Ajay%d", st->anumber);
+        st->astring = sv;
+        ts[i] = st;
+    }
 
     // Make a list.
     list_t* mylist = list_create();
@@ -37,16 +44,16 @@ UT_SUITE(LIST_ALL, "Test all list functions.")
     UT_EQUAL(list_iterNext(mylist, (void**)&data), RS_FAIL);
 
     // Add a node at the beginning.
-    UT_EQUAL(list_push(mylist, &st1), RS_PASS);
+    UT_EQUAL(list_push(mylist, ts[0]), RS_PASS);
 
     // Add a node at the beginning.
-    UT_EQUAL(list_push(mylist, &st2), RS_PASS);
+    UT_EQUAL(list_push(mylist, ts[1]), RS_PASS);
 
     // Add a node at the end.
-    UT_EQUAL(list_append(mylist, &st3), RS_PASS);
+    UT_EQUAL(list_append(mylist, ts[2]), RS_PASS);
 
     // Add a node at the beginning.
-    UT_EQUAL(list_push(mylist, &st4), RS_PASS);
+    UT_EQUAL(list_push(mylist, ts[3]), RS_PASS);
 
     UT_EQUAL(list_count(mylist), 4);
 
@@ -62,22 +69,22 @@ UT_SUITE(LIST_ALL, "Test all list functions.")
         {
             case 0:
                 UT_EQUAL(data->anumber, 44);
-                UT_STR_EQUAL(data->astring, "Ajay4");
+                UT_STR_EQUAL(data->astring, "Ajay44");
                 break;
 
             case 1:
                 UT_EQUAL(data->anumber, 22);
-                UT_STR_EQUAL(data->astring, "Ajay2");
+                UT_STR_EQUAL(data->astring, "Ajay22");
                 break;
 
             case 2:
                 UT_EQUAL(data->anumber, 11);
-                UT_STR_EQUAL(data->astring, "Ajay1");
+                UT_STR_EQUAL(data->astring, "Ajay11");
                 break;
 
             case 3:
                 UT_EQUAL(data->anumber, 33);
-                UT_STR_EQUAL(data->astring, "Ajay3");
+                UT_STR_EQUAL(data->astring, "Ajay33");
                 break;
         }
     }
@@ -90,21 +97,23 @@ UT_SUITE(LIST_ALL, "Test all list functions.")
     UT_EQUAL(list_count(mylist), 3);
     UT_NOT_NULL(data);
     UT_EQUAL(data->anumber, 33);
-    UT_STR_EQUAL(data->astring, "Ajay3");
+    UT_STR_EQUAL(data->astring, "Ajay33");
     // I own this now so clean up.
-    free(data);
+    FREE(data);
+    data = NULL;
 
     // Add another.
-    UT_EQUAL(list_push(mylist, &st5), RS_PASS);
+    UT_EQUAL(list_push(mylist, ts[4]), RS_PASS);
 
     // Test pop.
     UT_EQUAL(list_pop(mylist, (void**)&data), RS_PASS);
     UT_EQUAL(list_count(mylist), 3);
     UT_NOT_NULL(data);
     UT_EQUAL(data->anumber, 11);
-    UT_STR_EQUAL(data->astring, "Ajay1");
+    UT_STR_EQUAL(data->astring, "Ajay11");
     // I own this now so clean up.
-    free(data);
+    FREE(data);
+    data = NULL;
 
     // Remove everything.
     UT_EQUAL(list_clear(mylist), RS_PASS);
@@ -114,13 +123,15 @@ UT_SUITE(LIST_ALL, "Test all list functions.")
 
     // Bad container.
     list_t* badlist = NULL;
-    UT_EQUAL(list_push(badlist, &st1), RS_ERR);
-    UT_EQUAL(list_append(badlist, &st3), RS_ERR);
-    UT_EQUAL(list_push(badlist, &st4), RS_ERR);
+    UT_EQUAL(list_push(badlist, ts[0]), RS_ERR);
+    UT_EQUAL(list_append(badlist, ts[0]), RS_ERR);
+    UT_EQUAL(list_push(badlist, ts[0]), RS_ERR);
     UT_EQUAL(list_count(badlist), RS_ERR);
     UT_EQUAL(list_iterStart(badlist), RS_ERR);
     UT_EQUAL(list_iterNext(badlist, (void**)&data), RS_ERR);
     UT_EQUAL(list_pop(badlist, (void**)&data), RS_ERR);
     UT_EQUAL(list_clear(badlist), RS_ERR);
     UT_EQUAL(list_destroy(badlist), RS_ERR);
+
+    return 0;
 }

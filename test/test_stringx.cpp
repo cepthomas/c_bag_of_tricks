@@ -82,6 +82,8 @@ UT_SUITE(STR_BASIC, "Test basic stringx functions.")
     stringx_destroy(s4);
     // Don't try to destroy the same object twice!
     //stringx_destroy(s4);
+
+    return 0;
 }
 
 
@@ -110,9 +112,10 @@ UT_SUITE(STR_FANCY, "Test fancier stringx functions.")
     UT_EQUAL(stringx_format(s2, 100, "i:%d I am a GOOD formatted string with d:%f s:%s x:%0X", i, d, s, i), RS_PASS);
     UT_EQUAL(stringx_compare(s2, "i:123 I am a GOOD formatted string with d:44.990000 s:xyzzy oooo x:7B", CASE_SENS), RS_PASS);
 
-
     // Clean up.
     stringx_destroy(s1);
     stringx_destroy(s2);
     list_destroy(parts);
+
+    return 0;
 }
