@@ -31,7 +31,7 @@ struct list
 //--------------------------------------------------------//
 list_t* list_create(void)
 {
-    CREATE_INST(l, list_t, BAD_PTR);//<<<<<<< Unfreed memory
+    CREATE_INST(l, list_t, BAD_PTR);//XXX
 
     return l;
 }
@@ -120,7 +120,7 @@ int list_append(list_t* l, void* data)
     // Get current tail. Can be null.
     node_t* ctail = l->tail;
 
-    CREATE_INST(newNode, node_t, RS_ERR);//<<<<<<< Unfreed memory
+    CREATE_INST(newNode, node_t, RS_ERR);//XXX
     newNode->data = data;
 
     if(ctail != NULL)

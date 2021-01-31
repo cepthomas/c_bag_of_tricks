@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <cstring>
 
-#include "common.h" //TODO no
+#include "common.h"
 
 #include "pnut.h"
 
@@ -27,7 +27,7 @@ UT_SUITE(LIST_ALL, "Test all list functions.")
     for(int i = 0; i < NUM_TS; i++)
     {
         CREATE_INST(st, test_struct_t, RS_ERR);
-        CREATE_STR(sv, 16, RS_ERR);
+        CREATE_STR(sv, 16, RS_ERR);//XXX
         st->anumber = 11 * (i + 1);
         sprintf(sv, "Ajay%d", st->anumber);
         st->astring = sv;

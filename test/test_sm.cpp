@@ -18,7 +18,6 @@ UT_SUITE(SM_MAIN, "Test the full state machine using a real world example.")
     sm_t* sm = lock_create(NULL); // stdout);
 
     // Should come up in the locked state.
-    //UT_EQUAL(sm_getState(sm), ST_LOCKED);
     UT_STR_EQUAL(STATE_STR, "ST_LOCKED");
 
     // Enter the default combination of 000.
@@ -70,7 +69,7 @@ UT_SUITE(SM_MAIN, "Test the full state machine using a real world example.")
 /////////////////////////////////////////////////////////////////////////////
 UT_SUITE(SM_DOT, "Test the dot file creation.")
 {
-    system("del sm.*");
+    system("del /q sm.*");
 
     FILE* fp = fopen("sm.gv", "w");
     UT_NOT_NULL(fp);

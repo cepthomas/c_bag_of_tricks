@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <cstring>
 
-#include "common.h" //TODO no
+#include "common.h"
 
 #include "pnut.h"
 
@@ -29,10 +29,10 @@ UT_SUITE(DICT_STR, "Test all dict functions using string key.")
     UT_NOT_NULL(mydict);
     UT_EQUAL(dict_count(mydict), 184);
 
-    CREATE_INST(kv, kv_t, RS_ERR);
+    CREATE_INST(kv, kv_t, RS_ERR);//XXX
 
     // look at some
-    CREATE_STR(s, 16, RS_ERR);
+    CREATE_STR(s, 16, RS_ERR);//XXX
 
     // good
     strcpy(s, "SOMETHING");  
@@ -165,8 +165,8 @@ dict_t* create_str_dict(void)
                 if(buffind > 0)
                 {
                     buff[buffind] = 0;
-                    CREATE_INST(st1, test_struct_t, NULL);
-                    CREATE_STR(sv, 16, NULL);
+                    CREATE_INST(st1, test_struct_t, NULL);//XXX
+                    CREATE_STR(sv, 16, NULL);//XXX
                     sprintf(sv, "Ajay_%d", st1->anumber);
                     st1->astring = sv;
                     st1->anumber = 100 + i;
@@ -212,12 +212,12 @@ dict_t* create_int_dict(void)
     // Add some values.
     for(int k = 0; k < 290; k++)
     {
-        CREATE_INST(st1, test_struct_t, BAD_PTR);
+        CREATE_INST(st1, test_struct_t, BAD_PTR);//XXX
         st1->anumber = 1000 + k;
-        CREATE_STR(s, 16, BAD_PTR);
+        CREATE_STR(s, 16, BAD_PTR);//XXX
         sprintf(s, "str%d", k);
         st1->astring = s;
-        CREATE_INST(kv, kv_t, BAD_PTR);
+        CREATE_INST(kv, kv_t, BAD_PTR);//XXX
         kv->key.ki = k;
         kv->value = st1;
         dict_set(d, kv);

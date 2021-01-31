@@ -13,7 +13,7 @@
 
 /// Prime number.
 #ifndef DICT_NUM_BINS
-#define DICT_NUM_BINS 101
+#define DICT_NUM_BINS 101 //TODO cmd arg?
 #endif
 
 
@@ -237,13 +237,13 @@ list_t* dict_get_keys(dict_t* d)
             {
                 // Copy only.
                 VAL_PTR(kv->key.ks, BAD_PTR);
-                CREATE_STR(s, strlen(kv->key.ks), BAD_PTR);
+                CREATE_STR(s, strlen(kv->key.ks), BAD_PTR);//XXX
                 strcpy(s, kv->key.ks);
                 list_append(l, s);
             }
             else // KEY_INT
             {
-                CREATE_INST(pi, int, BAD_PTR);
+                CREATE_INST(pi, int, BAD_PTR);//XXX
                 list_append(l, pi);
             }
             

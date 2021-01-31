@@ -18,8 +18,8 @@ add_executable(cbot_test
     cbot_module/private/dict.c
     cbot_module/private/state_machine.c
     cbot_module/private/stringx.c
+    cbot_module/private/pnut.cpp
     test/main.cpp
-    test/pnut.cpp
     test/test_list.cpp
     test/test_dict.cpp
     test/test_pnut.cpp
