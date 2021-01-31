@@ -10,10 +10,12 @@ extern "C"
 #include "list.h"
 }
 
+#define TEST_STR_LEN 16
+// A data struct for testing. 
 typedef struct
 {
     int anumber;
-    const char* astring;
+    char astring[TEST_STR_LEN];
 } test_struct_t;
 
 
@@ -27,10 +29,8 @@ UT_SUITE(LIST_ALL, "Test all list functions.")
     for(int i = 0; i < NUM_TS; i++)
     {
         CREATE_INST(st, test_struct_t, RS_ERR);
-        CREATE_STR(sv, 16, RS_ERR);//XXX
         st->anumber = 11 * (i + 1);
-        sprintf(sv, "Ajay%d", st->anumber);
-        st->astring = sv;
+        sprintf(st->astring, "Ajay%d", st->anumber);
         ts[i] = st;
     }
 

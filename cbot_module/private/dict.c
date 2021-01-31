@@ -13,7 +13,7 @@
 
 /// Prime number.
 #ifndef DICT_NUM_BINS
-#define DICT_NUM_BINS 101 //TODO cmd arg?
+#define DICT_NUM_BINS 101 //TODO from cmd arg?
 #endif
 
 
@@ -37,7 +37,7 @@ static unsigned int p_hashString(char* s);
 /// @return Hash value between 0 and DICT_NUM_BINS.
 static unsigned int p_hashInt(int i);
 
-//TODO check returns from list funcs = elsewhere.
+//TODO check returns from list funcs.
 
 
 //---------------- Public API Implementation -------------//
@@ -93,7 +93,7 @@ int dict_clear(dict_t* d)
     {
         list_t* pl = d->bins[i]; // shorthand
 
-        // Remove user data.
+        // Remove custom user data.
         kv_t* kv;
         list_iterStart(pl);
         while(RS_PASS == list_iterNext(pl, (void**)&kv))
@@ -102,7 +102,16 @@ int dict_clear(dict_t* d)
             if(d->kt == KEY_STRING && kv->key.ks != NULL)
             {
                 FREE(kv->key.ks);
+                kv->key.ks = NULL;
             }
+
+            if(kv->value != NULL)
+            {
+                FREE(kv->value);
+                kv->value = NULL;
+            }
+
+            // FREE(kv); // this gets freed in list_clear()
         }
 
         list_clear(pl);
@@ -130,7 +139,6 @@ int dict_set(dict_t* d, kv_t* kv)
 {
     VAL_PTR(d, RS_ERR);
     VAL_PTR(kv, RS_ERR);
-    VAL_PTR(kv->key.ks, RS_ERR);
 
     int ret = RS_PASS;
 
@@ -147,19 +155,21 @@ int dict_set(dict_t* d, kv_t* kv)
 
         if(d->kt == KEY_STRING)
         {
-            if(strcmp(lkv->key.ks, kv->key.ks) == 0)
-            {
-                lkv->value = kv->value;
-                found = true;
-            }
+            found = (strcmp(lkv->key.ks, kv->key.ks) == 0);
         }
         else // KEY_INT
         {
-            if(lkv->key.ki == kv->key.ki)
+            found = (lkv->key.ki == kv->key.ki);
+        }
+
+        if(found)
+        {
+            // Need to FREE the original. TODO doesn't work right.
+            if(kv->value != NULL)
             {
-                lkv->value = kv->value;
-                found = true;
+                FREE(kv->value);
             }
+            lkv->value = kv->value;
         }
     }
 
@@ -173,7 +183,7 @@ int dict_set(dict_t* d, kv_t* kv)
 }
 
 //--------------------------------------------------------//
-int dict_get(dict_t* d, kv_t* kv)//, void** data)
+int dict_get(dict_t* d, kv_t* kv)
 {
     VAL_PTR(d, RS_ERR);
     VAL_PTR(kv, RS_ERR);
@@ -237,16 +247,15 @@ list_t* dict_get_keys(dict_t* d)
             {
                 // Copy only.
                 VAL_PTR(kv->key.ks, BAD_PTR);
-                CREATE_STR(s, strlen(kv->key.ks), BAD_PTR);//XXX
+                CREATE_STR(s, strlen(kv->key.ks), BAD_PTR);
                 strcpy(s, kv->key.ks);
                 list_append(l, s);
             }
             else // KEY_INT
             {
-                CREATE_INST(pi, int, BAD_PTR);//XXX
+                CREATE_INST(pi, int, BAD_PTR);
                 list_append(l, pi);
             }
-            
         }
     }
 

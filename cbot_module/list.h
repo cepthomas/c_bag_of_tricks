@@ -7,8 +7,6 @@
 /// Note that clear() and destroy() will free() them for you but if your data
 /// type contains other pointers you will have to manually free those yourself first.
 
- // TODO clean up all the void** and void* casts?? Also in dict.
-
 
 //---------------- Public API ----------------------//
 
@@ -31,13 +29,13 @@ int list_destroy(list_t* l);
 
 /// Add a node at the beginning.
 /// @param l The list opaque pointer.
-/// @param data Data to add.
+/// @param data Data to add. NOTE can't contain pointers.
 /// @return RS_PASS | RS_ERR.
 int list_push(list_t* l, void* data);
 
 /// Add a node at the end.
 /// @param l The list opaque pointer.
-/// @param data Data to add.
+/// @param data Data to add. NOTE can't contain pointers.
 /// @return RS_PASS | RS_ERR.
 int list_append(list_t* l, void* data);
 

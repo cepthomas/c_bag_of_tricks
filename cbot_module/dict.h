@@ -53,7 +53,7 @@ int dict_count(dict_t* l);
 
 /// Set a value using a key. Also used to remove.
 /// @param d The dictionary opaque pointer.
-/// @param kv The key-value pair.
+/// @param kv The key-value pair. NOTE value can't contain pointers.
 /// @return RS_PASS | RS_ERR.
 int dict_set(dict_t* d, kv_t* kv);
 

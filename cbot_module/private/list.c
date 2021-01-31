@@ -31,7 +31,7 @@ struct list
 //--------------------------------------------------------//
 list_t* list_create(void)
 {
-    CREATE_INST(l, list_t, BAD_PTR);//XXX
+    CREATE_INST(l, list_t, BAD_PTR);
 
     return l;
 }
@@ -61,7 +61,7 @@ int list_clear(list_t* l)
         node_t* next = iter->next;
         if(iter->data != NULL)
         {
-            FREE(iter->data);//<<<<<<< Freeing invalid pointer 
+            FREE(iter->data);
             iter->data = NULL;
         }
         FREE(iter);
@@ -120,7 +120,7 @@ int list_append(list_t* l, void* data)
     // Get current tail. Can be null.
     node_t* ctail = l->tail;
 
-    CREATE_INST(newNode, node_t, RS_ERR);//XXX
+    CREATE_INST(newNode, node_t, RS_ERR);
     newNode->data = data;
 
     if(ctail != NULL)

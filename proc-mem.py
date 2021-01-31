@@ -1,16 +1,23 @@
 
-
 # Collect and process output from instrumented unit test build.
 
 
 import sys
 
+if len(sys.argv) != 2:
+    print('>>>>>>>>>>>>> Bad args')
+    exit()
+
 # Collect and analyze input lines.
 
 allocs = dict()
 
-for line in sys.stdin:
-    # sys.stdout.write("%s" % line)
+print('Open %s' % sys.argv[1])
+
+f = open(sys.argv[1], "r")
+
+for line in f.readlines():
+    # print("%s" % line)
 
     # Split the line and see if it is one we are interested in.
     # +++,008485E0,396,"C:\Dev\repos\c-bag-of-tricks\cbot_module\private\stringx.c"
@@ -25,12 +32,12 @@ for line in sys.stdin:
 
         if parts[0] == '+++':
             if address in allocs:
-                sys.stdout.write("%s: Duplicate alloc.\n" % fileline)
+                print("%s: Duplicate alloc." % fileline)
             else:
                 allocs.setdefault(address, fileline)
         elif parts[0] == '---':
             if address not in allocs:
-                sys.stdout.write("%s: Freeing invalid pointer %s.\n" % (fileline, address))
+                print("%s: Freeing invalid pointer %s." % (fileline, address))
             else:
                 allocs.pop(address)
         else:
@@ -39,4 +46,4 @@ for line in sys.stdin:
 
 
 for address, fileline in allocs.items():
-    sys.stdout.write("%s: Unfreed memory %s.\n" % (fileline, address))
+    print("%s: Unfreed memory %s.\n" % (fileline, address))

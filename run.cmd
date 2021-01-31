@@ -1,18 +1,24 @@
 
-@echo off
+rem @echo off
 cls
 
-rem Run leak test on the app.
+rem Build and run the app w/probe.
 
-rem Run the app.
+mkdir build
+
 cd build
 
-rem heob version
-rem heob32 -D -x cbot_test.exe > ..\run_out.txt
+cmake -DUSE_PROBE="1"  -G "MinGW Makefiles"  ..
 
-rem probe version
-cbot_test.exe | python ..\proc-mem.py > ..\run_out.txt
+make
 
+cbot_test.exe > ..\temp\probe.txt
 cd ..
 
-pause
+python proc-mem.py temp\probe.txt > temp\mem_out.txt
+
+
+rem heob version
+rem heob32 -D -x cbot_test.exe > run_out.txt
+
+rem pause

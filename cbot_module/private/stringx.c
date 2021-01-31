@@ -376,6 +376,7 @@ int p_assign(stringx_t* s, char* cs)
     if(s->raw != NULL)
     {
         FREE(s->raw);
+        s->raw = NULL;
     }
 
     s->raw = cs == NULL ? NULL : cs;

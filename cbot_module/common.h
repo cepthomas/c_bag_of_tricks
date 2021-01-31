@@ -23,8 +23,12 @@
 /// @param err Error value to return in case of failure.
 #define VAL_PTR(ptr, err) if(ptr == NULL) { errno = EINVAL; return err; }
 
-/// A crude memory alloc/free probe mechanism. TODO disable later.
-#define PROBE(mark, var, ln, fn) printf("%s,%p,%d,\"%s\"\n", mark, var, ln, fn);
+#ifdef USE_PROBE
+/// A crude memory alloc/free probe mechanism. TODO monitor for mem highwater/overflow?
+#define PROBE(mark, var, ln, fn) printf("%s,%p,%d,\"%s\"\n", mark, var, ln, fn)
+#else
+#define PROBE(mark, var, ln, fn)
+#endif
 
 /// Make an instance of a typed thing with all bytes set to 0. Client is responsible for free().
 /// @param var Thing variable name.

@@ -10,10 +10,12 @@ extern "C"
 #include "dict.h"
 }
 
+#define TEST_STR_LEN 16
+// A data struct for testing. 
 typedef struct
 {
     int anumber;
-    const char* astring;
+    char astring[TEST_STR_LEN];
 } test_struct_t;
 
 // Helpers.
@@ -28,45 +30,77 @@ UT_SUITE(DICT_STR, "Test all dict functions using string key.")
     dict_t* mydict = create_str_dict();
     UT_NOT_NULL(mydict);
     UT_EQUAL(dict_count(mydict), 184);
+    CREATE_INST(kv1, kv_t, RS_ERR);
 
-    CREATE_INST(kv, kv_t, RS_ERR);//XXX
-
-    // look at some
-    CREATE_STR(s, 16, RS_ERR);//XXX
-
-    // good
-    strcpy(s, "SOMETHING");  
-    kv->key.ks = s;
-    UT_EQUAL(dict_get(mydict, kv), RS_PASS);
-    UT_NOT_NULL(kv->value);
-    test_struct_t* ts = (test_struct_t*)kv->value;
+    // Good
+    CREATE_STR(s1, 16, RS_ERR);
+    strcpy(s1, "SOMETHING");  
+    kv1->key.ks = s1;
+    UT_EQUAL(dict_get(mydict, kv1), RS_PASS);
+    UT_NOT_NULL(kv1->value);
+    test_struct_t* ts = (test_struct_t*)kv1->value;
     UT_EQUAL(ts->anumber, 138);
-    UT_STR_EQUAL(ts->astring, "str138");
-    // ng
-    strcpy(s, "AAAAAA"); 
-    kv->key.ks = s;
-    UT_EQUAL(dict_get(mydict, kv), RS_FAIL);
-    UT_NULL(kv->value);
+    UT_STR_EQUAL(ts->astring, "Ajay_138");
 
+    // Bad
+    CREATE_STR(s2, 16, RS_ERR);
+    strcpy(s2, "AAAAAA"); 
+    kv1->key.ks = s2;
+    UT_EQUAL(dict_get(mydict, kv1), RS_FAIL);
+    UT_NULL(kv1->value);
+
+    // Replace one.
+    // Create data payload.
+    CREATE_INST(st, test_struct_t, RS_ERR);
+    st->anumber = 9999;
+    sprintf(st->astring, "Ajay_%d", st->anumber);
+    // Create key/value.
+    CREATE_STR(s3, 16, RS_ERR);
+    strcpy(s3, "SOMETHING");
+    CREATE_INST(kv2, kv_t, RS_ERR);
+    kv2->key.ks = s3;
+    kv2->value = st;
+    dict_set(mydict, kv2);
+    // Size should not change.
+    UT_EQUAL(dict_count(mydict), 184);
+    // Content should have.
+    CREATE_STR(s4, 16, RS_ERR);
+    strcpy(s4, "SOMETHING");  
+    kv2->key.ks = s4;
+    UT_EQUAL(dict_get(mydict, kv2), RS_PASS);
+    UT_NOT_NULL(kv2->value);
+    test_struct_t* tsr = (test_struct_t*)kv2->value;
+    UT_EQUAL(tsr->anumber, 9999);
+    UT_STR_EQUAL(tsr->astring, "Ajay_9999");
+
+    // Get keys
     list_t* keys = dict_get_keys(mydict);
     UT_NOT_NULL(keys);
     UT_EQUAL(list_count(keys), 184);
     // look at some TODO...
 
-    // Remove everything.
+    // Clean up everything.
     UT_EQUAL(dict_clear(mydict), RS_PASS);
     UT_NOT_NULL(mydict);
     UT_EQUAL(dict_count(mydict), 0);
     UT_EQUAL(dict_destroy(mydict), RS_PASS);
+    UT_EQUAL(list_destroy(keys), RS_PASS);
 
     // Bad container.
     dict_t* baddict = NULL;
-    UT_EQUAL(dict_set(baddict, kv), RS_ERR);
+    UT_EQUAL(dict_set(baddict, kv1), RS_ERR);
     UT_EQUAL(dict_dump(baddict, NULL), RS_ERR);
-    UT_EQUAL(dict_get(baddict, kv), RS_ERR);
+    UT_EQUAL(dict_get(baddict, kv1), RS_ERR);
     UT_NULL(dict_get_keys(baddict));
     UT_EQUAL(dict_clear(baddict), RS_ERR);
     UT_EQUAL(dict_destroy(baddict), RS_ERR);
+
+    FREE(kv1);
+    FREE(kv2);
+    FREE(s1);
+    FREE(s2);
+    FREE(s3);
+    FREE(s4);
 
     return 0;
 }
@@ -77,18 +111,17 @@ UT_SUITE(DICT_INT, "Test some dict functions using int key.")
     // Make a dict with int key. create_int_dict() tests dict_create() and dict_set().
     dict_t* mydict = create_int_dict();
     UT_NOT_NULL(mydict);
-    UT_EQUAL(dict_count(mydict), 289);
+    UT_EQUAL(dict_count(mydict), 290);
 
     CREATE_INST(kv, kv_t, RS_ERR);
 
-    // look at some
     // good
     kv->key.ki = 155;
     UT_EQUAL(dict_get(mydict, kv), RS_PASS);
     UT_NOT_NULL(kv->value);
     test_struct_t* ts = (test_struct_t*)kv->value;
     UT_EQUAL(ts->anumber, 1155);
-    UT_STR_EQUAL(ts->astring, "str155");
+    UT_STR_EQUAL(ts->astring, "Boo_1155");
     // ng
     kv->key.ki = 444;
     UT_EQUAL(dict_get(mydict, kv), RS_FAIL);
@@ -96,7 +129,7 @@ UT_SUITE(DICT_INT, "Test some dict functions using int key.")
 
     list_t* keys = dict_get_keys(mydict);
     UT_NOT_NULL(keys);
-    UT_EQUAL(list_count(keys), 289);
+    UT_EQUAL(list_count(keys), 290);
     // look at some TODO...
 
     // Remove everything.
@@ -104,6 +137,9 @@ UT_SUITE(DICT_INT, "Test some dict functions using int key.")
     UT_NOT_NULL(mydict);
     UT_EQUAL(dict_count(mydict), 0);
     UT_EQUAL(dict_destroy(mydict), RS_PASS);
+    UT_EQUAL(list_destroy(keys), RS_PASS);
+
+    FREE(kv);
 
     return 0;
 }
@@ -147,7 +183,7 @@ dict_t* create_str_dict(void)
     // Add some values.
     FILE* fp = fopen("hemingway_short.txt", "r");
 
-    char buff[50];
+    char buff[64]; // I just know this.
     int buffind = 0;
     int i = 0;
     bool done = false;
@@ -164,19 +200,19 @@ dict_t* create_str_dict(void)
                 // add entry if exists
                 if(buffind > 0)
                 {
-                    buff[buffind] = 0;
-                    CREATE_INST(st1, test_struct_t, NULL);//XXX
-                    CREATE_STR(sv, 16, NULL);//XXX
-                    sprintf(sv, "Ajay_%d", st1->anumber);
-                    st1->astring = sv;
-                    st1->anumber = 100 + i;
-                    CREATE_STR(sk, strlen(buff), NULL);
-                    strcpy(sk, buff);
-                    i++;
+                    buff[buffind] = 0; // terminate
 
-                    CREATE_INST(kv, kv_t, NULL);
-                    kv->key.ks = sk;
-                    kv->value = st1;
+                    // Create data payload.
+                    CREATE_INST(st, test_struct_t, BAD_PTR);
+                    st->anumber = 100 + i++;
+                    sprintf(st->astring, "Ajay_%d", st->anumber);
+
+                    // Create key/value.
+                    CREATE_STR(skey, strlen(buff), BAD_PTR);
+                    strcpy(skey, buff);
+                    CREATE_INST(kv, kv_t, BAD_PTR);
+                    kv->key.ks = skey;
+                    kv->value = st;
 
                     dict_set(d, kv);
                     buffind = 0;
@@ -212,14 +248,16 @@ dict_t* create_int_dict(void)
     // Add some values.
     for(int k = 0; k < 290; k++)
     {
-        CREATE_INST(st1, test_struct_t, BAD_PTR);//XXX
-        st1->anumber = 1000 + k;
-        CREATE_STR(s, 16, BAD_PTR);//XXX
-        sprintf(s, "str%d", k);
-        st1->astring = s;
-        CREATE_INST(kv, kv_t, BAD_PTR);//XXX
+        // Create data payload.
+        CREATE_INST(st, test_struct_t, BAD_PTR);
+        st->anumber = 1000 + k;
+        sprintf(st->astring, "Boo_%d", st->anumber);
+
+        // Create key/value.
+        CREATE_INST(kv, kv_t, BAD_PTR);
         kv->key.ki = k;
-        kv->value = st1;
+        kv->value = st;
+
         dict_set(d, kv);
     }
 

@@ -24,7 +24,7 @@ typedef enum
 typedef struct stringx stringx_t;
 
 /// Create an empty string.
-/// @param sinit Optional initial value. If NULL, content will be "".
+/// @param sinit Initial value. If empty use "".
 /// @return The opaque pointer used in all functions | BAD_PTR.
 stringx_t* stringx_create(const char* sinit);
 
