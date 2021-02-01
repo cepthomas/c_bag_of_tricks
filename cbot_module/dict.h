@@ -15,18 +15,11 @@
 /// Opaque dict object.
 typedef struct dict dict_t;
 
-/// Supported key types.
+/// Key type per dictionary.
 typedef enum { KEY_INT, KEY_STRING } keyType_t;
 
 /// Key for each keyType_t.
-typedef union { int ki; char* ks; } key_t;
-
-/// Key-value pair.
-typedef struct kv
-{
-    key_t key;      ///> The key.
-    void* value;    ///> Client specific data. Client must cast.
-} kv_t;
+typedef union { int ki; const char* ks; } key_t;
 
 /// Create a dict.
 /// @param kt Key type.
@@ -50,22 +43,21 @@ int dict_count(dict_t* l);
 
 /// Set a value using a key. Also used to remove.
 /// @param d The dictionary opaque pointer.
-/// @param kv The key-value pair. NOTE value can't contain pointers.
+/// @param k The key.
+/// @param v The value. NOTE value can't contain pointers.
 /// @return RS_PASS | RS_ERR.
-int dict_set(dict_t* d, kv_t* kv);
+int dict_set(dict_t* d, key_t k, void* v);
 
 /// Get a value using a key.
 /// @param d The dictionary opaque pointer.
-/// @param kv The key.
-/// @param data Pointer to where to put the associated data.
+/// @param k The key.
+/// @param v Pointer to where to put the associated data.
 /// @return RS_PASS | RS_FAIL | RS_ERR.
-int dict_get(dict_t* d, kv_t* kv);
+int dict_get(dict_t* d, key_t k, void** v);
 
 /// Get a list of all key_t. NOTE - client must destroy the returned list.
 /// @param d The dictionary opaque pointer.
-/// @param key The key.
-/// @param data Pointer to where to put the associated data.
-/// @return RS_PASS | RS_FAIL | RS_ERR.
+/// @return The list | BAD_PTR.
 list_t* dict_get_keys(dict_t* d);
 
 /// Dump contents of the dict to file.

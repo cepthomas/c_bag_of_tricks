@@ -17,6 +17,14 @@
 
 //---------------- Private --------------------------//
 
+/// Key-value pair.
+typedef struct kv
+{
+    char* skey;     ///> The key.
+    int ikey;       ///> The key.
+    void* value;    ///> Client specific data. Client must cast.
+} kv_t;
+
 
 /// One instance of a dictionary.
 struct dict
@@ -35,6 +43,11 @@ static unsigned int p_hashString(char* s);
 /// @return Hash value between 0 and DICT_NUM_BINS.
 static unsigned int p_hashInt(int i);
 
+/// Convert client to internal format.
+/// @param kt Type.
+/// @param k Key itself.
+/// @return New pointer to thing.
+static kv_t* p_convertKey(keyType_t kt, key_t k);
 
 //---------------- Public API Implementation -------------//
 
@@ -97,10 +110,10 @@ int dict_clear(dict_t* d)
         while(RS_PASS == list_iterNext(pl, (void**)&kv))
         {
             VAL_PTR(kv, RS_ERR);
-            if(d->kt == KEY_STRING && kv->key.ks != NULL)
+            if(d->kt == KEY_STRING && kv->skey != NULL)
             {
-                FREE(kv->key.ks);
-                kv->key.ks = NULL;
+                FREE(kv->skey);
+                kv->skey = NULL;
             }
 
             if(kv->value != NULL)
@@ -141,15 +154,18 @@ int dict_count(dict_t* d)
 }
 
 //--------------------------------------------------------//
-int dict_set(dict_t* d, kv_t* kv)
+int dict_set(dict_t* d, key_t k, void* v)
 {
     VAL_PTR(d, RS_ERR);
-    VAL_PTR(kv, RS_ERR);
 
     int ret = RS_PASS;
 
+    // Pack into our preferred format.
+    kv_t* kv = p_convertKey(d->kt, k);
+    kv->value = v;
+
     // If it is in a bin already, replace the value.
-    unsigned int bin = d->kt == KEY_STRING ? p_hashString(kv->key.ks) : p_hashInt(kv->key.ki);
+    unsigned int bin = d->kt == KEY_STRING ? p_hashString(kv->skey) : p_hashInt(kv->ikey);
     list_t* pl = d->bins[bin]; // shorthand
     VAL_PTR(pl, RS_ERR);
 
@@ -163,11 +179,11 @@ int dict_set(dict_t* d, kv_t* kv)
 
         if(d->kt == KEY_STRING)
         {
-            found = (strcmp(lkv->key.ks, kv->key.ks) == 0);
+            found = (strcmp(lkv->skey, kv->skey) == 0);
         }
         else // KEY_INT
         {
-            found = (lkv->key.ki == kv->key.ki);
+            found = (lkv->ikey == kv->ikey);
         }
 
         if(found)
@@ -192,16 +208,17 @@ int dict_set(dict_t* d, kv_t* kv)
 }
 
 //--------------------------------------------------------//
-int dict_get(dict_t* d, kv_t* kv)
+int dict_get(dict_t* d, key_t k, void** v)
 {
     VAL_PTR(d, RS_ERR);
-    VAL_PTR(kv, RS_ERR);
 
     int ret = RS_FAIL;
-    kv->value = NULL;
+
+    // Pack into our preferred format.
+    kv_t* kv = p_convertKey(d->kt, k);
 
     // Is it in the bin?
-    unsigned int bin = d->kt == KEY_STRING ? p_hashString(kv->key.ks) : p_hashInt(kv->key.ki);
+    unsigned int bin = d->kt == KEY_STRING ? p_hashString(kv->skey) : p_hashInt(kv->ikey);
     list_t* pl = d->bins[bin]; // shorthand
 
     list_iterStart(pl);
@@ -214,7 +231,7 @@ int dict_get(dict_t* d, kv_t* kv)
 
         if(d->kt == KEY_STRING)
         {
-            if(strcmp(lkv->key.ks, kv->key.ks) == 0)
+            if(strcmp(lkv->skey, kv->skey) == 0)
             {
                 ret = RS_PASS;
                 kv->value = lkv->value;
@@ -223,7 +240,7 @@ int dict_get(dict_t* d, kv_t* kv)
         }
         else // KEY_INT
         {
-            if(lkv->key.ki == kv->key.ki)
+            if(lkv->ikey == kv->ikey)
             {
                 ret = RS_PASS;
                 kv->value = lkv->value;
@@ -258,9 +275,9 @@ list_t* dict_get_keys(dict_t* d)
             if(d->kt == KEY_STRING)
             {
                 // Copy only.
-                VAL_PTR(kv->key.ks, BAD_PTR);
-                CREATE_STR(s, strlen(kv->key.ks), BAD_PTR);
-                strcpy(s, kv->key.ks);
+                VAL_PTR(kv->skey, BAD_PTR);
+                CREATE_STR(s, strlen(kv->skey), BAD_PTR);
+                strcpy(s, kv->skey);
                 list_append(l, s);
             }
             else // KEY_INT
@@ -307,15 +324,15 @@ int dict_dump(dict_t* d, FILE* fp)
             if(d->kt == KEY_STRING)
             {
                 // Output and fix embedded commas, poorly.
-                for(int ci = 0; ci < strlen(kv->key.ks); ci++)
+                for(int ci = 0; ci < strlen(kv->skey); ci++)
                 {
-                    char c = kv->key.ks[ci];
+                    char c = kv->skey[ci];
                     fprintf(fp, "%c", c == ',' ? '#' : c);
                 }
             }
             else // KEY_INT
             {
-                fprintf(fp, "%d", kv->key.ki);
+                fprintf(fp, "%d", kv->ikey);
             }
         }
 
@@ -348,4 +365,25 @@ unsigned int p_hashString(char* s)
 unsigned int p_hashInt(int i)
 {
     return (unsigned int)(i % DICT_NUM_BINS);
+}
+
+//--------------------------------------------------------//
+kv_t* p_convertKey(keyType_t kt, key_t k)
+{
+    // Pack into our preferred format.
+    CREATE_INST(kv, kv_t, BAD_PTR);
+    if(kt == KEY_STRING)
+    {
+        CREATE_STR(s, strlen(k.ks), BAD_PTR);
+        strcpy(s, k.ks);
+        kv->skey = s;
+        kv->ikey = 0;
+    }
+    else
+    {
+        kv->skey = NULL;
+        kv->ikey = k.ki;
+    }
+
+    return kv;
 }

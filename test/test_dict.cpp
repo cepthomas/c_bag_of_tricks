@@ -30,48 +30,45 @@ UT_SUITE(DICT_STR, "Test all dict functions using string key.")
     dict_t* mydict = create_str_dict();
     UT_NOT_NULL(mydict);
     UT_EQUAL(dict_count(mydict), 184);
-    CREATE_INST(kv1, kv_t, RS_ERR);
+
+    test_struct_t* ts = NULL;
+    test_struct_t* tsret = NULL;
+    key_t key;
 
     // Good
-    CREATE_STR(s1, 16, RS_ERR);
-    strcpy(s1, "SOMETHING");  
-    kv1->key.ks = s1;
-    UT_EQUAL(dict_get(mydict, kv1), RS_PASS);
-    UT_NOT_NULL(kv1->value);
-    test_struct_t* ts = (test_struct_t*)kv1->value;
+    key.ks = "SOMETHING";
+    UT_EQUAL(dict_get(mydict, key, (void**)&ts), RS_PASS);
+    UT_NOT_NULL(ts);
     UT_EQUAL(ts->anumber, 138);
     UT_STR_EQUAL(ts->astring, "Ajay_138");
 
     // Bad
-    CREATE_STR(s2, 16, RS_ERR);
-    strcpy(s2, "AAAAAA"); 
-    kv1->key.ks = s2;
-    UT_EQUAL(dict_get(mydict, kv1), RS_FAIL);
-    UT_NULL(kv1->value);
+    key.ks = "AAAAAA";
+    UT_EQUAL(dict_get(mydict, key, (void**)&ts), RS_FAIL);
 
     // Replace one.
     // Create data payload.
-    CREATE_INST(st, test_struct_t, RS_ERR);
-    st->anumber = 9999;
-    sprintf(st->astring, "Ajay_%d", st->anumber);
+    CREATE_INST(tsrep, test_struct_t, RS_ERR);
+    tsrep->anumber = 9999;
+    sprintf(tsrep->astring, "Ajay_%d", tsrep->anumber);
     // Create key/value.
-    CREATE_STR(s3, 16, RS_ERR);
-    strcpy(s3, "SOMETHING");
-    CREATE_INST(kv2, kv_t, RS_ERR);
-    kv2->key.ks = s3;
-    kv2->value = st;
-    dict_set(mydict, kv2);
+ //   CREATE_STR(s3, 16, RS_ERR);
+ //   strcpy(s3, "SOMETHING");
+//    CREATE_INST(kv2, kv_t, RS_ERR);
+    key.ks = "SOMETHING";
+//    kv2->value = tsrep;
+    dict_set(mydict, key, tsrep);
     // Size should not change.
     UT_EQUAL(dict_count(mydict), 184);
     // Content should have.
-    CREATE_STR(s4, 16, RS_ERR);
-    strcpy(s4, "SOMETHING");  
-    kv2->key.ks = s4;
-    UT_EQUAL(dict_get(mydict, kv2), RS_PASS);
-    UT_NOT_NULL(kv2->value);
-    test_struct_t* tsr = (test_struct_t*)kv2->value;
-    UT_EQUAL(tsr->anumber, 9999);
-    UT_STR_EQUAL(tsr->astring, "Ajay_9999");
+//    CREATE_STR(s4, 16, RS_ERR);
+//    strcpy(s4, "SOMETHING");  
+//    kv2->key.ks = s4;
+    UT_EQUAL(dict_get(mydict, key, (void**)&tsret), RS_PASS);
+    UT_NOT_NULL(tsret);
+    //test_struct_t* tsr = (test_struct_t*)kv2->value;
+    UT_EQUAL(tsret->anumber, 9999);
+    UT_STR_EQUAL(tsret->astring, "Ajay_9999");
 
     // Get keys
     list_t* keys = dict_get_keys(mydict);
@@ -111,19 +108,22 @@ UT_SUITE(DICT_INT, "Test some dict functions using int key.")
     UT_NOT_NULL(mydict);
     UT_EQUAL(dict_count(mydict), 290);
 
-    CREATE_INST(kv, kv_t, RS_ERR);
+    test_struct_t* ts = NULL;
+ //   test_struct_t* tsret = NULL;
+    key_t key;
+
+//    CREATE_INST(kv, kv_t, RS_ERR);
 
     // good
-    kv->key.ki = 155;
-    UT_EQUAL(dict_get(mydict, kv), RS_PASS);
-    UT_NOT_NULL(kv->value);
-    test_struct_t* ts = (test_struct_t*)kv->value;
+    key.ki = 155;
+    UT_EQUAL(dict_get(mydict, key, (void**)&ts), RS_PASS);
+    UT_NOT_NULL(ts);
     UT_EQUAL(ts->anumber, 1155);
     UT_STR_EQUAL(ts->astring, "Boo_1155");
     // ng
-    kv->key.ki = 444;
-    UT_EQUAL(dict_get(mydict, kv), RS_FAIL);
-    UT_NULL(kv->value);
+    key.ki = 444;
+    UT_EQUAL(dict_get(mydict, key, (void**)&ts), RS_FAIL);
+    UT_NULL(ts);
 
     list_t* keys = dict_get_keys(mydict);
     UT_NOT_NULL(keys);
@@ -137,7 +137,7 @@ UT_SUITE(DICT_INT, "Test some dict functions using int key.")
     UT_EQUAL(dict_destroy(mydict), RS_PASS);
     UT_EQUAL(list_destroy(keys), RS_PASS);
 
-    FREE(kv);
+//    FREE(kv);
 
     return 0;
 }
@@ -173,18 +173,17 @@ UT_SUITE(DICT_DUMP, "Test the dump file creation.")
 /////////////////////////////////////////////////////////////////////////////
 UT_SUITE(DICT_ERRORS, "Test some failure situations.")
 {
-    CREATE_INST(kv, kv_t, RS_ERR);
+    key_t key;
+    void* value = NULL;
 
     // Bad container.
     dict_t* baddict = NULL;
-    UT_EQUAL(dict_set(baddict, kv), RS_ERR);
+    UT_EQUAL(dict_set(baddict, key, value), RS_ERR);
     UT_EQUAL(dict_dump(baddict, NULL), RS_ERR);
-    UT_EQUAL(dict_get(baddict, kv), RS_ERR);
+    UT_EQUAL(dict_get(baddict, key, &value), RS_ERR);
     UT_NULL(dict_get_keys(baddict));
     UT_EQUAL(dict_clear(baddict), RS_ERR);
     UT_EQUAL(dict_destroy(baddict), RS_ERR);
-
-    FREE(kv);
     
     return 0;
 }
@@ -223,13 +222,14 @@ dict_t* create_str_dict(void)
                     sprintf(st->astring, "Ajay_%d", st->anumber);
 
                     // Create key/value.
-                    CREATE_STR(skey, strlen(buff), BAD_PTR);
-                    strcpy(skey, buff);
-                    CREATE_INST(kv, kv_t, BAD_PTR);
-                    kv->key.ks = skey;
-                    kv->value = st;
+                    key_t key;
+                    // CREATE_STR(skey, strlen(buff), BAD_PTR);
+                    // strcpy(skey, buff);
+                    // CREATE_INST(kv, kv_t, BAD_PTR);
+                    key.ks = buff;
+                    // kv->value = st;
 
-                    dict_set(d, kv);
+                    dict_set(d, key, st);
                     buffind = 0;
                 }
                 break;
@@ -269,11 +269,12 @@ dict_t* create_int_dict(void)
         sprintf(st->astring, "Boo_%d", st->anumber);
 
         // Create key/value.
-        CREATE_INST(kv, kv_t, BAD_PTR);
-        kv->key.ki = k;
-        kv->value = st;
+        //CREATE_INST(kv, kv_t, BAD_PTR);
+        key_t key;
+        key.ki = k;
+       // kv->value = st;
 
-        dict_set(d, kv);
+        dict_set(d, key, st);
     }
 
     return d;
