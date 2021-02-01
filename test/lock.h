@@ -8,7 +8,7 @@
 
 ////// Ids - all unique ///////
 
-// Event IDs TODO make these an enum?
+// Event IDs
 #define EVT_DEFAULT 100
 #define EVT_DIGIT_KEY_PRESSED 101
 #define EVT_IS_LOCKED 102

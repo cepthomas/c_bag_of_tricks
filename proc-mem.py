@@ -32,12 +32,12 @@ for line in f.readlines():
 
         if parts[0] == '+++':
             if address in allocs:
-                print("%s: Duplicate alloc." % fileline)
+                print("%s: Duplicate alloc at %s" % (fileline, address))
             else:
                 allocs.setdefault(address, fileline)
         elif parts[0] == '---':
             if address not in allocs:
-                print("%s: Freeing invalid pointer %s." % (fileline, address))
+                print("%s: Freeing invalid pointer at %s" % (fileline, address))
             else:
                 allocs.pop(address)
         else:
@@ -46,4 +46,4 @@ for line in f.readlines():
 
 
 for address, fileline in allocs.items():
-    print("%s: Unfreed memory %s.\n" % (fileline, address))
+    print("%s: Unfreed memory at %s" % (fileline, address))

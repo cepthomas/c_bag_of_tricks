@@ -86,21 +86,19 @@ UT_SUITE(DICT_STR, "Test all dict functions using string key.")
     UT_EQUAL(dict_destroy(mydict), RS_PASS);
     UT_EQUAL(list_destroy(keys), RS_PASS);
 
-    // Bad container.
-    dict_t* baddict = NULL;
-    UT_EQUAL(dict_set(baddict, kv1), RS_ERR);
-    UT_EQUAL(dict_dump(baddict, NULL), RS_ERR);
-    UT_EQUAL(dict_get(baddict, kv1), RS_ERR);
-    UT_NULL(dict_get_keys(baddict));
-    UT_EQUAL(dict_clear(baddict), RS_ERR);
-    UT_EQUAL(dict_destroy(baddict), RS_ERR);
-
-    FREE(kv1);
-    FREE(kv2);
-    FREE(s1);
-    FREE(s2);
-    FREE(s3);
-    FREE(s4);
+    // FREE(kv1);
+    // FREE(kv2);
+    // FREE(s1);
+    // FREE(s2);
+    // FREE(s3);
+    // FREE(s4); //TODO Freeing invalid pointer 008D34D0.
+//(214): Unfreed memory 00ED02B0.
+//(33): Unfreed memory 00ED4390.
+//(36): Unfreed memory 00ED3C18.
+//(46): Unfreed memory 00ED3B98.
+//(58): Unfreed memory 00ED3C38.
+//(60): Unfreed memory 00ED4450.
+//(67): Unfreed memory 00ED3C98.
 
     return 0;
 }
@@ -169,8 +167,25 @@ UT_SUITE(DICT_DUMP, "Test the dump file creation.")
     fclose(fp);
     dict_destroy(mydict);
 
-    // TODO need some actual test.
+    return 0;
+}
 
+/////////////////////////////////////////////////////////////////////////////
+UT_SUITE(DICT_ERRORS, "Test some failure situations.")
+{
+    CREATE_INST(kv, kv_t, RS_ERR);
+
+    // Bad container.
+    dict_t* baddict = NULL;
+    UT_EQUAL(dict_set(baddict, kv), RS_ERR);
+    UT_EQUAL(dict_dump(baddict, NULL), RS_ERR);
+    UT_EQUAL(dict_get(baddict, kv), RS_ERR);
+    UT_NULL(dict_get_keys(baddict));
+    UT_EQUAL(dict_clear(baddict), RS_ERR);
+    UT_EQUAL(dict_destroy(baddict), RS_ERR);
+
+    FREE(kv);
+    
     return 0;
 }
 
@@ -203,7 +218,7 @@ dict_t* create_str_dict(void)
                     buff[buffind] = 0; // terminate
 
                     // Create data payload.
-                    CREATE_INST(st, test_struct_t, BAD_PTR);
+                    CREATE_INST(st, test_struct_t, BAD_PTR); //TODO Unfreed memory 007DE998.
                     st->anumber = 100 + i++;
                     sprintf(st->astring, "Ajay_%d", st->anumber);
 

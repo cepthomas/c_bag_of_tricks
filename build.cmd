@@ -1,3 +1,4 @@
+rem Standard build - called by VS Code.
 
 echo off
 cls

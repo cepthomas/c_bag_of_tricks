@@ -6,25 +6,25 @@
 #include <errno.h>
 
 
+//-------------------------- Return codes -----------------------------//
+
 /// Defines an error (allocation, iniitialization, etc) for a function that returns a pointer.
 #define BAD_PTR NULL
 
-/// Defines an error (memory, invalid data, etc) for a function that returns status int.
+/// Defines an error (memory, invalid data, etc) for a function that returns int status.
 #define RS_ERR -1
 
-/// Defines success for a function that returns status int.
+/// Defines success for a function that returns int status.
 #define RS_PASS 0
 
-/// Defines failure (expected, end of iteration, etc) for a function that returns status int.
+/// Defines failure (expected, end of iteration, etc) for a function that returns int status.
 #define RS_FAIL -2
 
-/// Validate pointer arg. If fails, sets errno and early returns.
-/// @param ptr Pointer.
-/// @param err Error value to return in case of failure.
-#define VAL_PTR(ptr, err) if(ptr == NULL) { errno = EINVAL; return err; }
 
+//-------------------------- Managed lifetime -----------------------------//
+
+/// A crude memory alloc/free probe mechanism. You can strip it out if you want.
 #ifdef USE_PROBE
-/// A crude memory alloc/free probe mechanism. TODO monitor for mem highwater/overflow?
 #define PROBE(mark, var, ln, fn) printf("%s,%p,%d,\"%s\"\n", mark, var, ln, fn)
 #else
 #define PROBE(mark, var, ln, fn)
@@ -54,5 +54,10 @@
     PROBE("---", var, __LINE__, __FILE__); \
     free(var)
 
+/// Validate pointer arg. If fails, sets errno and early returns.
+/// @param ptr Pointer.
+/// @param err Error value to return in case of failure.
+#define VAL_PTR(ptr, err) \
+    if(ptr == NULL) { errno = EINVAL; return err; }
 
 #endif // COMMON_H

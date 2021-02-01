@@ -3,9 +3,6 @@
 #define DICT_H
 
 #include "list.h"
-// Optionally define DICT_NUM_BINS as some prime number here.
-#include "dict.h"
-
 
 /// @brief Declaration of a rudimentary dictionary thing.
 /// You can use the value pointers for your own application any way you like.

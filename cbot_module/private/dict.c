@@ -11,10 +11,8 @@
 
 /// @brief Definition of dictionary thing.
 
-/// Prime number.
-#ifndef DICT_NUM_BINS
-#define DICT_NUM_BINS 101 //TODO from cmd arg?
-#endif
+/// Size should be a prime number. TODO Nice to set from dict_create() arg.
+#define DICT_NUM_BINS 101
 
 
 //---------------- Private --------------------------//
@@ -36,8 +34,6 @@ static unsigned int p_hashString(char* s);
 /// @param i The int.
 /// @return Hash value between 0 and DICT_NUM_BINS.
 static unsigned int p_hashInt(int i);
-
-//TODO check returns from list funcs.
 
 
 //---------------- Public API Implementation -------------//
@@ -92,10 +88,12 @@ int dict_clear(dict_t* d)
     for(int i = 0; i < DICT_NUM_BINS; i++)
     {
         list_t* pl = d->bins[i]; // shorthand
+        VAL_PTR(pl, RS_ERR);
 
         // Remove custom user data.
         kv_t* kv;
         list_iterStart(pl);
+
         while(RS_PASS == list_iterNext(pl, (void**)&kv))
         {
             VAL_PTR(kv, RS_ERR);
@@ -107,14 +105,14 @@ int dict_clear(dict_t* d)
 
             if(kv->value != NULL)
             {
-                FREE(kv->value);
+                FREE(kv->value); //TODO Freeing invalid pointer 00ED3B58.
                 kv->value = NULL;
             }
 
-            // FREE(kv); // this gets freed in list_clear()
+            // kv gets freed in list_clear()
         }
 
-        list_clear(pl);
+        ret = list_clear(pl);
     }
 
     return ret;
@@ -126,9 +124,17 @@ int dict_count(dict_t* d)
     VAL_PTR(d, RS_ERR);
 
     int ret = 0;
-    for(int i = 0; i < DICT_NUM_BINS; i++)
+    for(int i = 0; i < DICT_NUM_BINS && ret >= 0; i++)
     {
-        ret += list_count(d->bins[i]);
+        int cnt = list_count(d->bins[i]);
+        if(cnt >= 0)
+        {
+            ret += cnt;
+        }
+        else
+        {
+            ret = cnt; // ng
+        }
     }
 
     return ret;
@@ -145,6 +151,8 @@ int dict_set(dict_t* d, kv_t* kv)
     // If it is in a bin already, replace the value.
     unsigned int bin = d->kt == KEY_STRING ? p_hashString(kv->key.ks) : p_hashInt(kv->key.ki);
     list_t* pl = d->bins[bin]; // shorthand
+    VAL_PTR(pl, RS_ERR);
+
     list_iterStart(pl);
     kv_t* lkv;
     bool found = false;
@@ -170,13 +178,14 @@ int dict_set(dict_t* d, kv_t* kv)
                 FREE(kv->value);
             }
             lkv->value = kv->value;
+            FREE(kv);
         }
     }
 
     // Not in a bin so add.
     if(!found)
     {
-        list_append(pl, (void**)kv);
+        list_append(pl, (void*)kv);
     }
 
     return ret;
@@ -194,6 +203,7 @@ int dict_get(dict_t* d, kv_t* kv)
     // Is it in the bin?
     unsigned int bin = d->kt == KEY_STRING ? p_hashString(kv->key.ks) : p_hashInt(kv->key.ki);
     list_t* pl = d->bins[bin]; // shorthand
+
     list_iterStart(pl);
     kv_t* lkv;
     bool found = false;
@@ -231,10 +241,12 @@ list_t* dict_get_keys(dict_t* d)
     VAL_PTR(d, BAD_PTR);
 
     list_t* l = list_create();
+    VAL_PTR(l, BAD_PTR);
     
     for(int i = 0; i < DICT_NUM_BINS; i++)
     {
         list_t* pl = d->bins[i]; // shorthand
+        VAL_PTR(pl, BAD_PTR);
 
         list_iterStart(pl);
 
@@ -280,6 +292,7 @@ int dict_dump(dict_t* d, FILE* fp)
     for(int i = 0; i < DICT_NUM_BINS; i++)
     {
         list_t* pl = d->bins[i]; // shorthand
+        VAL_PTR(pl, RS_ERR);
 
         fprintf(fp, "%d,%d", i, list_count(pl));
 

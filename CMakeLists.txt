@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 3.5)
+
 project(cbot_test)
 
 set(CMAKE_C_STANDARD 99)
 # set(CMAKE_CXX_STANDARD 11)
 
-# needs -g to debug. TODO clean up flags when done: -Wno-unused-variable
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall -Werror -Wno-unused-variable")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wno-unused-variable")
+# needs -g to debug.
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall -Werror") # -Wno-unused-variable")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall")
 
 if(DEFINED USE_PROBE)
     message(STATUS "USE_PROBE is DEFINED")
@@ -31,7 +32,6 @@ add_executable(cbot_test
     test/test_sm.cpp
     test/lock.c
     )
-
 
 # Copy test files.
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/test/hemingway_short.txt  DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
