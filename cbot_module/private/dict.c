@@ -11,7 +11,7 @@
 
 /// @brief Definition of dictionary thing.
 
-/// Size should be a prime number. TODO Nice to set from dict_create() arg.
+/// Size should be a prime number. TODO Would be nice to set from dict_create() arg.
 #define DICT_NUM_BINS 101
 
 
@@ -36,7 +36,7 @@ struct dict
 /// Make hash from string and bin it.
 /// @param s The string.
 /// @return Hash value between 0 and DICT_NUM_BINS.
-static unsigned int p_hashString(char* s);
+static unsigned int p_hashString(const char* s);
 
 /// Make hash from int and bin it.
 /// @param i The int.
@@ -118,7 +118,7 @@ int dict_clear(dict_t* d)
 
             if(kv->value != NULL)
             {
-                FREE(kv->value); //TODO Freeing invalid pointer 00ED3B58.
+                FREE(kv->value);
                 kv->value = NULL;
             }
 
@@ -157,15 +157,13 @@ int dict_count(dict_t* d)
 int dict_set(dict_t* d, key_t k, void* v)
 {
     VAL_PTR(d, RS_ERR);
+    VAL_PTR(v, RS_ERR);
 
     int ret = RS_PASS;
 
-    // Pack into our preferred format.
-    kv_t* kv = p_convertKey(d->kt, k);
-    kv->value = v;
 
     // If it is in a bin already, replace the value.
-    unsigned int bin = d->kt == KEY_STRING ? p_hashString(kv->skey) : p_hashInt(kv->ikey);
+    unsigned int bin = d->kt == KEY_STRING ? p_hashString(k.ks) : p_hashInt(k.ki);
     list_t* pl = d->bins[bin]; // shorthand
     VAL_PTR(pl, RS_ERR);
 
@@ -179,28 +177,31 @@ int dict_set(dict_t* d, key_t k, void* v)
 
         if(d->kt == KEY_STRING)
         {
-            found = (strcmp(lkv->skey, kv->skey) == 0);
+            found = (strcmp(lkv->skey, k.ks) == 0);
         }
         else // KEY_INT
         {
-            found = (lkv->ikey == kv->ikey);
+            found = (lkv->ikey == k.ki);
         }
 
         if(found)
         {
-            // Need to FREE the original. TODO doesn't work right.
-            if(kv->value != NULL)
+            // Need to FREE the original data then copy from the new..
+            if(lkv->value != NULL)
             {
-                FREE(kv->value);
+                FREE(lkv->value);
             }
-            lkv->value = kv->value;
-            FREE(kv);
+            lkv->value = v;
         }
     }
 
     // Not in a bin so add.
     if(!found)
     {
+        // Pack into our internal format.
+        kv_t* kv = p_convertKey(d->kt, k);
+        kv->value = v;
+
         list_append(pl, (void*)kv);
     }
 
@@ -214,11 +215,8 @@ int dict_get(dict_t* d, key_t k, void** v)
 
     int ret = RS_FAIL;
 
-    // Pack into our preferred format.
-    kv_t* kv = p_convertKey(d->kt, k);
-
     // Is it in the bin?
-    unsigned int bin = d->kt == KEY_STRING ? p_hashString(kv->skey) : p_hashInt(kv->ikey);
+    unsigned int bin = d->kt == KEY_STRING ? p_hashString(k.ks) : p_hashInt(k.ki);
     list_t* pl = d->bins[bin]; // shorthand
 
     list_iterStart(pl);
@@ -231,19 +229,19 @@ int dict_get(dict_t* d, key_t k, void** v)
 
         if(d->kt == KEY_STRING)
         {
-            if(strcmp(lkv->skey, kv->skey) == 0)
+            if(strcmp(lkv->skey, k.ks) == 0)
             {
                 ret = RS_PASS;
-                kv->value = lkv->value;
+                *v = lkv->value;
                 found = true;
             }
         }
         else // KEY_INT
         {
-            if(lkv->ikey == kv->ikey)
+            if(lkv->ikey == k.ki)
             {
                 ret = RS_PASS;
-                kv->value = lkv->value;
+                *v = lkv->value;
                 found = true;
             }
         }
@@ -345,7 +343,7 @@ int dict_dump(dict_t* d, FILE* fp)
 //---------------- Private Implementation --------------------------//
 
 //--------------------------------------------------------//
-unsigned int p_hashString(char* s)
+unsigned int p_hashString(const char* s)
 {
     // Lifted from http://www.cse.yorku.ca/~oz/hash.html.
     unsigned long long hash = 5381;
@@ -364,6 +362,7 @@ unsigned int p_hashString(char* s)
 //--------------------------------------------------------//
 unsigned int p_hashInt(int i)
 {
+    // Simple "hash".
     return (unsigned int)(i % DICT_NUM_BINS);
 }
 

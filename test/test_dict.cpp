@@ -52,21 +52,13 @@ UT_SUITE(DICT_STR, "Test all dict functions using string key.")
     tsrep->anumber = 9999;
     sprintf(tsrep->astring, "Ajay_%d", tsrep->anumber);
     // Create key/value.
- //   CREATE_STR(s3, 16, RS_ERR);
- //   strcpy(s3, "SOMETHING");
-//    CREATE_INST(kv2, kv_t, RS_ERR);
     key.ks = "SOMETHING";
-//    kv2->value = tsrep;
     dict_set(mydict, key, tsrep);
     // Size should not change.
     UT_EQUAL(dict_count(mydict), 184);
     // Content should have.
-//    CREATE_STR(s4, 16, RS_ERR);
-//    strcpy(s4, "SOMETHING");  
-//    kv2->key.ks = s4;
     UT_EQUAL(dict_get(mydict, key, (void**)&tsret), RS_PASS);
     UT_NOT_NULL(tsret);
-    //test_struct_t* tsr = (test_struct_t*)kv2->value;
     UT_EQUAL(tsret->anumber, 9999);
     UT_STR_EQUAL(tsret->astring, "Ajay_9999");
 
@@ -83,20 +75,6 @@ UT_SUITE(DICT_STR, "Test all dict functions using string key.")
     UT_EQUAL(dict_destroy(mydict), RS_PASS);
     UT_EQUAL(list_destroy(keys), RS_PASS);
 
-    // FREE(kv1);
-    // FREE(kv2);
-    // FREE(s1);
-    // FREE(s2);
-    // FREE(s3);
-    // FREE(s4); //TODO Freeing invalid pointer 008D34D0.
-//(214): Unfreed memory 00ED02B0.
-//(33): Unfreed memory 00ED4390.
-//(36): Unfreed memory 00ED3C18.
-//(46): Unfreed memory 00ED3B98.
-//(58): Unfreed memory 00ED3C38.
-//(60): Unfreed memory 00ED4450.
-//(67): Unfreed memory 00ED3C98.
-
     return 0;
 }
 
@@ -109,10 +87,7 @@ UT_SUITE(DICT_INT, "Test some dict functions using int key.")
     UT_EQUAL(dict_count(mydict), 290);
 
     test_struct_t* ts = NULL;
- //   test_struct_t* tsret = NULL;
     key_t key;
-
-//    CREATE_INST(kv, kv_t, RS_ERR);
 
     // good
     key.ki = 155;
@@ -121,6 +96,7 @@ UT_SUITE(DICT_INT, "Test some dict functions using int key.")
     UT_EQUAL(ts->anumber, 1155);
     UT_STR_EQUAL(ts->astring, "Boo_1155");
     // ng
+    ts = NULL;
     key.ki = 444;
     UT_EQUAL(dict_get(mydict, key, (void**)&ts), RS_FAIL);
     UT_NULL(ts);
@@ -217,17 +193,13 @@ dict_t* create_str_dict(void)
                     buff[buffind] = 0; // terminate
 
                     // Create data payload.
-                    CREATE_INST(st, test_struct_t, BAD_PTR); //TODO Unfreed memory 007DE998.
+                    CREATE_INST(st, test_struct_t, BAD_PTR);
                     st->anumber = 100 + i++;
                     sprintf(st->astring, "Ajay_%d", st->anumber);
 
                     // Create key/value.
                     key_t key;
-                    // CREATE_STR(skey, strlen(buff), BAD_PTR);
-                    // strcpy(skey, buff);
-                    // CREATE_INST(kv, kv_t, BAD_PTR);
                     key.ks = buff;
-                    // kv->value = st;
 
                     dict_set(d, key, st);
                     buffind = 0;
@@ -269,10 +241,8 @@ dict_t* create_int_dict(void)
         sprintf(st->astring, "Boo_%d", st->anumber);
 
         // Create key/value.
-        //CREATE_INST(kv, kv_t, BAD_PTR);
         key_t key;
         key.ki = k;
-       // kv->value = st;
 
         dict_set(d, key, st);
     }
