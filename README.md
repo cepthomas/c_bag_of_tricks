@@ -12,7 +12,7 @@
 
 # Components
 - The components in this collection generally follow the model put forth in [c-modular](https://github.com/cepthomas/c-modular).
-- If a function returns a pointer, the client now owns it and is responsible for destroying it. This doesn't apply to const pointers.
+- If a function returns a pointer (except const), the client now owns it and is responsible for destroying it.
 
 ## state_machine
 - Semi-hierarchical state machine for C.
@@ -44,9 +44,9 @@ Rather than add a whole new error handling system, cbot uses existing C patterns
 - When errors occur, cbot sets errno accordingly.
 - common.h defines some macros:
     - Return values for ints and pointers.
-    - Macros for creating typed objects - CREATE_INST(), CREATE_STR().
-    - Macros for validating arg pointers - VAL_PTR(). Note that these use early returns to keep the if-nesting reasonable.
-      Normally I hate early returns but in this case the pluses outweigh.
+    - Macros for creating and destroying typed objects with validation - CREATE_INST(), CREATE_STR(), FREE().
+    - Macros for validating arg pointers - VAL_PTR().
+    - Note that these macros use early returns to keep the if-nesting reasonable. Normally I disdain early returns but in this case the pluses outweigh.
 
 # pnut
 Practically Nonexistent Unit Tester: A super lightweight unit test framework for C (or C++).
@@ -64,3 +64,8 @@ See test-pnut.cpp for an example of how to write unit tests and main.cpp of how 
 The original intent was to provide a way to unit test algorithmic parts of embedded code in an isolated
 environment. To that end, the system must be designed so as to abstract the hardware components.
 An example showing how to use this for embedded applications is [c-modular](https://github.com/cepthomas/c-modular).
+
+# Tools
+- Debugging memory management in composites like dict is difficult. Tools like heob and valgrind exist but I cobbled together
+  something compatible with the CREATE/FREE macros. With this feature turned on (see run-probe.cmd), the app spews out all alloc() and
+  free() calls, which is then fed through proc-mem.py to detect leaks and danglers. Crude but works ok.
