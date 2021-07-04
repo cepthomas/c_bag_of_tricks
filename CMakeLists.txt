@@ -5,9 +5,10 @@ project(cbot_test)
 set(CMAKE_C_STANDARD 99)
 # set(CMAKE_CXX_STANDARD 11)
 
-# needs -g to debug.
+# needs -g to debug. Probably get rid of -Wno-deprecated-declarations.
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall -Werror") # -Wno-unused-variable")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall")
+
 
 if(DEFINED USE_PROBE)
     message(STATUS "USE_PROBE is DEFINED")
@@ -15,15 +16,17 @@ if(DEFINED USE_PROBE)
     set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -DUSE_PROBE")
 endif()
 
-include_directories("cbot_module" "test")
+include_directories("cbot_module" "cbot_win" "test")
 
 # Source files.
 add_executable(cbot_test
+    cbot_module/private/pnut.cpp
     cbot_module/private/list.c
     cbot_module/private/dict.c
     cbot_module/private/state_machine.c
     cbot_module/private/stringx.c
-    cbot_module/private/pnut.cpp
+    cbot_win/private/ftimer.c
+    cbot_win/private/stopwatch.c
     test/main.cpp
     test/test_list.cpp
     test/test_dict.cpp
@@ -32,6 +35,8 @@ add_executable(cbot_test
     test/test_sm.cpp
     test/lock.c
     )
+
+target_link_libraries(cbot_test libwinmm.a)
 
 # Copy test files.
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/test/hemingway_short.txt  DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
