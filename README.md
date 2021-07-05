@@ -1,5 +1,5 @@
 
-# c-bag-of-tricks
+# c_bag_of_tricks
 - An ever-expanding collection of the C things I seem to use repeatedly. The primary focus is on
   utilities for embedded systems. There are lots of other ways to do this but I find most to be over-complicated.
 - There is some dynamic allocation, maybe I can make it all static eventually. No assert() are used.
@@ -11,7 +11,7 @@
 ![logo](felix.jpg)
 
 # Components
-- The components in this collection generally follow the model put forth in [c-modular](https://github.com/cepthomas/c-modular).
+- The components in this collection generally follow the model put forth in [c_modular](https://github.com/cepthomas/c_modular).
 - If a function returns a pointer (except const), the client now owns it and is responsible for destroying it.
 
 ## state_machine
@@ -63,9 +63,9 @@ See test-pnut.cpp for an example of how to write unit tests and main.cpp of how 
 
 The original intent was to provide a way to unit test algorithmic parts of embedded code in an isolated
 environment. To that end, the system must be designed so as to abstract the hardware components.
-An example showing how to use this for embedded applications is [c-modular](https://github.com/cepthomas/c-modular).
+An example showing how to use this for embedded applications is [c_modular](https://github.com/cepthomas/c_modular).
 
 # Tools
 - Debugging memory management in composites like dict is difficult. Tools like heob and valgrind exist but I cobbled together
   something compatible with the CREATE/FREE macros. With this feature turned on (see run-probe.cmd), the app spews out all alloc() and
-  free() calls, which is then fed through proc-mem.py to detect leaks and danglers. Crude but works ok.
+  free() calls, which is then fed through proc_mem.py to detect leaks and danglers. Crude but works ok.

@@ -16,7 +16,7 @@ make
 :: Run mem check. 
 cbot_test.exe > ..\temp\probe.txt
 cd ..
-python proc-mem.py temp\probe.txt > temp\mem_out.txt
+python proc_mem.py temp\probe.txt > temp\mem_out.txt
 :: Go have a look.
 
 rem pause

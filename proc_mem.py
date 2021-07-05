@@ -20,7 +20,6 @@ for line in f.readlines():
     # print("%s" % line)
 
     # Split the line and see if it is one we are interested in.
-    # +++,008485E0,396,"C:\Dev\repos\c-bag-of-tricks\cbot_module\private\stringx.c"
 
     parts = line.split(',')
 
