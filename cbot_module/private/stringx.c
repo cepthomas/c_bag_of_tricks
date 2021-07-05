@@ -10,7 +10,7 @@
 /// @brief Definition of string thing.
 
 
-//---------------- Private --------------------------//
+//---------------- Private Declarations ------------------//
 
 /// Internal data definition.
 struct stringx

@@ -8,7 +8,7 @@
 
 /// @brief Definition of list thing.
 
-//---------------- Private --------------------------//
+//---------------- Private Declarations ------------------//
 
 /// List node definition.
 typedef struct node

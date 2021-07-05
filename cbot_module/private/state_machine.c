@@ -10,10 +10,10 @@
 /// @brief Definition of state machine.
 
 
-//---------------- Private --------------------------//
+//---------------- Private Declarations ------------------//
 
 /// For debugging if enabled.
-#define MAX_TRACE 100
+static const int MAX_TRACE = 100;
 
 /// One transition in a state.
 typedef struct

@@ -15,7 +15,7 @@
 #define DICT_NUM_BINS 101
 
 
-//---------------- Private --------------------------//
+//---------------- Private Declarations ------------------//
 
 /// Key-value pair.
 typedef struct kv

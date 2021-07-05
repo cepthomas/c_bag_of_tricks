@@ -1,6 +1,6 @@
 
 # c_bag_of_tricks
-- An ever-expanding collection of the C things I seem to use repeatedly. The primary focus is on
+- An ever-expanding collection of the C things I use repeatedly. The primary focus is on
   utilities for embedded systems. There are lots of other ways to do this but I find most to be over-complicated.
 - There is some dynamic allocation, maybe I can make it all static eventually. No assert() are used.
 - No dependencies on third party components.
@@ -10,9 +10,34 @@
 
 ![logo](felix.jpg)
 
-# Components
+# Conventions
+- All C projects will use this [naming convention](CONVENTIONS.md). It's basically the
+  [Barr Group standard](https://barrgroup.com/embedded-systems/books/embedded-c-coding-standard) with some minor adjustments, because.
 - The components in this collection generally follow the model put forth in [c_modular](https://github.com/cepthomas/c_modular).
 - If a function returns a pointer (except const), the client now owns it and is responsible for destroying it.
+
+## Error Handling
+In an embedded system, most real errors are considered unrecoverable. Things like handling comm timeouts should be considered
+normal behavior and handled accordingly. So cbot errors are very bad and usually result in hard crash/reset. This of course should never
+happen because they have all been caught in unit and integration testing, right?
+
+Rather than add a whole new error handling system, cbot uses existing C patterns:
+- Functions that return pointers return BAD_PTR (NULL) for errors.
+- Functions that return things like counts (where 0 is valid) return RS_ERR (-1) for errors.
+- Functions that return status return RS_ERR (-1) for errors, RS_PASS (0) for success, RS_FAIL (-2) for failure (logical not error).
+- When errors occur, cbot sets errno accordingly.
+- common.h defines some macros:
+    - Return values for ints and pointers.
+    - Macros for creating and destroying typed objects with validation - CREATE_INST(), CREATE_STR(), FREE().
+    - Macros for validating arg pointers - VAL_PTR().
+    - Note that these macros use early returns to keep the if-nesting reasonable. Normally I disdain early returns but in this case the pluses outweigh.
+
+## Tools
+- Debugging memory management in composites like dict is difficult. Tools like heob and valgrind exist but I cobbled together
+  something compatible with the CREATE/FREE macros. With this feature turned on (see run-probe.cmd), the app spews out all alloc() and
+  free() calls, which is then fed through proc_mem.py to detect leaks and danglers. Crude but works ok.
+
+# Components
 
 ## state_machine
 - Semi-hierarchical state machine for C.
@@ -32,23 +57,7 @@
 - Higher level string manipulation.
 - See test_stringx.cpp for example of usage.
 
-# Error Handling
-In an embedded system, most real errors are considered unrecoverable. Things like handling comm timeouts should be considered
-normal behavior and handled accordingly. So cbot errors are very bad and usually result in hard crash/reset. This of course should never
-happen because they have all been caught in unit and integration testing, right?
-
-Rather than add a whole new error handling system, cbot uses existing C patterns:
-- Functions that return pointers return BAD_PTR (NULL) for errors.
-- Functions that return things like counts (where 0 is valid) return RS_ERR (-1) for errors.
-- Functions that return status return RS_ERR (-1) for errors, RS_PASS (0) for success, RS_FAIL (-2) for failure (logical not error).
-- When errors occur, cbot sets errno accordingly.
-- common.h defines some macros:
-    - Return values for ints and pointers.
-    - Macros for creating and destroying typed objects with validation - CREATE_INST(), CREATE_STR(), FREE().
-    - Macros for validating arg pointers - VAL_PTR().
-    - Note that these macros use early returns to keep the if-nesting reasonable. Normally I disdain early returns but in this case the pluses outweigh.
-
-# pnut
+## pnut
 Practically Nonexistent Unit Tester: A super lightweight unit test framework for C (or C++).
 It has gone through many useful and successful iterations and may as well bring you joy also.
 Inspired by [Quicktest](http://quicktest.sourceforge.net/) from long ago.
@@ -64,8 +73,3 @@ See test-pnut.cpp for an example of how to write unit tests and main.cpp of how 
 The original intent was to provide a way to unit test algorithmic parts of embedded code in an isolated
 environment. To that end, the system must be designed so as to abstract the hardware components.
 An example showing how to use this for embedded applications is [c_modular](https://github.com/cepthomas/c_modular).
-
-# Tools
-- Debugging memory management in composites like dict is difficult. Tools like heob and valgrind exist but I cobbled together
-  something compatible with the CREATE/FREE macros. With this feature turned on (see run-probe.cmd), the app spews out all alloc() and
-  free() calls, which is then fed through proc_mem.py to detect leaks and danglers. Crude but works ok.

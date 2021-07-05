@@ -10,7 +10,8 @@ extern "C"
 #include "dict.h"
 }
 
-#define TEST_STR_LEN 16
+static const int TEST_STR_LEN = 16;
+
 // A data struct for testing. 
 typedef struct
 {
