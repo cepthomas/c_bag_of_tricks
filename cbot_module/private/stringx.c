@@ -23,38 +23,38 @@ struct stringx
 /// @param s Source stringx.
 /// @param cs The new raw string or NULL for an empty stringx.
 /// @return RS_PASS | RS_ERR.
-static int p_assign(stringx_t* s, char* cs);
+static int p_Assign(stringx_t* s, char* cs);
 
 /// Case sensitive char matcher.
 /// @param c1 First char.
 /// @param c2 Second char.
 /// @param csens Case sensitivity.
 /// @return True if match.
-static bool p_match(char c1, char c2, csens_t csens);
+static bool p_Match(char c1, char c2, csens_t csens);
 
 /// Copy a const string.
 /// @param sinit String to copy. If NULL, a valid empty string is created.
 /// @return The new mutable string | BAD_PTR.
-static char* p_scopy(const char* sinit);
+static char* p_Copy(const char* sinit);
 
 
 //---------------- Public API Implementation -------------//
 
 
 //--------------------------------------------------------//
-stringx_t* stringx_create(const char* sinit)
+stringx_t* stringx_Create(const char* sinit)
 {
     VAL_PTR(sinit, BAD_PTR);
     CREATE_INST(s, stringx_t, BAD_PTR);
 
     // Copy the contents.
-    p_assign(s, p_scopy(sinit));
+    p_Assign(s, p_Copy(sinit));
 
     return s;
 }
 
 //--------------------------------------------------------//
-int stringx_destroy(stringx_t* s)
+int stringx_Destroy(stringx_t* s)
 {
     VAL_PTR(s, RS_ERR);
 
@@ -71,7 +71,7 @@ int stringx_destroy(stringx_t* s)
 }
 
 //--------------------------------------------------------//
-int stringx_set(stringx_t* s, const char* sinit)
+int stringx_Set(stringx_t* s, const char* sinit)
 {
     VAL_PTR(s, RS_ERR);
     VAL_PTR(sinit, RS_ERR);
@@ -79,13 +79,13 @@ int stringx_set(stringx_t* s, const char* sinit)
     int ret = RS_PASS;
 
     // Copy the contents.
-    ret = p_assign(s, p_scopy(sinit));
+    ret = p_Assign(s, p_Copy(sinit));
 
     return ret;
 }
 
 //--------------------------------------------------------//
-int stringx_append(stringx_t* s, stringx_t* sapp)
+int stringx_Append(stringx_t* s, stringx_t* sapp)
 {
     VAL_PTR(s, RS_ERR);
     VAL_PTR(sapp, RS_ERR);
@@ -93,79 +93,79 @@ int stringx_append(stringx_t* s, stringx_t* sapp)
     int ret = RS_PASS;
 
     // This is a bit crude. Need to make smarter internal buffer to support growing.
-    int slen = stringx_len(s) + stringx_len(sapp);
+    int slen = stringx_Len(s) + stringx_Len(sapp);
     CREATE_STR(snew, slen, RS_ERR);
     strcpy(snew, s->raw);
-    strcpy(snew + stringx_len(s), sapp->raw);
-    ret = p_assign(s, snew);
+    strcpy(snew + stringx_Len(s), sapp->raw);
+    ret = p_Assign(s, snew);
 
     return ret;
 }
 
 //--------------------------------------------------------//
-const char* stringx_content(stringx_t* s)
+const char* stringx_Content(stringx_t* s)
 {
     const char* raw = s != NULL ? s->raw : NULL;
     return raw;
 }
 
 //--------------------------------------------------------//
-int stringx_len(stringx_t* s)
+int stringx_Len(stringx_t* s)
 {
     return s != NULL ? strlen(s->raw) : RS_ERR;
 }
 
 //--------------------------------------------------------//
-int stringx_compare(stringx_t* s1, const char* s2, csens_t csens)
+int stringx_Compare(stringx_t* s1, const char* s2, csens_t csens)
 {
     VAL_PTR(s1, RS_ERR);
     VAL_PTR(s2, RS_ERR);
 
-    bool match = stringx_len(s1) == strlen(s2);
+    bool match = stringx_Len(s1) == strlen(s2);
 
     for(unsigned int i = 0; i < strlen(s2) && match; i++)
     {
-        match = p_match(s1->raw[i], s2[i], csens);
+        match = p_Match(s1->raw[i], s2[i], csens);
     }
 
     return match ? RS_PASS : RS_FAIL;
 }
 
 //--------------------------------------------------------//
-int stringx_startswith(stringx_t* s1, const char* s2, csens_t csens)
+int stringx_StartsWith(stringx_t* s1, const char* s2, csens_t csens)
 {
     VAL_PTR(s1, RS_ERR);
     VAL_PTR(s2, RS_ERR);
 
-    bool match = stringx_len(s1) >= strlen(s2);
+    bool match = stringx_Len(s1) >= strlen(s2);
 
     for(unsigned int i = 0; i < strlen(s2) && match; i++)
     {
-        match = p_match(s1->raw[i], s2[i], csens);
+        match = p_Match(s1->raw[i], s2[i], csens);
     }
 
     return match ? RS_PASS : RS_FAIL;
 }
 
 //--------------------------------------------------------//
-int stringx_endswith(stringx_t* s1, const char* s2, csens_t csens)
+int stringx_EndsWith(stringx_t* s1, const char* s2, csens_t csens)
 {
     VAL_PTR(s1, RS_ERR);
     VAL_PTR(s2, RS_ERR);
 
-    bool match = stringx_len(s1) >= strlen(s2);
-    unsigned int ind1 = stringx_len(s1) - strlen(s2);
+    bool match = stringx_Len(s1) >= strlen(s2);
+    unsigned int ind1 = stringx_Len(s1) - strlen(s2);
 
     for(unsigned int i = 0; i < strlen(s2) && match; i++)
     {
-        match = p_match(s1->raw[ind1++], s2[i], csens);
+        match = p_Match(s1->raw[ind1++], s2[i], csens);
     }
 
     return match ? RS_PASS : RS_FAIL;
 }
 
 //--------------------------------------------------------//
-int stringx_contains(stringx_t* s1, const char* s2, csens_t csens)
+int stringx_Contains(stringx_t* s1, const char* s2, csens_t csens)
 {
     VAL_PTR(s1, RS_ERR);
     VAL_PTR(s2, RS_ERR);
@@ -184,57 +184,57 @@ int stringx_contains(stringx_t* s1, const char* s2, csens_t csens)
     else
     {
         // Need to convert to lower case before comparing.
-        stringx_t* cs1 = stringx_copy(s1);
-        stringx_tolower(cs1);
-        stringx_t* cs2 = stringx_create(s2);
-        stringx_tolower(cs2);
+        stringx_t* cs1 = stringx_Copy(s1);
+        stringx_ToLower(cs1);
+        stringx_t* cs2 = stringx_Create(s2);
+        stringx_ToLower(cs2);
 
         char* p = strstr(cs1->raw, cs2->raw);
         if(p != NULL)
         {
             index = p - cs1->raw;
         }
-        stringx_destroy(cs1);
-        stringx_destroy(cs2);
+        stringx_Destroy(cs1);
+        stringx_Destroy(cs2);
     }
 
     return index >= 0 ? index : RS_FAIL;
 }
 
 //--------------------------------------------------------//
-stringx_t* stringx_copy(stringx_t* s)
+stringx_t* stringx_Copy(stringx_t* s)
 {
     VAL_PTR(s, BAD_PTR);
 
-    stringx_t* copy = stringx_create(s->raw);
+    stringx_t* copy = stringx_Create(s->raw);
 
     return copy; // could be NULL - OK
 }
 
 //--------------------------------------------------------//
-stringx_t* stringx_left(stringx_t* s, unsigned int num)
+stringx_t* stringx_Left(stringx_t* s, unsigned int num)
 {
     VAL_PTR(s, BAD_PTR);
 
-    stringx_t* left = stringx_create("");
+    stringx_t* left = stringx_Create("");
 
     if(strlen(s->raw) >= num)
     {
         CREATE_STR(sleft, num, BAD_PTR);
-        CREATE_STR(sresid, stringx_len(s) - num, BAD_PTR);
+        CREATE_STR(sresid, stringx_Len(s) - num, BAD_PTR);
 
         strncpy(sleft, s->raw, num);
-        strncpy(sresid, s->raw + num, stringx_len(s) - num);
+        strncpy(sresid, s->raw + num, stringx_Len(s) - num);
 
-        p_assign(left, sleft);
-        p_assign(s, sresid);
+        p_Assign(left, sleft);
+        p_Assign(s, sresid);
     }
 
     return left; // could be NULL - OK
 }
 
 //--------------------------------------------------------//
-int stringx_trim(stringx_t* s)
+int stringx_Trim(stringx_t* s)
 {
     VAL_PTR(s, RS_ERR);
 
@@ -274,14 +274,14 @@ int stringx_trim(stringx_t* s)
         CREATE_STR(cs, slen, RS_ERR);
         memcpy(cs, s->raw + first, slen);
         cs[slen] = 0;
-        p_assign(s, cs);
+        p_Assign(s, cs);
     }
 
     return ret;
 }
 
 //--------------------------------------------------------//
-int stringx_toupper(stringx_t* s)
+int stringx_ToUpper(stringx_t* s)
 {
     VAL_PTR(s, RS_ERR);
 
@@ -301,7 +301,7 @@ int stringx_toupper(stringx_t* s)
 }
 
 //--------------------------------------------------------//
-int stringx_tolower(stringx_t* s)
+int stringx_ToLower(stringx_t* s)
 {
     VAL_PTR(s, RS_ERR);
 
@@ -321,7 +321,7 @@ int stringx_tolower(stringx_t* s)
 }
 
 //--------------------------------------------------------//
-int stringx_format(stringx_t* s, unsigned int maxlen, const char* format, ...)
+int stringx_Format(stringx_t* s, unsigned int maxlen, const char* format, ...)
 {
     VAL_PTR(s, RS_ERR);
     VAL_PTR(format, RS_ERR);
@@ -333,18 +333,18 @@ int stringx_format(stringx_t* s, unsigned int maxlen, const char* format, ...)
     va_start(args, format);
     vsnprintf(buff, maxlen, format, args);
 
-    p_assign(s, buff);
+    p_Assign(s, buff);
   
     return ret;
 }
 
 //--------------------------------------------------------//
-list_t* stringx_split(stringx_t* s, const char* delim)
+list_t* stringx_Split(stringx_t* s, const char* delim)
 {
     VAL_PTR(s, BAD_PTR);
     VAL_PTR(delim, BAD_PTR);
    
-    list_t* parts = list_create();
+    list_t* parts = list_Create();
     VAL_PTR(parts, BAD_PTR);
 
     // Make writable copy and tokenize it.
@@ -356,7 +356,7 @@ list_t* stringx_split(stringx_t* s, const char* delim)
     {
         CREATE_STR(ctoken, strlen(token), BAD_PTR);
         strcpy(ctoken, token);
-        list_append(parts, ctoken);
+        list_Append(parts, ctoken);
         token = strtok(NULL, delim);
     }
 
@@ -367,7 +367,7 @@ list_t* stringx_split(stringx_t* s, const char* delim)
 //---------------- Private Implementation --------------------------//
 
 //--------------------------------------------------------//
-int p_assign(stringx_t* s, char* cs)
+int p_Assign(stringx_t* s, char* cs)
 {
     VAL_PTR(s, RS_ERR);
     VAL_PTR(cs, RS_ERR);
@@ -386,7 +386,7 @@ int p_assign(stringx_t* s, char* cs)
 }
 
 //--------------------------------------------------------//
-char* p_scopy(const char* sinit)
+char* p_Copy(const char* sinit)
 {
     VAL_PTR(sinit, BAD_PTR);
 
@@ -400,7 +400,7 @@ char* p_scopy(const char* sinit)
 }
 
 //--------------------------------------------------------//
-bool p_match(char c1, char c2, csens_t csens)
+bool p_Match(char c1, char c2, csens_t csens)
 {
     // A=65 Z=90 a=97 z=122
     bool match = csens == CASE_INSENS ? toupper(c1) == toupper(c2) : c1 == c2;

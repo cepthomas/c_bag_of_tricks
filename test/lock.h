@@ -40,18 +40,18 @@
 /// Normal constructor.
 /// @param fp Stream for tracing.
 /// @return Pointer to underlying state machine object.
-sm_t* lock_create(FILE* fp);
+sm_t* lock_Create(FILE* fp);
 
 /// Normal destructor.
-int lock_destroy(void);
+int lock_Destroy(void);
 
 /// Process input from the keypad.
 /// @param key Specific key pressed.
-int lock_pressKey(char key);
+int lock_PressKey(char key);
 
 /// Readable version of defined state or event.
 /// @param id State or event id to translate.
 /// @return The corresponding string.
-const char* lock_xlat(unsigned int id);
+const char* lock_Xlat(unsigned int id);
 
 #endif // LOCK_H

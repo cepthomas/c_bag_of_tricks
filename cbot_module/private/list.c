@@ -29,7 +29,7 @@ struct list
 //---------------- Public API Implementation -------------//
 
 //--------------------------------------------------------//
-list_t* list_create(void)
+list_t* list_Create(void)
 {
     CREATE_INST(l, list_t, BAD_PTR);
 
@@ -37,18 +37,18 @@ list_t* list_create(void)
 }
 
 //--------------------------------------------------------//
-int list_destroy(list_t* l)
+int list_Destroy(list_t* l)
 {
     VAL_PTR(l, RS_ERR);
 
-    int ret = list_clear(l);
+    int ret = list_Clear(l);
     FREE(l);
 
     return ret;
 }
 
 //--------------------------------------------------------//
-int list_clear(list_t* l)
+int list_Clear(list_t* l)
 {
     VAL_PTR(l, RS_ERR);
 
@@ -76,41 +76,41 @@ int list_clear(list_t* l)
 }
 
 //--------------------------------------------------------//
-int list_push(list_t* l, void* data)
+int list_Push(list_t* l, void* data)
 {
     VAL_PTR(l, RS_ERR);
     VAL_PTR(data, RS_ERR);
 
     int ret = RS_PASS;
 
-    CREATE_INST(newNode, node_t, RS_ERR);
-    newNode->data = data;
+    CREATE_INST(new_node, node_t, RS_ERR);
+    new_node->data = data;
 
     // Get current head. Could be null if empty.
     node_t* chead = l->head;
 
     if(chead != NULL) // insert
     {
-        chead->prev = newNode;
-        newNode->next = chead;
-        l->head = newNode;
+        chead->prev = new_node;
+        new_node->next = chead;
+        l->head = new_node;
     }
     else // init
     {
-        l->head = newNode;
+        l->head = new_node;
     }
     
     // Clean up tail also.
     if(l->tail == NULL)
     {
-        l->tail = newNode;
+        l->tail = new_node;
     }
 
     return ret;
 }
 
 //--------------------------------------------------------//
-int list_append(list_t* l, void* data)
+int list_Append(list_t* l, void* data)
 {
     VAL_PTR(l, RS_ERR);
     VAL_PTR(data, RS_ERR);
@@ -120,30 +120,30 @@ int list_append(list_t* l, void* data)
     // Get current tail. Can be null.
     node_t* ctail = l->tail;
 
-    CREATE_INST(newNode, node_t, RS_ERR);
-    newNode->data = data;
+    CREATE_INST(new_node, node_t, RS_ERR);
+    new_node->data = data;
 
     if(ctail != NULL)
     {
-        ctail->next = newNode;
+        ctail->next = new_node;
     }
 
-    newNode->next = NULL; // last
-    newNode->prev = ctail;
+    new_node->next = NULL; // last
+    new_node->prev = ctail;
 
-    l->tail = newNode;
+    l->tail = new_node;
 
     // Init if first.
     if(l->head == NULL)
     {
-        l->head  = newNode;
+        l->head  = new_node;
     }
 
     return ret;
 }
 
 //--------------------------------------------------------//
-int list_pop(list_t* l, void** data)
+int list_Pop(list_t* l, void** data)
 {
     VAL_PTR(l, RS_ERR);
     VAL_PTR(data, RS_ERR);
@@ -183,7 +183,7 @@ int list_pop(list_t* l, void** data)
 }
 
 //--------------------------------------------------------//
-int list_count(list_t* l)
+int list_Count(list_t* l)
 {
     VAL_PTR(l, RS_ERR);
 
@@ -199,7 +199,7 @@ int list_count(list_t* l)
 }
 
 //--------------------------------------------------------//
-int list_iterStart(list_t* l)
+int list_IterStart(list_t* l)
 {
     VAL_PTR(l, RS_ERR);
 
@@ -217,7 +217,7 @@ int list_iterStart(list_t* l)
 }
 
 //--------------------------------------------------------//
-int list_iterNext(list_t* l, void** data)
+int list_IterNext(list_t* l, void** data)
 {
     VAL_PTR(l, RS_ERR);
     VAL_PTR(data, RS_ERR);

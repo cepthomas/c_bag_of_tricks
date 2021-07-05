@@ -36,24 +36,24 @@ struct dict
 /// Make hash from string and bin it.
 /// @param s The string.
 /// @return Hash value between 0 and DICT_NUM_BINS.
-static unsigned int p_hashString(const char* s);
+static unsigned int p_HashString(const char* s);
 
 /// Make hash from int and bin it.
 /// @param i The int.
 /// @return Hash value between 0 and DICT_NUM_BINS.
-static unsigned int p_hashInt(int i);
+static unsigned int p_HashInt(int i);
 
 /// Convert client to internal format.
 /// @param kt Type.
 /// @param k Key itself.
 /// @return New pointer to thing.
-static kv_t* p_convertKey(keyType_t kt, key_t k);
+static kv_t* p_ConvertKey(keyType_t kt, key_t k);
 
 //---------------- Public API Implementation -------------//
 
 
 //--------------------------------------------------------//
-dict_t* dict_create(keyType_t kt)
+dict_t* dict_Create(keyType_t kt)
 {
     CREATE_INST(d, dict_t, BAD_PTR);
 
@@ -62,7 +62,7 @@ dict_t* dict_create(keyType_t kt)
 
     for(int i = 0; i < DICT_NUM_BINS; i++)
     {
-        list_t* l = list_create();
+        list_t* l = list_Create();
         VAL_PTR(l, BAD_PTR);
         d->bins[i] = l;
     }
@@ -71,19 +71,19 @@ dict_t* dict_create(keyType_t kt)
 }
 
 //--------------------------------------------------------//
-int dict_destroy(dict_t* d)
+int dict_Destroy(dict_t* d)
 {
     VAL_PTR(d, RS_ERR);
 
     int ret = RS_PASS;
 
     // Clean up user data.
-    dict_clear(d);
+    dict_Clear(d);
 
     // Remove all bins.
     for(int i = 0; i < DICT_NUM_BINS; i++)
     {
-        list_destroy(d->bins[i]);
+        list_Destroy(d->bins[i]);
     }
 
     FREE(d);
@@ -92,7 +92,7 @@ int dict_destroy(dict_t* d)
 }
 
 //--------------------------------------------------------//
-int dict_clear(dict_t* d)
+int dict_Clear(dict_t* d)
 {
     VAL_PTR(d, RS_ERR);
 
@@ -105,9 +105,9 @@ int dict_clear(dict_t* d)
 
         // Remove custom user data.
         kv_t* kv;
-        list_iterStart(pl);
+        list_IterStart(pl);
 
-        while(RS_PASS == list_iterNext(pl, (void**)&kv))
+        while(RS_PASS == list_IterNext(pl, (void**)&kv))
         {
             VAL_PTR(kv, RS_ERR);
             if(d->kt == KEY_STRING && kv->skey != NULL)
@@ -125,21 +125,21 @@ int dict_clear(dict_t* d)
             // kv gets freed in list_clear()
         }
 
-        ret = list_clear(pl);
+        ret = list_Clear(pl);
     }
 
     return ret;
 }
 
 //--------------------------------------------------------//
-int dict_count(dict_t* d)
+int dict_Count(dict_t* d)
 {
     VAL_PTR(d, RS_ERR);
 
     int ret = 0;
     for(int i = 0; i < DICT_NUM_BINS && ret >= 0; i++)
     {
-        int cnt = list_count(d->bins[i]);
+        int cnt = list_Count(d->bins[i]);
         if(cnt >= 0)
         {
             ret += cnt;
@@ -154,7 +154,7 @@ int dict_count(dict_t* d)
 }
 
 //--------------------------------------------------------//
-int dict_set(dict_t* d, key_t k, void* v)
+int dict_Set(dict_t* d, key_t k, void* v)
 {
     VAL_PTR(d, RS_ERR);
     VAL_PTR(v, RS_ERR);
@@ -163,15 +163,15 @@ int dict_set(dict_t* d, key_t k, void* v)
 
 
     // If it is in a bin already, replace the value.
-    unsigned int bin = d->kt == KEY_STRING ? p_hashString(k.ks) : p_hashInt(k.ki);
+    unsigned int bin = d->kt == KEY_STRING ? p_HashString(k.ks) : p_HashInt(k.ki);
     list_t* pl = d->bins[bin]; // shorthand
     VAL_PTR(pl, RS_ERR);
 
-    list_iterStart(pl);
+    list_IterStart(pl);
     kv_t* lkv;
     bool found = false;
 
-    while(RS_PASS == list_iterNext(pl, (void**)&lkv) && !found)
+    while(RS_PASS == list_IterNext(pl, (void**)&lkv) && !found)
     {
         VAL_PTR(lkv, RS_ERR);
 
@@ -199,31 +199,31 @@ int dict_set(dict_t* d, key_t k, void* v)
     if(!found)
     {
         // Pack into our internal format.
-        kv_t* kv = p_convertKey(d->kt, k);
+        kv_t* kv = p_ConvertKey(d->kt, k);
         kv->value = v;
 
-        list_append(pl, (void*)kv);
+        list_Append(pl, (void*)kv);
     }
 
     return ret;
 }
 
 //--------------------------------------------------------//
-int dict_get(dict_t* d, key_t k, void** v)
+int dict_Get(dict_t* d, key_t k, void** v)
 {
     VAL_PTR(d, RS_ERR);
 
     int ret = RS_FAIL;
 
     // Is it in the bin?
-    unsigned int bin = d->kt == KEY_STRING ? p_hashString(k.ks) : p_hashInt(k.ki);
+    unsigned int bin = d->kt == KEY_STRING ? p_HashString(k.ks) : p_HashInt(k.ki);
     list_t* pl = d->bins[bin]; // shorthand
 
-    list_iterStart(pl);
+    list_IterStart(pl);
     kv_t* lkv;
     bool found = false;
 
-    while(RS_PASS == list_iterNext(pl, (void**)&lkv) && !found)
+    while(RS_PASS == list_IterNext(pl, (void**)&lkv) && !found)
     {
         VAL_PTR(lkv, RS_ERR);
 
@@ -251,11 +251,11 @@ int dict_get(dict_t* d, key_t k, void** v)
 }
 
 //--------------------------------------------------------//
-list_t* dict_get_keys(dict_t* d)
+list_t* dict_GetKeys(dict_t* d)
 {
     VAL_PTR(d, BAD_PTR);
 
-    list_t* l = list_create();
+    list_t* l = list_Create();
     VAL_PTR(l, BAD_PTR);
     
     for(int i = 0; i < DICT_NUM_BINS; i++)
@@ -263,11 +263,11 @@ list_t* dict_get_keys(dict_t* d)
         list_t* pl = d->bins[i]; // shorthand
         VAL_PTR(pl, BAD_PTR);
 
-        list_iterStart(pl);
+        list_IterStart(pl);
 
         kv_t* kv;
 
-        while(RS_PASS == list_iterNext(pl, (void**)&kv))
+        while(RS_PASS == list_IterNext(pl, (void**)&kv))
         {
             VAL_PTR(kv, BAD_PTR);
             if(d->kt == KEY_STRING)
@@ -276,12 +276,12 @@ list_t* dict_get_keys(dict_t* d)
                 VAL_PTR(kv->skey, BAD_PTR);
                 CREATE_STR(s, strlen(kv->skey), BAD_PTR);
                 strcpy(s, kv->skey);
-                list_append(l, s);
+                list_Append(l, s);
             }
             else // KEY_INT
             {
                 CREATE_INST(pi, int, BAD_PTR);
-                list_append(l, pi);
+                list_Append(l, pi);
             }
         }
     }
@@ -290,7 +290,7 @@ list_t* dict_get_keys(dict_t* d)
 }
 
 //--------------------------------------------------------//
-int dict_dump(dict_t* d, FILE* fp)
+int dict_Dump(dict_t* d, FILE* fp)
 {
     VAL_PTR(d, RS_ERR);
     VAL_PTR(fp, RS_ERR);
@@ -299,7 +299,7 @@ int dict_dump(dict_t* d, FILE* fp)
 
     // Preamble.
     fprintf(fp, "type,bins,total\n");
-    fprintf(fp, "%d,%d,%d\n\n", d->kt, DICT_NUM_BINS, dict_count(d));
+    fprintf(fp, "%d,%d,%d\n\n", d->kt, DICT_NUM_BINS, dict_Count(d));
 
     // Content.
     fprintf(fp, "bin,num,key0,key1,key2\n");
@@ -309,15 +309,15 @@ int dict_dump(dict_t* d, FILE* fp)
         list_t* pl = d->bins[i]; // shorthand
         VAL_PTR(pl, RS_ERR);
 
-        fprintf(fp, "%d,%d", i, list_count(pl));
+        fprintf(fp, "%d,%d", i, list_Count(pl));
 
-        list_iterStart(pl);
+        list_IterStart(pl);
 
-        for(int k = 0; k < (int)fmin(list_count(pl), 3); k++)
+        for(int k = 0; k < (int)fmin(list_Count(pl), 3); k++)
         {
             fprintf(fp, ",");
             kv_t* kv;
-            list_iterNext(pl, (void**)&kv);
+            list_IterNext(pl, (void**)&kv);
 
             if(d->kt == KEY_STRING)
             {
@@ -343,7 +343,7 @@ int dict_dump(dict_t* d, FILE* fp)
 //---------------- Private Implementation --------------------------//
 
 //--------------------------------------------------------//
-unsigned int p_hashString(const char* s)
+unsigned int p_HashString(const char* s)
 {
     // Lifted from http://www.cse.yorku.ca/~oz/hash.html.
     unsigned long long hash = 5381;
@@ -360,14 +360,14 @@ unsigned int p_hashString(const char* s)
 }
 
 //--------------------------------------------------------//
-unsigned int p_hashInt(int i)
+unsigned int p_HashInt(int i)
 {
     // Simple "hash".
     return (unsigned int)(i % DICT_NUM_BINS);
 }
 
 //--------------------------------------------------------//
-kv_t* p_convertKey(keyType_t kt, key_t k)
+kv_t* p_ConvertKey(keyType_t kt, key_t k)
 {
     // Pack into our preferred format.
     CREATE_INST(kv, kv_t, BAD_PTR);
