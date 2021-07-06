@@ -1,8 +1,5 @@
 :: Standard build - used by VS Code task.
 
-@echo off
-cls
-
 :: Setup dirs and files.
 mkdir build
 cd build

@@ -7,7 +7,7 @@
         {
             "name": "cbot",
             "includePath": [
-                "${workspaceFolder}/cbot_module",
+                "${workspaceFolder}/source",
                 "${workspaceFolder}/test"
             ],
             // "defines": [

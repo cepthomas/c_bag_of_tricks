@@ -181,7 +181,7 @@ int sm_ProcessEvent(sm_t* sm, unsigned int event_id)
     list_Push(sm->event_queue, ld);
 
     // Check for recursion through the processing loop - event may be generated internally during processing.
-    if (!sm->processing_events)
+    if(!sm->processing_events)
     {
         sm->processing_events = true;
 

@@ -22,7 +22,7 @@ Header files specify the public facing API.
 /// @param[in] stat blabla.
 /// @param[in] func blabla.
 /// @return blabla.
-#define CHECKED_FUNC(stat, func, ...) \
+#define MY_MACRO(stat, func, ...) \
 { \
     stat = func(__VA_ARGS__); \
 }

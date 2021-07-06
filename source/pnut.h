@@ -161,7 +161,7 @@ if(testContext.Format == 'r')\
 /// @param condition True?
 #define UT_TRUE(condition)\
 {\
-    if (!(condition))\
+    if(!(condition))\
     {\
         std::ostringstream oss;\
         oss << "[" << #condition << "] should be true";\
@@ -174,7 +174,7 @@ if(testContext.Format == 'r')\
 /// @param condition False?
 #define UT_FALSE(condition)\
 {\
-    if (condition)\
+    if(condition)\
     {\
         std::ostringstream oss;\
         oss << "[" << #condition << "] should be false";\
@@ -187,7 +187,7 @@ if(testContext.Format == 'r')\
 /// @param value NULL?
 #define UT_NULL(value)\
 {\
-    if ((value) != NULL)\
+    if((value) != NULL)\
     {\
         std::ostringstream oss;\
         oss << "[" << value << "] should be null";\
@@ -200,7 +200,7 @@ if(testContext.Format == 'r')\
 /// @param value NULL?
 #define UT_NOT_NULL(value)\
 {\
-    if ((value) == NULL)\
+    if((value) == NULL)\
     {\
         std::ostringstream oss;\
         oss << "[" << value << "] should not be null";\
@@ -214,7 +214,7 @@ if(testContext.Format == 'r')\
 /// @param expected
 #define UT_EQUAL(value, expected)\
 {\
-    if ((value) != (expected))\
+    if((value) != (expected))\
     {\
         std::ostringstream oss;\
         oss << "[" << value << "] should be " << "[" << expected << "]";\
@@ -228,7 +228,7 @@ if(testContext.Format == 'r')\
 /// @param unexpected
 #define UT_NOT_EQUAL(value, unexpected)\
 {\
-    if ((value) == (unexpected))\
+    if((value) == (unexpected))\
     {\
         std::ostringstream oss;\
         oss << "[" << value << "] should not be " << "[" << unexpected << "]";\
@@ -242,7 +242,7 @@ if(testContext.Format == 'r')\
 /// @param value2
 #define UT_LESS(value1, value2)\
 {\
-    if ((value1) >= (value2))\
+    if((value1) >= (value2))\
     {\
         std::ostringstream oss;\
         oss << "[" << value1 << "] should be less than " << "[" << value2 << "]";\
@@ -256,7 +256,7 @@ if(testContext.Format == 'r')\
 /// @param value2
 #define UT_LESS_OR_EQUAL(value1, value2)\
 {\
-    if ((value1) > (value2))\
+    if((value1) > (value2))\
     {\
         std::ostringstream oss;\
         oss << "[" << value1 << "] should be less than or equal to " << "[" << value2 << "]";\
@@ -270,7 +270,7 @@ if(testContext.Format == 'r')\
 /// @param value2
 #define UT_GREATER(value1, value2)\
 {\
-    if ((value1) <= (value2))\
+    if((value1) <= (value2))\
     {\
         std::ostringstream oss;\
         oss << "[" << value1 << "] should be greater than " << "[" << value2 << "]";\
@@ -284,7 +284,7 @@ if(testContext.Format == 'r')\
 /// @param value2
 #define UT_GREATER_OR_EQUAL(value1, value2)\
 {\
-    if ((value1) < (value2))\
+    if((value1) < (value2))\
     {\
         std::ostringstream oss;\
         oss << "[" << value1 << "] should be greater than or equal to " << "[" << value2 << "]";\
@@ -300,7 +300,7 @@ if(testContext.Format == 'r')\
 /// @param tolerance
 #define UT_CLOSE(value1, value2, tolerance)\
 {\
-    if (fabs((value1)-(value2)) > tolerance)\
+    if(fabs((value1)-(value2)) > tolerance)\
     {\
         std::ostringstream oss;\
         oss << "[" << value1 << "] should be within " << tolerance << " of " << "[" << value2 << "]";\
@@ -314,7 +314,7 @@ if(testContext.Format == 'r')\
 /// @param expected
 #define UT_STR_EQUAL(value, expected)\
 {\
-    if (strcmp(value, expected) != 0)\
+    if(strcmp(value, expected) != 0)\
     {\
         std::ostringstream oss;\
         oss << "[" << value << "] should be " << "[" << expected << "]";\
@@ -328,7 +328,7 @@ if(testContext.Format == 'r')\
 /// @param unexpected
 #define UT_STR_NOT_EQUAL(value, unexpected)\
 {\
-    if (strcmp(value, unexpected) == 0)\
+    if(strcmp(value, unexpected) == 0)\
     {\
         std::ostringstream oss;\
         oss << "[" << value << "] should not be " << "[" << unexpected << "]";\
@@ -341,7 +341,7 @@ if(testContext.Format == 'r')\
 /// @param value
 #define UT_STR_EMPTY(value)\
 {\
-    if (strlen(value) > 0)\
+    if(strlen(value) > 0)\
     {\
         std::ostringstream oss;\
         oss << "[" << value << "] should be empty";\

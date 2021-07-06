@@ -137,7 +137,7 @@ int lock_PressKey(char key)
 
     p_current_key = key;
 
-    switch (key)
+    switch(key)
     {
         case KEY_RESET:
             ret = sm_ProcessEvent(p_sm, EVT_RESET);
@@ -198,7 +198,7 @@ int InitialEnter()
 
     sm_Trace(p_sm, __LINE__, "InitialEnter()\n");
 
-    if (p_is_locked)
+    if(p_is_locked)
     {
         sm_ProcessEvent(p_sm, EVT_IS_LOCKED);
     }
@@ -264,7 +264,7 @@ int LockedAddDigit(void)
         }
     }
 
-    if (ok)
+    if(ok)
     {
         sm_ProcessEvent(p_sm, EVT_VALID_COMBO);
     }
@@ -293,7 +293,7 @@ int SetCombo(void)
 
     sm_Trace(p_sm, __LINE__, "SetCombo()\n");
 
-    if (list_Count(p_current_entry) > 0)
+    if(list_Count(p_current_entry) > 0)
     {
         list_Clear(p_combination);
 

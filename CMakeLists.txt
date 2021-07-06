@@ -16,15 +16,15 @@ if(DEFINED USE_PROBE)
     set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -DUSE_PROBE")
 endif()
 
-include_directories("cbot_module" "test")
+include_directories("source" "test")
 
 # Source files.
 add_executable(cbot_test
-    cbot_module/private/pnut.cpp
-    cbot_module/private/list.c
-    cbot_module/private/dict.c
-    cbot_module/private/state_machine.c
-    cbot_module/private/stringx.c
+    source/private/pnut.cpp
+    source/private/list.c
+    source/private/dict.c
+    source/private/state_machine.c
+    source/private/stringx.c
     test/main.cpp
     test/test_list.cpp
     test/test_dict.cpp

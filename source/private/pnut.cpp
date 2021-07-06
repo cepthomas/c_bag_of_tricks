@@ -30,9 +30,9 @@ void TestSuite::RecordResult(TestContext& context, bool pass, const std::string&
     std::ostringstream sstr;
     CaseCnt++;
 
-    if (pass)
+    if(pass)
     {
-        if (context.Format == 'x')
+        if(context.Format == 'x')
         {
             sstr << "        <testcase name=\"" << context.CurrentSuiteId << "." << CaseCnt << "\" classname=\"" << context.CurrentSuiteId << "\" />" << std::endl;
         }
@@ -41,7 +41,7 @@ void TestSuite::RecordResult(TestContext& context, bool pass, const std::string&
     {
         FailCnt++;
 
-        if (context.Format == 'x')
+        if(context.Format == 'x')
         {
             sstr << "        <testcase name=\"" << context.CurrentSuiteId << "." << CaseCnt << "\" classname=\"" << context.CurrentSuiteId << "\">" << std::endl;
             sstr << "            <failure message=\"" << file << ":" << line << " " << message << "\"></failure>" << std::endl;
@@ -61,7 +61,7 @@ void TestSuite::RecordResult(TestContext& context, bool pass, const std::string&
 void TestSuite::RecordProperty(TestContext& context, const std::string& name, const std::string& value)
 {
     std::ostringstream pstr;
-    if (context.Format == 'x')
+    if(context.Format == 'x')
     {
         pstr << "<property name=\"" << name << "\" value=\"" << value << "\" />";
         context.PropLines.push_back(pstr.str());
@@ -118,15 +118,15 @@ void TestManager::RunSuites(std::vector<std::string> which, char fmt)
     time_t tStart = time(NULL);
 
     // Run through to execute suites.
-    for (std::vector<TestSuite*>::iterator iter = _suites.begin(); iter != _suites.end(); ++iter)
+    for(std::vector<TestSuite*>::iterator iter = _suites.begin(); iter != _suites.end(); ++iter)
     {
         // Is this suite requested?
         bool newSuite = (which.size() == 0);
         if(!newSuite)
         {
-            for (std::vector<std::string>::iterator itRun = which.begin(); itRun != which.end(); ++itRun)
+            for(std::vector<std::string>::iterator itRun = which.begin(); itRun != which.end(); ++itRun)
             {
-                if ((*iter)->ID.find(*itRun) != std::string::npos)
+                if((*iter)->ID.find(*itRun) != std::string::npos)
                 {
                     newSuite = true;
                 }
@@ -163,13 +163,13 @@ void TestManager::RunSuites(std::vector<std::string> which, char fmt)
             if(_context.Format == 'x')
             {
                 // Any properties?
-                if (_context.PropLines.size() > 0)
+                if(_context.PropLines.size() > 0)
                 {
                     std::ostringstream oss1;
                     oss1 << "        <properties>" << std::endl;
                     (*iter)->RecordVerbatim(_context, oss1.str());
 
-                    for (std::vector<std::string>::iterator piter = _context.PropLines.begin(); piter != _context.PropLines.end(); ++piter)
+                    for(std::vector<std::string>::iterator piter = _context.PropLines.begin(); piter != _context.PropLines.end(); ++piter)
                     {
                         std::ostringstream ossp;
                         ossp << "            " << *piter << std::endl;
@@ -212,7 +212,7 @@ void TestManager::RunSuites(std::vector<std::string> which, char fmt)
     }
 
     /// Write out the test result lines.
-    for (std::vector<std::string>::iterator iter = _context.OutLines.begin(); iter != _context.OutLines.end(); ++iter)
+    for(std::vector<std::string>::iterator iter = _context.OutLines.begin(); iter != _context.OutLines.end(); ++iter)
     {
         std::cout << *iter;
     }
