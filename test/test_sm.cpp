@@ -14,6 +14,8 @@ extern "C"
 /////////////////////////////////////////////////////////////////////////////
 UT_SUITE(SM_MAIN, "Test the full state machine using a real world example.")
 {
+    common_Init();
+
     // Create a new lock.
     sm_t* sm = lock_Create(NULL); // stdout);
 
@@ -69,6 +71,8 @@ UT_SUITE(SM_MAIN, "Test the full state machine using a real world example.")
 /////////////////////////////////////////////////////////////////////////////
 UT_SUITE(SM_DOT, "Test the dot file creation.")
 {
+    common_Init();
+
     system("del /q sm.*");
 
     FILE* fp = fopen("sm.gv", "w");

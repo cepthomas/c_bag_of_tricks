@@ -19,8 +19,8 @@ Header files specify the public facing API.
 //---------------- Public API ----------------------//
 
 /// Define a useful macro.
-/// @param[in] stat blabla.
-/// @param[in] func blabla.
+/// @param stat blabla.
+/// @param func blabla.
 /// @return blabla.
 #define MY_MACRO(stat, func, ...) \
 { \
@@ -28,7 +28,7 @@ Header files specify the public facing API.
 }
 
 /// Define a function pointer type.
-/// @param[in] foo blabla.
+/// @param foo blabla.
 /// @return Something.
 typedef int (*thing_InterruptFunc_t)(int foo);
 
@@ -46,7 +46,7 @@ const int STATUS_OK = 0;
 #define STATUS_OK 0
 
 /// Initialize the module.
-/// @param[in] fp blabla.
+/// @param fp blabla.
 /// @return Status.
 status_t thing_Init(thing_InterruptFunc_t fp);
 
@@ -68,7 +68,7 @@ int p_some_value = 0;
 
 
 /// Function blabla.
-/// @param[in] index blabla.
+/// @param index blabla.
 /// @return some value..
 long p_SomeUtility(int index);
 

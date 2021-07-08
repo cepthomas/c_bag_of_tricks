@@ -8,7 +8,8 @@
             "name": "cbot",
             "includePath": [
                 "${workspaceFolder}/source",
-                "${workspaceFolder}/test"
+                "${workspaceFolder}/test",
+                "${workspaceFolder}/pnut"
             ],
             // "defines": [
             //     "HAVE_LIST"

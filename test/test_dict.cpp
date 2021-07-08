@@ -1,12 +1,12 @@
 #include <cstdio>
 #include <cstring>
 
-#include "common.h"
 
 #include "pnut.h"
 
 extern "C"
 {
+#include "common.h"
 #include "dict.h"
 }
 

@@ -11,11 +11,11 @@
 
 /// @brief Definition of dictionary thing.
 
-/// Size should be a prime number. TODO Would be nice to set from dict_create() arg.
-#define DICT_NUM_BINS 101
-
 
 //---------------- Private Declarations ------------------//
+
+/// Size should be a prime number. TODO Would be nice to set from dict_create() arg.
+#define DICT_NUM_BINS 101
 
 /// Key-value pair.
 typedef struct kv

@@ -21,25 +21,48 @@ static const int RS_ERR = -1;
 static const int RS_FAIL = -2;
 
 
+//-------------------------- Utilities --------------------------------//
+
+/// Startup.
+/// @return Status.
+int common_Init();
+
+/// Returns the number of milliseconds since the app was started.
+/// @return The msec.
+double common_GetElapsedSec(void);
+
+
+/// Helper macro.
+// ... CHECKED_FUNC(stat, hal_RegTimerInterrupt, SYS_TICK_MSEC, p_TimerHandler);
+#define CHECKED_FUNC(stat, func, ...) \
+{ \
+    stat = func(__VA_ARGS__); \
+    if(stat != STATUS_OK) \
+    { \
+        common_log(LOG_ERROR, #func); \
+    } \
+}
+
+
 //-------------------------- Managed lifetime -----------------------------//
 
-/// A crude memory alloc/free probe mechanism. You can strip it out if you want.
+/// A crude memory alloc/free probe mechanism. You can strip it out if you want. TODO
 #ifdef USE_PROBE
 #define PROBE(mark, var, ln, fn) printf("%s,%p,%d,\"%s\"\n", mark, var, ln, fn)
 #else
 #define PROBE(mark, var, ln, fn)
 #endif
 
-/// Make an instance of a typed thing with all bytes set to 0. Client is responsible for free().
+/// Make an instance of a typed thing with all bytes set to 0. Client is responsible for FREE().
 /// @param var Thing variable name.
-/// @param type The thing type.
+/// @param type Thing type.
 /// @param err Error value to return in case of failure.
 #define CREATE_INST(var, type, err) \
     type* var = (type*)calloc(1, sizeof(type)); \
     PROBE("+++", var, __LINE__, __FILE__); \
     if(var == NULL) { errno = ENOMEM; return err; }
 
-/// Make a standard char buff. Client is responsible for free().
+/// Make a standard char buff. Client is responsible for FREE().
 /// @param var String variable name.
 /// @param len String length. We add room for trailing 0.
 /// @param err Error value to return in case of failure.
