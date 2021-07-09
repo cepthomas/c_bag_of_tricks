@@ -30,7 +30,7 @@ UT_SUITE(LIST_ALL, "Test all list functions.")
     {
         CREATE_INST(st, test_struct_t, RS_ERR);
         st->anumber = 11 * (i + 1);
-        sprintf(st->astring, "Ajay%d", st->anumber);
+        snprintf(st->astring, TEST_STR_LEN-1, "Ajay%d", st->anumber);
         ts[i] = st;
     }
 

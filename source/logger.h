@@ -1,9 +1,10 @@
 #ifndef LOGGER
 #define LOGGER
 
-#include <common.h>
+#include "common.h"
 
-/// @brief Declaration of a module named thing.
+
+/// @brief Declaration of a logger module.
 
 //---------------- Public API ----------------------//
 
@@ -21,12 +22,10 @@
 ///    for the most heinous errors and situations where there is guaranteed to have been data corruption or loss.
 typedef enum
 {
-    LOG_TRACE = 1 << 0,
-    LOG_DEBUG = 1 << 1,
-    LOG_INFO  = 1 << 2,
-    LOG_WARN  = 1 << 3,
-    LOG_ERROR = 1 << 4,
-    LOG_FATAL = 1 << 5,
+    LVL_DEBUG = 1 << 1,
+    LVL_INFO  = 1 << 2,
+    LVL_ERROR = 1 << 4,
+    LVL_ALL   = 0xFFFF
 } log_level_t;
 
 
@@ -48,17 +47,16 @@ int logger_Destroy(void);
 
 /// log some information.
 /// @param level See log_level_t.
-/// @param cats User supplied.
+/// @param cat User supplied.
 /// @param line Source line number.
 /// @param format Format string followed by varargs.
-void logger_Log(log_level_t level, int cats, int line, const char* format, ...);
+/// @return Status.
+int logger_Log(log_level_t level, int cat, int line, const char* format, ...);
 
-
-#define eeeprintf(...) fprintf (stderr, __VA_ARGS__);
 
 /// Helper macros.
-#define LOG_ERR(cats, fmt, ...)   logger_Log(log_level_t.LOG_ERR, cats, __LINE__, fmt, __VA_ARGS__);
-#define LOG_INFO(cats, fmt, ...)   logger_Log(log_level_t.LOG_INFO, cats, __LINE__, fmt, __VA_ARGS__);
-#define LOG_DEBUG(cats, fmt, ...)   logger_Log(log_level_t.LOG_DEBUG, cats, __LINE__, fmt, __VA_ARGS__);
+#define LOG_ERROR(cats, fmt, ...)  logger_Log(LVL_ERROR, cats, __LINE__, fmt, __VA_ARGS__);
+#define LOG_INFO(cats, fmt, ...)   logger_Log(LVL_INFO, cats, __LINE__, fmt, __VA_ARGS__);
+#define LOG_DEBUG(cats, fmt, ...)  logger_Log(LVL_DEBUG, cats, __LINE__, fmt, __VA_ARGS__);
 
 #endif // LOGGER

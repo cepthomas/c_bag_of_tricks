@@ -16,7 +16,7 @@ static const int TEST_STR_LEN = 16;
 typedef struct
 {
     int anumber;
-    char astring[TEST_STR_LEN];
+    char astring[TEST_STR_LEN+1];
 } test_struct_t;
 
 // Helpers.
@@ -51,7 +51,7 @@ UT_SUITE(DICT_STR, "Test all dict functions using string key.")
     // Create data payload.
     CREATE_INST(tsrep, test_struct_t, RS_ERR);
     tsrep->anumber = 9999;
-    sprintf(tsrep->astring, "Ajay_%d", tsrep->anumber);
+    snprintf(tsrep->astring, TEST_STR_LEN, "Ajay_%d", tsrep->anumber);
     // Create key/value.
     key.ks = "SOMETHING";
     dict_Set(mydict, key, tsrep);
@@ -196,7 +196,7 @@ dict_t* create_str_dict(void)
                     // Create data payload.
                     CREATE_INST(st, test_struct_t, BAD_PTR);
                     st->anumber = 100 + i++;
-                    sprintf(st->astring, "Ajay_%d", st->anumber);
+                    snprintf(st->astring, TEST_STR_LEN, "Ajay_%d", st->anumber);
 
                     // Create key/value.
                     key_t key;
@@ -239,7 +239,7 @@ dict_t* create_int_dict(void)
         // Create data payload.
         CREATE_INST(st, test_struct_t, BAD_PTR);
         st->anumber = 1000 + k;
-        sprintf(st->astring, "Boo_%d", st->anumber);
+        snprintf(st->astring, TEST_STR_LEN, "Boo_%d", st->anumber);
 
         // Create key/value.
         key_t key;

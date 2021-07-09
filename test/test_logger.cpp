@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <cstring>
+#include <unistd.h>
 
 #include "pnut.h"
 
@@ -11,32 +12,69 @@ extern "C"
 
 
 /////////////////////////////////////////////////////////////////////////////
-UT_SUITE(LOGGER_XXX, "Test all logger functions.")
+UT_SUITE(LOGGER_FILE, "Test logger to file.")
 {
     common_Init();
 
-// /// Log categories - from user.
-// typedef enum
-// {
-//     LOG_INIT     = 1 << 8,
-//     LOG_DESTROY  = 1 << 9,
-//     LOG_LOOK     = 1 << 10,  ///> make it stand out in file
-//     LOG_ALL_CATS = 0xFFFFFF00
-// } log_cat_t;
+    /// Log categories - from user. TODOP
+    const int CAT_INIT     = 1 << 0;
+    const int CAT_DESTROY  = 1 << 1;
+    const int CAT_LOOK     = 1 << 2;
+    const int CAT_ALL      = 0xFFFF;
 
+    system("del /q log_test.txt");
 
+    FILE* fp = fopen("log_test.txt", "w");
+    UT_NOT_NULL(fp);
 
+    UT_EQUAL(logger_Init(fp), 0);
 
-// int logger_Init(FILE* fp);
-// int logger_SetFilters(log_level_t level, log_cat_t cat);
-// int logger_Destroy(void);
-// void logger_Log(loglvl_t level, int cats, int line, const char* format, ...);
+    // Turn on all.
+    UT_EQUAL(logger_SetFilters(LVL_ALL, CAT_ALL), 0);
 
-// #define LOG_BASE(level) logger_Log(level, cats, __LINE__, fmt, __VA_ARGS__);
-// #define LOG_ERR(cats, fmt, ...)   LOG_BASE(loglvl_t.LOG_ERR);
-// #define LOG_INFO(cats, fmt, ...)  LOG_BASE(loglvl_t.LOG_INFO);
-// #define LOG_DEBUG(cats, fmt, ...) LOG_BASE(loglvl_t.LOG_DEBUG);
+    // Start logging stuff.
+    LOG_ERROR(CAT_INIT, "Hello error 99:%d", 99);
+
+    sleep(1);
+    LOG_INFO(CAT_DESTROY, "One second later... info:%d", 555);
+
+    sleep(1);
+    LOG_DEBUG(CAT_LOOK, "Two second later... debug:%d", 71717);
+
+    // Specific filters.
+    UT_EQUAL(logger_SetFilters(LVL_INFO, CAT_LOOK), 0);
+
+    LOG_INFO(CAT_DESTROY, "This should not appear", "");
+    LOG_INFO(CAT_LOOK, "This should appear", "");
+    LOG_ERROR(CAT_LOOK, "This should not appear", "");
+
+    UT_EQUAL(logger_Destroy(), 0);
 
     return 0;
 }    
 
+/////////////////////////////////////////////////////////////////////////////
+UT_SUITE(LOGGER_STDOUT, "Test logger to stdout.")
+{
+    common_Init();
+
+    UT_EQUAL(logger_Init(NULL), 0);
+
+    // Turn on all.
+    UT_EQUAL(logger_SetFilters(LVL_ALL, 0xFFFF), 0);
+
+    // Start logging stuff.
+    LOG_ERROR(1, "Hello stdout 99:%d", 1000000);
+
+    sleep(1);
+    LOG_INFO(2, "One second later... stdout:%d", 888);
+
+    sleep(1);
+    LOG_DEBUG(4, "Two second later... stdout:%d", 333);
+
+    UT_INFO("Need to look in terminal!!", "OK!!");
+
+    UT_EQUAL(logger_Destroy(), 0);
+
+    return 0;
+}    

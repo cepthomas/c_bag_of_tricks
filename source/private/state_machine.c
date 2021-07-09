@@ -297,7 +297,7 @@ int sm_ProcessEvent(sm_t* sm, unsigned int event_id)
 }
 
 //--------------------------------------------------------//
-int sm_Trace(sm_t* sm, int line, const char* format, ...)
+int sm_Trace(sm_t* sm, int line, const char* format, ...)//TODOP
 {
     VAL_PTR(sm, RS_ERR);
     VAL_PTR(format, RS_ERR);

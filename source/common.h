@@ -31,6 +31,9 @@ int common_Init();
 /// @return The msec.
 double common_GetElapsedSec(void);
 
+/// Returns the current number of seconds since the epoch.
+/// @return The sec.
+double common_GetCurrentSec(void);
 
 /// Helper macro.
 // ... CHECKED_FUNC(stat, hal_RegTimerInterrupt, SYS_TICK_MSEC, p_TimerHandler);
@@ -39,14 +42,14 @@ double common_GetElapsedSec(void);
     stat = func(__VA_ARGS__); \
     if(stat != STATUS_OK) \
     { \
-        common_log(LOG_ERROR, #func); \
+        common_log(LVL_ERROR, #func); \
     } \
 }
 
 
 //-------------------------- Managed lifetime -----------------------------//
 
-/// A crude memory alloc/free probe mechanism. You can strip it out if you want. TODO
+/// A crude memory alloc/free probe mechanism. You can strip it out if you want. TODOP
 #ifdef USE_PROBE
 #define PROBE(mark, var, ln, fn) printf("%s,%p,%d,\"%s\"\n", mark, var, ln, fn)
 #else

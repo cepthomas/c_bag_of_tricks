@@ -7,7 +7,7 @@
 //---------------- Private Declarations ------------------//
 
 /// For timing.
-double p_start_time;
+double p_start_time = 0;
 
 //---------------- Public API Implementation -------------//
 
@@ -21,9 +21,21 @@ int common_Init()
 //--------------------------------------------------------//
 double common_GetElapsedSec()
 {
+    double current = common_GetCurrentSec();
+    if(p_start_time == 0)
+    {
+        p_start_time = current;
+    }
+    double sec = current - p_start_time;
+    return sec;
+}
+
+//--------------------------------------------------------//
+double common_GetCurrentSec()
+{
     struct timeval tv;
     struct timezone tz;
     gettimeofday(&tv, &tz);
-    double sec = tv.tv_sec + tv.tv_usec / 1000000;
+    double sec = (double)tv.tv_sec + (double)tv.tv_usec / 1000000.0;
     return sec;
 }

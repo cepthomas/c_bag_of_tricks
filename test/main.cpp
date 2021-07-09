@@ -9,11 +9,11 @@ int main()
     std::vector<std::string> whichSuites;
 
     whichSuites.emplace_back("COMMON");
-    whichSuites.emplace_back("LOGGER");
-    whichSuites.emplace_back("DICT");
-    whichSuites.emplace_back("STR");
-    whichSuites.emplace_back("LIST");
-    whichSuites.emplace_back("SM");
+    //whichSuites.emplace_back("LOGGER");
+    // whichSuites.emplace_back("DICT");
+    // whichSuites.emplace_back("STR");
+    // whichSuites.emplace_back("LIST");
+    // whichSuites.emplace_back("SM");
 
     tm.RunSuites(whichSuites, 'r'); // 'r' for readable, 'x' for xml
 

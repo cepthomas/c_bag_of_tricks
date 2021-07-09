@@ -75,7 +75,7 @@ UT_SUITE(SM_DOT, "Test the dot file creation.")
 
     system("del /q sm.*");
 
-    FILE* fp = fopen("sm.gv", "w");
+    FILE* fp = fopen("sm.gv", "w");//TODOP
     UT_NOT_NULL(fp);
 
     // Create a lock sm.

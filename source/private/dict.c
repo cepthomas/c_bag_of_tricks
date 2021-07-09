@@ -290,7 +290,7 @@ list_t* dict_GetKeys(dict_t* d)
 }
 
 //--------------------------------------------------------//
-int dict_Dump(dict_t* d, FILE* fp)
+int dict_Dump(dict_t* d, FILE* fp)//TODOP
 {
     VAL_PTR(d, RS_ERR);
     VAL_PTR(fp, RS_ERR);
