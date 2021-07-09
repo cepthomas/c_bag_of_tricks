@@ -11,18 +11,21 @@
 
 //---------------- Private Declarations ------------------//
 
-log_level_t p_level = LVL_INFO;
-int p_cat = 0xFFFFFFFF;
+// Logging support items.
+log_level_t p_level = LVL_ALL;
+log_cat_t p_cat = CAT_ALL;
 FILE* p_fp = NULL;
 
-#define LOG_LINE_LEN 100
-//static const int LOG_LINE_LEN = 100;
-static char p_log_buff[LOG_LINE_LEN];
 
-
+/// Translate to human.
+/// @param level to translate.
+/// @return string version
 const char* p_XlatLogLevel(log_level_t level);
 
-const char* p_XlatLogCat(int cat);
+/// Translate to human.
+/// @param cat to translate.
+/// @return string version
+const char* p_XlatLogCat(log_cat_t cat);
 
 
 //---------------- Public API Implementation -------------//
@@ -35,7 +38,7 @@ int logger_Init(FILE* fp)
 }
 
 //--------------------------------------------------------//
-int logger_SetFilters(log_level_t level, int cat)
+int logger_SetFilters(log_level_t level, log_cat_t cat)
 {
     p_level = level;
     p_cat = cat;
@@ -50,9 +53,17 @@ int logger_Destroy(void)
 }
 
 //--------------------------------------------------------//
-int logger_Log(log_level_t level, int cat, int line, const char* format, ...)
+int logger_Log(log_level_t level, log_cat_t cat, int line, const char* format, ...)
 {
     VAL_PTR(format, RS_ERR);
+    #define LOG_LINE_LEN 100
+    static char buff[LOG_LINE_LEN];
+
+    if(p_fp == NULL)
+    {
+        logger_Init(NULL);
+        fprintf(p_fp, "!!!!!!!!!!!!! You forgot to call logger_Init() so I did it for you.\n");
+    }
 
     // Check filters.
     if((level & p_level) && (cat & p_cat))
@@ -60,11 +71,10 @@ int logger_Log(log_level_t level, int cat, int line, const char* format, ...)
         va_list args;
         va_start(args, format);
         // The content.
-        vsnprintf(p_log_buff, LOG_LINE_LEN-1, format, args);
+        vsnprintf(buff, LOG_LINE_LEN-1, format, args);
         va_end(args);
 
-        fprintf(p_fp, "%03.6f %s %s (%d) %s\n", common_GetElapsedSec(), p_XlatLogLevel(level), p_XlatLogCat(cat), line, p_log_buff);
-
+        fprintf(p_fp, "%03.6f %s %s (%d) %s\n", common_GetElapsedSec(), p_XlatLogLevel(level), p_XlatLogCat(cat), line, buff);
     }
 
     return RS_PASS;
@@ -81,23 +91,27 @@ const char* p_XlatLogLevel(log_level_t level)
     {
         case LVL_INFO:  strcpy(buff, "INF"); break;
         case LVL_DEBUG: strcpy(buff, "DBG"); break;
-        case LVL_ERROR: strcpy(buff, "ERR"); break;
-        default: snprintf(buff, 20-1, "%d", level); break;
+        case LVL_ERROR: strcpy(buff, "!!!!!! ERR"); break;
+        default: snprintf(buff, 20-1, "?????? LVL%d", level); break;
     }
     return buff;
 }    
 
 //--------------------------------------------------------//
-const char* p_XlatLogCat(int cat) //TODO from user
+const char* p_XlatLogCat(log_cat_t cat)
 {
     static char buff[20];
     switch(cat)
     {
-        // case LOG_INFO:  strcpy(buff, "INF"); break;
-        // case LOG_WARN:  strcpy(buff, "WRN"); break;
-        // case LOG_ERROR: strcpy(buff, "ERR"); break;
-        default: snprintf(buff, 20, "CAT%d", cat); break;
+        case CAT_INIT:    strcpy(buff, "INIT"); break;
+        case CAT_CREATE:  strcpy(buff, "CREATE"); break;
+        case CAT_DESTROY: strcpy(buff, "DESTROY"); break;
+        case CAT_ENTRY:   strcpy(buff, "ENTRY"); break;
+        case CAT_EXIT:    strcpy(buff, "EXIT"); break;
+        case CAT_LOOK:    strcpy(buff, ">>>>>> LOOK"); break;
+        case CAT_SM:      strcpy(buff, "SM"); break;
+        case CAT_USER:    strcpy(buff, "USER"); break;
+        default: snprintf(buff, 20-1, "?????? CAT_%d", cat); break;
     }
     return buff;
 }    
-

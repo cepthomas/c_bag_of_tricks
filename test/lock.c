@@ -1,6 +1,7 @@
 
 #include <stdlib.h>
 #include "common.h"
+#include "logger.h"
 #include "list.h"
 #include "lock.h"
 #include "state_machine.h"
@@ -14,7 +15,6 @@ typedef struct
 {
     char c;     ///< Character.
 } lock_data_t;
-
 
 /// State of the lock.
 static bool p_is_locked;
@@ -59,7 +59,7 @@ static int UnlockedEnter(void);
 
 
 //--------------------------------------------------------//
-sm_t* lock_Create(FILE* fp)
+sm_t* lock_Create()
 {
     p_is_locked = true;
     p_current_entry = list_Create();
@@ -79,7 +79,7 @@ sm_t* lock_Create(FILE* fp)
     list_Append(p_combination, k3);
 
     // Build the FSM.
-    p_sm = sm_Create(fp, lock_Xlat, ST_DEFAULT, EVT_DEFAULT);
+    p_sm = sm_Create(lock_Xlat, ST_DEFAULT, EVT_DEFAULT);
     VAL_PTR(p_sm, BAD_PTR);
 
     sm_AddState(p_sm, ST_INITIAL,                   InitialEnter);
@@ -133,7 +133,7 @@ int lock_PressKey(char key)
 {
     int ret = RS_PASS;
 
-    sm_Trace(p_sm, __LINE__, "Key pressed %c\n", key);
+    LOG_DEBUG(CAT_SM, "lock_PressKey(%c)", key);
 
     p_current_key = key;
 
@@ -196,7 +196,7 @@ int InitialEnter()
 {
     int ret = RS_PASS;
 
-    sm_Trace(p_sm, __LINE__, "InitialEnter()\n");
+    LOG_DEBUG(CAT_SM, "InitialEnter()");
 
     if(p_is_locked)
     {
@@ -215,7 +215,7 @@ int LockedEnter(void)
 {
     int ret = RS_PASS;
 
-    sm_Trace(p_sm, __LINE__, "LockedEnter()\n");
+    LOG_DEBUG(CAT_SM, "LockedEnter()");
     p_is_locked = true;
     list_Clear(p_current_entry);
 
@@ -227,7 +227,7 @@ int ClearCurrentEntry(void)
 {
     int ret = RS_PASS;
 
-    sm_Trace(p_sm, __LINE__, "ClearCurrentEntry()\n");
+    LOG_DEBUG(CAT_SM, "ClearCurrentEntry()");
     list_Clear(p_current_entry);
 
     return ret;
@@ -238,7 +238,7 @@ int LockedAddDigit(void)
 {
     int ret = RS_PASS;
 
-    sm_Trace(p_sm, __LINE__, "LockedAddDigit()\n");
+    LOG_DEBUG(CAT_SM, "LockedAddDigit()");
 
     CREATE_INST(data, lock_data_t, RS_ERR);
     data->c = p_current_key;
@@ -277,7 +277,7 @@ int SetComboAddDigit(void)
 {
     int ret = RS_PASS;
 
-    sm_Trace(p_sm, __LINE__, "SetComboAddDigit()\n");
+    LOG_DEBUG(CAT_SM, "SetComboAddDigit()");
 
     CREATE_INST(data, lock_data_t, RS_ERR);
     data->c = p_current_key;
@@ -291,7 +291,7 @@ int SetCombo(void)
 {
     int ret = RS_PASS;
 
-    sm_Trace(p_sm, __LINE__, "SetCombo()\n");
+    LOG_DEBUG(CAT_SM, "SetCombo()");
 
     if(list_Count(p_current_entry) > 0)
     {
@@ -325,7 +325,7 @@ int UnlockedEnter(void)
 {
     int ret = RS_PASS;
 
-    sm_Trace(p_sm, __LINE__, "UnlockedEnter()\n");
+    LOG_DEBUG(CAT_SM, "UnlockedEnter()");
     p_is_locked = false;
 
     return ret;
@@ -336,7 +336,7 @@ int TryDefault(void)
 {
     int ret = RS_PASS;
 
-    sm_Trace(p_sm, __LINE__, "TryDefault()\n");
+    LOG_DEBUG(CAT_SM, "TryDefault()");
     p_is_locked = true;
     list_Clear(p_current_entry);
 

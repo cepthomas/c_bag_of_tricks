@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#include "logger.h"
 #include "state_machine.h"
 #include "list.h"
 
@@ -35,7 +36,6 @@ typedef struct
 struct sm
 {
     // Stuff supplied by client.
-    FILE* fp;                   ///< For logging output - optional.
     xlat_t xlat;                ///< Client supplied translation for logging - optional.
     unsigned int def_state;     ///< The default state id.
     unsigned int def_event;     ///< The default event id.
@@ -52,11 +52,10 @@ struct sm
 
 
 //--------------------------------------------------------//
-sm_t* sm_Create(FILE* fp, xlat_t xlat, unsigned int def_state, unsigned int def_event)
+sm_t* sm_Create(xlat_t xlat, unsigned int def_state, unsigned int def_event)
 {
     CREATE_INST(sm, sm_t, BAD_PTR);
 
-    sm->fp = fp;
     sm->xlat = xlat;
     sm->def_state = def_state;
     sm->def_event = def_event;
@@ -193,7 +192,7 @@ int sm_ProcessEvent(sm_t* sm, unsigned int event_id)
             unsigned int qevtid = *qevt;
             FREE(qevt);
 
-            sm_Trace(sm, __LINE__, "Process current state %s event %s\n",
+            LOG_DEBUG(CAT_SM, "SM: Process current state %s event %s",
                      sm->xlat(sm->current_state->state_id), sm->xlat(qevtid));
 
             // Find match with this event for present state.
@@ -263,7 +262,7 @@ int sm_ProcessEvent(sm_t* sm, unsigned int event_id)
 
                     if(next_state != NULL)
                     {
-                        sm_Trace(sm, __LINE__, "Changing state from %s to %s\n",
+                        LOG_DEBUG(CAT_SM, "SM: Changing state from %s to %s",
                                  sm->xlat(sm->current_state->state_id), sm->xlat(next_state->state_id));
                         sm->current_state = next_state;
                         if(sm->current_state->func != NULL)
@@ -273,18 +272,18 @@ int sm_ProcessEvent(sm_t* sm, unsigned int event_id)
                     }
                     else
                     {
-                        sm_Trace(sm, __LINE__, "Couldn't find next state from %s to %s\n",
+                        LOG_DEBUG(CAT_SM, "SM: Couldn't find next state from %s to %s",
                                  sm->xlat(sm->current_state->state_id), sm->xlat(next_state->state_id)); // Should be an error.
                     }
                 }
                 else
                 {
-                    sm_Trace(sm, __LINE__, "Same state %s\n", sm->xlat(sm->current_state->state_id));
+                    LOG_DEBUG(CAT_SM, "SM: Same state %s", sm->xlat(sm->current_state->state_id));
                 }
             }
             else
             {
-                sm_Trace(sm, __LINE__, "No match for state %s for event %s\n",
+                LOG_DEBUG(CAT_SM, "SM: No match for state %s for event %s",
                          sm->xlat(sm->current_state->state_id), sm->xlat(qevtid));
             }
         }
@@ -292,29 +291,6 @@ int sm_ProcessEvent(sm_t* sm, unsigned int event_id)
     
     // Done for now.
     sm->processing_events = false;
-
-    return ret;
-}
-
-//--------------------------------------------------------//
-int sm_Trace(sm_t* sm, int line, const char* format, ...)//TODOP
-{
-    VAL_PTR(sm, RS_ERR);
-    VAL_PTR(format, RS_ERR);
-
-    int ret = RS_PASS;
-
-    if(sm->fp != NULL)
-    {
-        va_list args;
-        va_start(args, format);
-
-        char sfmt[MAX_TRACE];
-        vsnprintf(sfmt, MAX_TRACE-1, format, args);
-        va_end(args);
-
-        fprintf(sm->fp, "SM(%d): %s", line, sfmt);
-    }
 
     return ret;
 }

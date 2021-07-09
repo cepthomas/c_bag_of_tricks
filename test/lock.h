@@ -38,9 +38,8 @@
 /////// Public interface //////////
 
 /// Normal constructor.
-/// @param fp Stream for tracing.
 /// @return Pointer to underlying state machine object.
-sm_t* lock_Create(FILE* fp);
+sm_t* lock_Create(void);
 
 /// Normal destructor.
 int lock_Destroy(void);

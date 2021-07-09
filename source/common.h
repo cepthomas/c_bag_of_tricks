@@ -46,12 +46,18 @@ double common_GetCurrentSec(void);
     } \
 }
 
+/// Validate pointer arg. If fails, sets errno and early returns.
+/// @param ptr Pointer.
+/// @param err Error value to return in case of failure.
+#define VAL_PTR(ptr, err) \
+    if(ptr == NULL) { errno = EINVAL; return err; }
+
 
 //-------------------------- Managed lifetime -----------------------------//
 
-/// A crude memory alloc/free probe mechanism. You can strip it out if you want. TODOP
+/// A crude memory alloc/free probe mechanism. You can strip it out if you want.
 #ifdef USE_PROBE
-#define PROBE(mark, var, ln, fn) printf("%s,%p,%d,\"%s\"\n", mark, var, ln, fn)
+#define PROBE(mark, var, ln, fn) printf("%s,%p,%d,\"%s\"\n", mark, var, ln, fn) //TODOP
 #else
 #define PROBE(mark, var, ln, fn)
 #endif
@@ -79,11 +85,5 @@ double common_GetCurrentSec(void);
 #define FREE(var) \
     PROBE("---", var, __LINE__, __FILE__); \
     free(var)
-
-/// Validate pointer arg. If fails, sets errno and early returns.
-/// @param ptr Pointer.
-/// @param err Error value to return in case of failure.
-#define VAL_PTR(ptr, err) \
-    if(ptr == NULL) { errno = EINVAL; return err; }
 
 #endif // COMMON_H

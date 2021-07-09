@@ -1,6 +1,8 @@
 #ifndef LOGGER
 #define LOGGER
 
+#include <stdio.h>
+
 #include "common.h"
 
 
@@ -8,26 +10,28 @@
 
 //---------------- Public API ----------------------//
 
-/// Log levels. https://stackoverflow.com/a/2031209.
-/// Trace - Only when I would be "tracing" the code and trying to find one part of a function specifically.
-/// Debug - Information that is diagnostically helpful to people more than just developers (IT, sysadmins, etc.).
-/// Info - Generally useful information to log (service start/stop, configuration assumptions, etc). Info I want to always have
-///    available but usually don't care about under normal circumstances. This is my out-of-the-box config level.
-/// Warn - Anything that can potentially cause application oddities, but for which I am automatically recovering. (Such as switching
-///    from a primary to backup server, retrying an operation, missing secondary data, etc.)
-/// Error - Any error which is fatal to the operation, but not the service or application (can't open a required file, missing data, etc.).
-///    These errors will force user (administrator, or direct user) intervention. These are usually reserved (in my apps) for incorrect
-///    connection strings, missing services, etc.
-/// Fatal - Any error that is forcing a shutdown of the service or application to prevent data loss (or further data loss). I reserve these only
-///    for the most heinous errors and situations where there is guaranteed to have been data corruption or loss.
+/// Log levels. See https://stackoverflow.com/a/2031209.
 typedef enum
 {
     LVL_DEBUG = 1 << 1,
     LVL_INFO  = 1 << 2,
     LVL_ERROR = 1 << 4,
-    LVL_ALL   = 0xFFFF
+    LVL_ALL   = 0xFFFFFFFF
 } log_level_t;
 
+/// Log categories. Add more as needed - and update p_XlatLogCat(). TODO Make client configuraable.
+typedef enum
+{
+    CAT_INIT     = 1 << 0,
+    CAT_CREATE   = 1 << 1,
+    CAT_DESTROY  = 1 << 2,
+    CAT_ENTRY    = 1 << 3,
+    CAT_EXIT     = 1 << 4,
+    CAT_LOOK     = 1 << 5,
+    CAT_SM       = 1 << 6,
+    CAT_USER     = 1 << 15,
+    CAT_ALL      = 0xFFFFFFFF
+} log_cat_t;
 
 
 /// Initialize the module.
@@ -39,7 +43,7 @@ int logger_Init(FILE* fp);
 /// @param level
 /// @param cat
 /// @return Status.
-int logger_SetFilters(log_level_t level, int cat);
+int logger_SetFilters(log_level_t level, log_cat_t cat);
 
 /// Shutdown the module.
 /// @return Status.
@@ -51,12 +55,12 @@ int logger_Destroy(void);
 /// @param line Source line number.
 /// @param format Format string followed by varargs.
 /// @return Status.
-int logger_Log(log_level_t level, int cat, int line, const char* format, ...);
+int logger_Log(log_level_t level, log_cat_t cat, int line, const char* format, ...);
 
 
 /// Helper macros.
-#define LOG_ERROR(cats, fmt, ...)  logger_Log(LVL_ERROR, cats, __LINE__, fmt, __VA_ARGS__);
-#define LOG_INFO(cats, fmt, ...)   logger_Log(LVL_INFO, cats, __LINE__, fmt, __VA_ARGS__);
-#define LOG_DEBUG(cats, fmt, ...)  logger_Log(LVL_DEBUG, cats, __LINE__, fmt, __VA_ARGS__);
+#define LOG_ERROR(cat, fmt, ...)  logger_Log(LVL_ERROR, cat, __LINE__, fmt, ##__VA_ARGS__);
+#define LOG_INFO(cat, fmt, ...)   logger_Log(LVL_INFO,  cat, __LINE__, fmt, ##__VA_ARGS__);
+#define LOG_DEBUG(cat, fmt, ...)  logger_Log(LVL_DEBUG, cat, __LINE__, fmt, ##__VA_ARGS__);
 
 #endif // LOGGER

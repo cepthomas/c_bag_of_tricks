@@ -14,7 +14,7 @@
 
 //---------------- Private Declarations ------------------//
 
-/// Size should be a prime number. TODO Would be nice to set from dict_create() arg.
+/// Size should be a prime number somewhere around the quantity of items.
 #define DICT_NUM_BINS 101
 
 /// Key-value pair.
@@ -290,7 +290,7 @@ list_t* dict_GetKeys(dict_t* d)
 }
 
 //--------------------------------------------------------//
-int dict_Dump(dict_t* d, FILE* fp)//TODOP
+int dict_Dump(dict_t* d, FILE* fp)
 {
     VAL_PTR(d, RS_ERR);
     VAL_PTR(fp, RS_ERR);

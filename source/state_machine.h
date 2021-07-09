@@ -23,12 +23,11 @@ typedef const char* (*xlat_t)(unsigned int id);
 
 /// Create a state machine. Client must sm_destroy() it.
 /// Currently this is NOT thread-safe.
-/// @param fp Optional stream for tracing. Can be NULL if not used.
 /// @param xlat Optional translator for id tracing.
 /// @param def_state The default state id.
 /// @param def_event The default event id.
 /// @return The opaque pointer used in all functions | BAD_PTR.
-sm_t* sm_Create(FILE* fp, xlat_t xlat, unsigned int def_state, unsigned int def_event);
+sm_t* sm_Create(xlat_t xlat, unsigned int def_state, unsigned int def_event);
 
 /// Clean up all resources including the state machine.
 /// @param sm Pertinent state machine.
@@ -76,6 +75,6 @@ int sm_ToDot(sm_t* sm, FILE* fp);
 /// @param line Line number.
 /// @param format Format string followed by args.
 /// @return RS_PASS | RS_ERR.
-int sm_Trace(sm_t* sm, int line, const char* format, ...);
+//int sm_Trace(sm_t* sm, int line, const char* format, ...);
 
 #endif // STATE_MACHINE_H
