@@ -24,7 +24,7 @@ UT_SUITE(LOGGER_FILE, "Test logger to file.")
     UT_EQUAL(logger_Init(fp), 0);
 
     // Turn on all.
-    UT_EQUAL(logger_SetFilters(LVL_ALL, CAT_ALL), 0);
+    UT_EQUAL(logger_SetFilters(LVL_DEBUG, CAT_ALL), 0);
 
     // Start logging stuff.
     LOG_ERROR(CAT_INIT, "Hello error 99:%d", 99);
@@ -55,7 +55,7 @@ UT_SUITE(LOGGER_STDOUT, "Test logger to stdout.")
     UT_EQUAL(logger_Init(NULL), 0);
 
     // Turn on all.
-    UT_EQUAL(logger_SetFilters(LVL_ALL, CAT_ALL), 0);
+    UT_EQUAL(logger_SetFilters(LVL_DEBUG, CAT_ALL), 0);
 
     // Start logging stuff.
     LOG_ERROR(CAT_INIT, "Hello stdout 99:%d", 1000000);

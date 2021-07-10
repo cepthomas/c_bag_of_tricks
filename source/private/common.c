@@ -1,6 +1,7 @@
 
 #include <time.h>
 #include <sys/time.h>
+
 #include "common.h"
 
 
@@ -38,4 +39,10 @@ double common_GetCurrentSec()
     gettimeofday(&tv, &tz);
     double sec = (double)tv.tv_sec + (double)tv.tv_usec / 1000000.0;
     return sec;
+}
+
+//--------------------------------------------------------//
+void common_MemFail(int line, const char* file)
+{
+    logger_Log(LVL_ERROR, CAT_MEM, line, "Alloc failure: %s", file);
 }

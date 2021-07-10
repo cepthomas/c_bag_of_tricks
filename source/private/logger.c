@@ -11,8 +11,8 @@
 
 //---------------- Private Declarations ------------------//
 
-// Logging support items.
-log_level_t p_level = LVL_ALL;
+/// Logging support items.
+log_level_t p_level = LVL_INFO;
 log_cat_t p_cat = CAT_ALL;
 FILE* p_fp = NULL;
 
@@ -62,11 +62,11 @@ int logger_Log(log_level_t level, log_cat_t cat, int line, const char* format, .
     if(p_fp == NULL)
     {
         logger_Init(NULL);
-        fprintf(p_fp, "!!!!!!!!!!!!! You forgot to call logger_Init() so I did it for you.\n");
+        logger_Log(LVL_ERROR, cat, line, "You forgot to call logger_Init() so I did it for you.");
     }
 
     // Check filters.
-    if((level & p_level) && (cat & p_cat))
+    if((level >= p_level) && (cat & p_cat))
     {
         va_list args;
         va_start(args, format);
@@ -74,7 +74,8 @@ int logger_Log(log_level_t level, log_cat_t cat, int line, const char* format, .
         vsnprintf(buff, LOG_LINE_LEN-1, format, args);
         va_end(args);
 
-        fprintf(p_fp, "%03.6f %s %s (%d) %s\n", common_GetElapsedSec(), p_XlatLogLevel(level), p_XlatLogCat(cat), line, buff);
+        fprintf(p_fp, "%03.6f,%s,%s,%d,%s\n", common_GetElapsedSec(), p_XlatLogLevel(level), p_XlatLogCat(cat), line, buff);
+        // fprintf(p_fp, "%03.6f %s %s (%d) %s\n", common_GetElapsedSec(), p_XlatLogLevel(level), p_XlatLogCat(cat), line, buff);
     }
 
     return RS_PASS;
@@ -110,6 +111,7 @@ const char* p_XlatLogCat(log_cat_t cat)
         case CAT_EXIT:    strcpy(buff, "EXIT"); break;
         case CAT_LOOK:    strcpy(buff, ">>>>>> LOOK"); break;
         case CAT_SM:      strcpy(buff, "SM"); break;
+        case CAT_MEM:     strcpy(buff, "MEM"); break;
         case CAT_USER:    strcpy(buff, "USER"); break;
         default: snprintf(buff, 20-1, "?????? CAT_%d", cat); break;
     }

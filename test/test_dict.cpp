@@ -49,7 +49,7 @@ UT_SUITE(DICT_STR, "Test all dict functions using string key.")
 
     // Replace one.
     // Create data payload.
-    CREATE_INST(tsrep, test_struct_t, RS_ERR);
+    CREATE_INST(tsrep, test_struct_t);
     tsrep->anumber = 9999;
     snprintf(tsrep->astring, TEST_STR_LEN, "Ajay_%d", tsrep->anumber);
     // Create key/value.
@@ -67,7 +67,7 @@ UT_SUITE(DICT_STR, "Test all dict functions using string key.")
     list_t* keys = dict_GetKeys(mydict);
     UT_NOT_NULL(keys);
     UT_EQUAL(list_Count(keys), 184);
-    // look at some TODO...
+    // Should look at some ...
 
     // Clean up everything.
     UT_EQUAL(dict_Clear(mydict), RS_PASS);
@@ -105,7 +105,7 @@ UT_SUITE(DICT_INT, "Test some dict functions using int key.")
     list_t* keys = dict_GetKeys(mydict);
     UT_NOT_NULL(keys);
     UT_EQUAL(list_Count(keys), 290);
-    // look at some TODO...
+    // Should look at some ...
 
     // Remove everything.
     UT_EQUAL(dict_Clear(mydict), RS_PASS);
@@ -194,7 +194,7 @@ dict_t* create_str_dict(void)
                     buff[buffind] = 0; // terminate
 
                     // Create data payload.
-                    CREATE_INST(st, test_struct_t, BAD_PTR);
+                    CREATE_INST(st, test_struct_t);
                     st->anumber = 100 + i++;
                     snprintf(st->astring, TEST_STR_LEN, "Ajay_%d", st->anumber);
 
@@ -237,7 +237,7 @@ dict_t* create_int_dict(void)
     for(int k = 0; k < 290; k++)
     {
         // Create data payload.
-        CREATE_INST(st, test_struct_t, BAD_PTR);
+        CREATE_INST(st, test_struct_t);
         st->anumber = 1000 + k;
         snprintf(st->astring, TEST_STR_LEN, "Boo_%d", st->anumber);
 

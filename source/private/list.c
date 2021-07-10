@@ -31,7 +31,7 @@ struct list
 //--------------------------------------------------------//
 list_t* list_Create(void)
 {
-    CREATE_INST(l, list_t, BAD_PTR);
+    CREATE_INST(l, list_t);
 
     return l;
 }
@@ -83,7 +83,7 @@ int list_Push(list_t* l, void* data)
 
     int ret = RS_PASS;
 
-    CREATE_INST(new_node, node_t, RS_ERR);
+    CREATE_INST(new_node, node_t);
     new_node->data = data;
 
     // Get current head. Could be null if empty.
@@ -120,7 +120,7 @@ int list_Append(list_t* l, void* data)
     // Get current tail. Can be null.
     node_t* ctail = l->tail;
 
-    CREATE_INST(new_node, node_t, RS_ERR);
+    CREATE_INST(new_node, node_t);
     new_node->data = data;
 
     if(ctail != NULL)

@@ -66,15 +66,15 @@ sm_t* lock_Create()
     p_combination = list_Create();
 
     // Initial combination is: 000
-    CREATE_INST(k1, lock_data_t, BAD_PTR);
+    CREATE_INST(k1, lock_data_t);
     k1->c = '0';
     list_Append(p_combination, k1);
 
-    CREATE_INST(k2, lock_data_t, BAD_PTR);
+    CREATE_INST(k2, lock_data_t);
     k2->c = '0';
     list_Append(p_combination, k2);
 
-    CREATE_INST(k3, lock_data_t, BAD_PTR);
+    CREATE_INST(k3, lock_data_t);
     k3->c = '0';
     list_Append(p_combination, k3);
 
@@ -240,7 +240,7 @@ int LockedAddDigit(void)
 
     LOG_DEBUG(CAT_SM, "LockedAddDigit()");
 
-    CREATE_INST(data, lock_data_t, RS_ERR);
+    CREATE_INST(data, lock_data_t);
     data->c = p_current_key;
     list_Append(p_current_entry, data);
 
@@ -279,7 +279,7 @@ int SetComboAddDigit(void)
 
     LOG_DEBUG(CAT_SM, "SetComboAddDigit()");
 
-    CREATE_INST(data, lock_data_t, RS_ERR);
+    CREATE_INST(data, lock_data_t);
     data->c = p_current_key;
     list_Append(p_current_entry, data);
 
@@ -305,7 +305,7 @@ int SetCombo(void)
         {
             if(list_IterNext(p_current_entry, (void**)&data))
             {
-                CREATE_INST(data2, lock_data_t, RS_ERR);
+                CREATE_INST(data2, lock_data_t);
                 list_Append(p_combination, data2);
             }
             else

@@ -28,7 +28,7 @@ UT_SUITE(LIST_ALL, "Test all list functions.")
 
     for(int i = 0; i < NUM_TS; i++)
     {
-        CREATE_INST(st, test_struct_t, RS_ERR);
+        CREATE_INST(st, test_struct_t);
         st->anumber = 11 * (i + 1);
         snprintf(st->astring, TEST_STR_LEN-1, "Ajay%d", st->anumber);
         ts[i] = st;

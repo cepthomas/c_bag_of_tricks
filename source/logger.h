@@ -13,13 +13,13 @@
 /// Log levels. See https://stackoverflow.com/a/2031209.
 typedef enum
 {
-    LVL_DEBUG = 1 << 1,
-    LVL_INFO  = 1 << 2,
-    LVL_ERROR = 1 << 4,
-    LVL_ALL   = 0xFFFFFFFF
+    LVL_NONE  = 0,
+    LVL_DEBUG = 1,
+    LVL_INFO  = 2,
+    LVL_ERROR = 3
 } log_level_t;
 
-/// Log categories. Add more as needed - and update p_XlatLogCat(). TODO Make client configuraable.
+/// Log categories. Add more as needed - and update p_XlatLogCat(). Make client configurable?
 typedef enum
 {
     CAT_INIT     = 1 << 0,
@@ -29,6 +29,7 @@ typedef enum
     CAT_EXIT     = 1 << 4,
     CAT_LOOK     = 1 << 5,
     CAT_SM       = 1 << 6,
+    CAT_MEM      = 1 << 7,
     CAT_USER     = 1 << 15,
     CAT_ALL      = 0xFFFFFFFF
 } log_cat_t;

@@ -54,7 +54,7 @@ struct sm
 //--------------------------------------------------------//
 sm_t* sm_Create(xlat_t xlat, unsigned int def_state, unsigned int def_event)
 {
-    CREATE_INST(sm, sm_t, BAD_PTR);
+    CREATE_INST(sm, sm_t);
 
     sm->xlat = xlat;
     sm->def_state = def_state;
@@ -133,7 +133,7 @@ int sm_AddState(sm_t* sm, unsigned int state_id, const func_t func)
 {
     int ret = RS_PASS;
 
-    CREATE_INST(state_desc, state_desc_t, RS_ERR);
+    CREATE_INST(state_desc, state_desc_t);
 
     state_desc->state_id = state_id;
     state_desc->func = func;
@@ -155,7 +155,7 @@ int sm_AddTransition(sm_t* sm, unsigned int event_id, const func_t func, unsigne
 {
     int ret = RS_PASS;
 
-    CREATE_INST(trans_desc, trans_desc_t, RS_ERR);
+    CREATE_INST(trans_desc, trans_desc_t);
 
     trans_desc->event_id = event_id;
     trans_desc->func = func;
@@ -175,7 +175,7 @@ int sm_ProcessEvent(sm_t* sm, unsigned int event_id)
 
     // Transition functions may generate new events so keep a queue.
     // This allows current execution to complete before handling new event.
-    CREATE_INST(ld, unsigned int, RS_ERR);
+    CREATE_INST(ld, unsigned int);
     *ld = event_id;
     list_Push(sm->event_queue, ld);
 

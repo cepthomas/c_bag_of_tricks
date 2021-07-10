@@ -45,7 +45,7 @@ static char* p_Copy(const char* sinit);
 stringx_t* stringx_Create(const char* sinit)
 {
     VAL_PTR(sinit, BAD_PTR);
-    CREATE_INST(s, stringx_t, BAD_PTR);
+    CREATE_INST(s, stringx_t);
 
     // Copy the contents.
     p_Assign(s, p_Copy(sinit));
@@ -94,7 +94,7 @@ int stringx_Append(stringx_t* s, stringx_t* sapp)
 
     // This is a bit crude. Need to make smarter internal buffer to support growing.
     int slen = stringx_Len(s) + stringx_Len(sapp);
-    CREATE_STR(snew, slen, RS_ERR);
+    CREATE_STR(snew, slen);
     strcpy(snew, s->raw);
     strcpy(snew + stringx_Len(s), sapp->raw);
     ret = p_Assign(s, snew);
@@ -220,8 +220,8 @@ stringx_t* stringx_Left(stringx_t* s, unsigned int num)
 
     if(strlen(s->raw) >= num)
     {
-        CREATE_STR(sleft, num, BAD_PTR);
-        CREATE_STR(sresid, stringx_Len(s) - num, BAD_PTR);
+        CREATE_STR(sleft, num);
+        CREATE_STR(sresid, stringx_Len(s) - num);
 
         strncpy(sleft, s->raw, num);
         strncpy(sresid, s->raw + num, stringx_Len(s) - num);
@@ -271,7 +271,7 @@ int stringx_Trim(stringx_t* s)
         last = last >= 0 ? last : len - 1;
 
         unsigned int slen = (unsigned int)(last - first);
-        CREATE_STR(cs, slen, RS_ERR);
+        CREATE_STR(cs, slen);
         memcpy(cs, s->raw + first, slen);
         cs[slen] = 0;
         p_Assign(s, cs);
@@ -328,7 +328,7 @@ int stringx_Format(stringx_t* s, unsigned int maxlen, const char* format, ...)
 
     int ret = RS_PASS;
 
-    CREATE_STR(buff, maxlen, RS_ERR);
+    CREATE_STR(buff, maxlen);
     va_list args;
     va_start(args, format);
     vsnprintf(buff, maxlen, format, args);
@@ -348,13 +348,13 @@ list_t* stringx_Split(stringx_t* s, const char* delim)
     VAL_PTR(parts, BAD_PTR);
 
     // Make writable copy and tokenize it.
-    CREATE_STR(cp, strlen(s->raw), BAD_PTR);
+    CREATE_STR(cp, strlen(s->raw));
     strcpy(cp, s->raw);
 
     char* token = strtok(cp, delim);
     while(token != NULL)
     {
-        CREATE_STR(ctoken, strlen(token), BAD_PTR);
+        CREATE_STR(ctoken, strlen(token));
         strcpy(ctoken, token);
         list_Append(parts, ctoken);
         token = strtok(NULL, delim);
@@ -392,7 +392,7 @@ char* p_Copy(const char* sinit)
 
     char* retbuff;
 
-    CREATE_STR(buff, strlen(sinit), BAD_PTR);
+    CREATE_STR(buff, strlen(sinit));
     strcpy(buff, sinit);
     retbuff = buff;
 

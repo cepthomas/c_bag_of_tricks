@@ -55,7 +55,7 @@ static kv_t* p_ConvertKey(keyType_t kt, key_t k);
 //--------------------------------------------------------//
 dict_t* dict_Create(keyType_t kt)
 {
-    CREATE_INST(d, dict_t, BAD_PTR);
+    CREATE_INST(d, dict_t);
 
     // Initialize.
     d->kt = kt;
@@ -274,13 +274,13 @@ list_t* dict_GetKeys(dict_t* d)
             {
                 // Copy only.
                 VAL_PTR(kv->skey, BAD_PTR);
-                CREATE_STR(s, strlen(kv->skey), BAD_PTR);
+                CREATE_STR(s, strlen(kv->skey));
                 strcpy(s, kv->skey);
                 list_Append(l, s);
             }
             else // KEY_INT
             {
-                CREATE_INST(pi, int, BAD_PTR);
+                CREATE_INST(pi, int);
                 list_Append(l, pi);
             }
         }
@@ -370,10 +370,10 @@ unsigned int p_HashInt(int i)
 kv_t* p_ConvertKey(keyType_t kt, key_t k)
 {
     // Pack into our preferred format.
-    CREATE_INST(kv, kv_t, BAD_PTR);
+    CREATE_INST(kv, kv_t);
     if(kt == KEY_STRING)
     {
-        CREATE_STR(s, strlen(k.ks), BAD_PTR);
+        CREATE_STR(s, strlen(k.ks));
         strcpy(s, k.ks);
         kv->skey = s;
         kv->ikey = 0;
