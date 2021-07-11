@@ -6,8 +6,8 @@ set(CMAKE_C_STANDARD 99)
 # set(CMAKE_CXX_STANDARD 11)
 
 # needs -g to debug.
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall -Werror -Wno-deprecated-declarations -Wno-unused-variable")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wno-unused-variable")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall -Wno-deprecated-declarations")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall")
 
 
 if(DEFINED USE_PROBE)
@@ -16,7 +16,11 @@ if(DEFINED USE_PROBE)
     set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -DUSE_PROBE")
 endif()
 
-include_directories(source pnut test)
+include_directories(
+    source
+    pnut
+    test
+)
 
 # Source files.
 add_executable(cbot_test

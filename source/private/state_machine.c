@@ -13,9 +13,6 @@
 
 //---------------- Private Declarations ------------------//
 
-/// For debugging if enabled.
-static const int MAX_TRACE = 100;
-
 /// One transition in a state.
 typedef struct
 {
