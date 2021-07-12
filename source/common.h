@@ -36,7 +36,7 @@ double common_GetElapsedSec(void);
 /// @return The sec.
 double common_GetCurrentSec(void);
 
-/// Handler for alloc failures. Never returns.
+/// Handler for alloc failures. Never returns - exits.
 /// @param line Number.
 /// @param file Name.
 void common_MemFail(int line, const char* file);
@@ -50,33 +50,34 @@ void common_MemFail(int line, const char* file);
 //-------------------------- Managed lifetime -----------------------------//
 
 /// A crude memory alloc/free probe mechanism. You can strip it out if you want.
-#ifdef USE_PROBE
-#define PROBE(mark, var, ln, fn) logger_Log(LVL_DEBUG, CAT_MEM, ln, "%s,%p,%d,\"%s\"", mark, var, ln, fn)
-#else
+
+//#define PROBE(mark, var, ln, fn) logger_Log(LVL_DEBUG, CAT_MEM, __LINE__, "%s,%p,%d,\"%s\"", mark, var, __LINE__, fn)
 #define PROBE(mark, var, ln, fn)
-#endif
+
+// Common part.
+#define _CREATE(var) \
+    PROBE("+++", var, __LINE__, __FILE__); \
+    if(var == NULL) { common_MemFail(__LINE__, __FILE__); };
 
 /// Make an instance of a typed thing. Client is responsible for FREE().
 /// @param var Variable name.
-/// @param type Thing type.
-/// @param err Error value to return in case of failure.
+/// @param type Variable type.
 #define CREATE_INST(var, type) \
     type* var = (type*)calloc(1, sizeof(type)); \
-    PROBE("+++", var, __LINE__, __FILE__); \
-    if(var == NULL) { common_MemFail(__LINE__, __FILE__); }
+    _CREATE(var);
 
 /// Make a standard char buff. Client is responsible for FREE().
 /// @param var Variable name.
 /// @param len String length. We add room for trailing 0.
 #define CREATE_STR(var, len) \
-    char* var = (char*)calloc(len + 1, sizeof(char)); \
-    PROBE("+++", var, __LINE__, __FILE__); \
-    if(var == NULL) { common_MemFail(__LINE__, __FILE__); }
+    char* var = (char*)calloc(len + 1, sizeof(char));  \
+    _CREATE(var);
 
 /// Free the item.
 /// @param var Variable name.
 #define FREE(var) \
+    if(var == NULL) { common_MemFail(__LINE__, __FILE__); } \
     PROBE("---", var, __LINE__, __FILE__); \
-    free(var)
+    free(var);
 
 #endif // COMMON_H

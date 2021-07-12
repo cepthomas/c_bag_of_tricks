@@ -10,12 +10,6 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall -Wno-deprecated-declarations")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall")
 
 
-if(DEFINED USE_PROBE)
-    message(STATUS "USE_PROBE is DEFINED")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DUSE_PROBE")
-    set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -DUSE_PROBE")
-endif()
-
 include_directories(
     source
     pnut

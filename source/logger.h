@@ -36,7 +36,7 @@ typedef enum
 
 
 /// Initialize the module.
-/// @param fp File to write to or stdout if NULL.
+/// @param fp File to write to.
 /// @return Status.
 int logger_Init(FILE* fp);
 
@@ -45,10 +45,6 @@ int logger_Init(FILE* fp);
 /// @param cat
 /// @return Status.
 int logger_SetFilters(log_level_t level, log_cat_t cat);
-
-/// Shutdown the module.
-/// @return Status.
-int logger_Destroy(void);
 
 /// log some information.
 /// @param level See log_level_t.

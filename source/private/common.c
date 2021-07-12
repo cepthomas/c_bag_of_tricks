@@ -44,5 +44,6 @@ double common_GetCurrentSec()
 //--------------------------------------------------------//
 void common_MemFail(int line, const char* file)
 {
-    logger_Log(LVL_ERROR, CAT_MEM, line, "Alloc failure: %s", file);
+    logger_Log(LVL_ERROR, CAT_MEM, line, "Alloc/free failure: %s", file);
+    exit(1);
 }

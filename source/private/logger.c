@@ -33,8 +33,9 @@ const char* p_XlatLogCat(log_cat_t cat);
 //--------------------------------------------------------//
 int logger_Init(FILE* fp)
 {
-    p_fp = fp == NULL ? stdout : fp;
-    return 0;
+    VAL_PTR(fp, RS_ERR);
+    p_fp = fp;
+    return RS_PASS;
 }
 
 //--------------------------------------------------------//
@@ -42,28 +43,16 @@ int logger_SetFilters(log_level_t level, log_cat_t cat)
 {
     p_level = level;
     p_cat = cat;
-    return 0;
-}
-
-//--------------------------------------------------------//
-int logger_Destroy(void)
-{
-    // Anything?
-    return 0;
+    return RS_PASS;
 }
 
 //--------------------------------------------------------//
 int logger_Log(log_level_t level, log_cat_t cat, int line, const char* format, ...)
 {
+    VAL_PTR(p_fp, RS_ERR);
     VAL_PTR(format, RS_ERR);
     #define LOG_LINE_LEN 100
     static char buff[LOG_LINE_LEN];
-
-    if(p_fp == NULL)
-    {
-        logger_Init(NULL);
-        logger_Log(LVL_ERROR, cat, line, "You forgot to call logger_Init() so I did it for you.");
-    }
 
     // Check filters.
     if((level >= p_level) && (cat & p_cat))
@@ -75,7 +64,6 @@ int logger_Log(log_level_t level, log_cat_t cat, int line, const char* format, .
         va_end(args);
 
         fprintf(p_fp, "%03.6f,%s,%s,%d,%s\n", common_GetElapsedSec(), p_XlatLogLevel(level), p_XlatLogCat(cat), line, buff);
-        // fprintf(p_fp, "%03.6f %s %s (%d) %s\n", common_GetElapsedSec(), p_XlatLogLevel(level), p_XlatLogCat(cat), line, buff);
     }
 
     return RS_PASS;
