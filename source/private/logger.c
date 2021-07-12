@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
+#include <assert.h>
 
 #include "logger.h"
 
@@ -41,6 +42,8 @@ int logger_Init(FILE* fp)
 //--------------------------------------------------------//
 int logger_SetFilters(log_level_t level, log_cat_t cat)
 {
+    assert(p_fp != NULL);
+
     p_level = level;
     p_cat = cat;
     return RS_PASS;
@@ -49,6 +52,8 @@ int logger_SetFilters(log_level_t level, log_cat_t cat)
 //--------------------------------------------------------//
 int logger_Log(log_level_t level, log_cat_t cat, int line, const char* format, ...)
 {
+    assert(p_fp != NULL);
+
     VAL_PTR(p_fp, RS_ERR);
     VAL_PTR(format, RS_ERR);
     #define LOG_LINE_LEN 100

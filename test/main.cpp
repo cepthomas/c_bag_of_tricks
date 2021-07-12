@@ -23,7 +23,7 @@ int main()
 
     // Init system before running tests.
     common_Init();
-    FILE* fp = fopen("..\\test\\temp\\log_test.txt", "w");
+    FILE* fp = fopen("log_test.txt", "w");
     logger_Init(fp);
 
     tm.RunSuites(whichSuites, 'r'); // 'r' for readable, 'x' for xml

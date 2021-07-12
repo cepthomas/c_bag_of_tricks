@@ -69,7 +69,3 @@ Output is to stdout. There are two formats currently supported:
 It is plain C++ with a little bit of stl so will build and run on any win or nx platform using any compiler.
 
 See test-pnut.cpp for an example of how to write unit tests and main.cpp of how to run them.
-
-The original intent was to provide a way to unit test algorithmic parts of embedded code in an isolated
-environment. To that end, the system must be designed so as to abstract the hardware components.
-An example showing how to use this for embedded applications is [c_modular](https://github.com/cepthomas/c_modular).

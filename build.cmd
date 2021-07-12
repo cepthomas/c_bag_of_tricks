@@ -10,4 +10,7 @@ cmake -G "MinGW Makefiles" ..
 make
 cd ..
 
+rem Copy test files.
+copy test\files\* build
+
 rem pause

@@ -14,7 +14,7 @@ include_directories(
     source
     pnut
     test
-)
+    )
 
 # Source files.
 add_executable(cbot_test
@@ -35,6 +35,3 @@ add_executable(cbot_test
     test/test_sm.cpp
     test/lock.c
     )
-
-# Copy test files.
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/test/hemingway_short.txt  DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

@@ -32,10 +32,6 @@ int common_Init();
 /// @return The msec.
 double common_GetElapsedSec(void);
 
-/// Returns the current number of seconds since the epoch.
-/// @return The sec.
-double common_GetCurrentSec(void);
-
 /// Handler for alloc failures. Never returns - exits.
 /// @param line Number.
 /// @param file Name.
@@ -49,8 +45,8 @@ void common_MemFail(int line, const char* file);
 
 //-------------------------- Managed lifetime -----------------------------//
 
-/// A crude memory alloc/free probe mechanism. You can strip it out if you want.
-
+/// A crude memory alloc/free probe mechanism. Used to detect leaks during the collections development.
+/// Enable it being changing the define below, building, then run proc_mem.py. You can strip it out if you want.
 //#define PROBE(mark, var, ln, fn) logger_Log(LVL_DEBUG, CAT_MEM, __LINE__, "%s,%p,%d,\"%s\"", mark, var, __LINE__, fn)
 #define PROBE(mark, var, ln, fn)
 
