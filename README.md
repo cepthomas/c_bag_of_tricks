@@ -11,26 +11,8 @@
 ![logo](felix.jpg)
 
 # Conventions
-- All C projects will use this [naming convention](CONVENTIONS.md). It's basically the
-  [Barr Group standard](https://barrgroup.com/embedded-systems/books/embedded-c-coding-standard) with some minor adjustments, because.
-- The components in this collection generally follow the model put forth in [c_modular](https://github.com/cepthomas/c_modular).
-- If a function returns a pointer (except const), the client now owns it and is responsible for destroying it.
-
-## Error Handling
-In an embedded system, most real errors are considered unrecoverable. Things like handling comm timeouts should be considered
-normal behavior and handled accordingly. So cbot errors are very bad and usually result in hard crash/reset. This of course should never
-happen because they have all been caught in unit and integration testing, right?
-
-Rather than add a whole new error handling system, cbot uses existing C patterns:
-- Functions that return pointers return BAD_PTR (NULL) for errors.
-- Functions that return things like counts (where 0 is valid) return RS_ERR (-1) for errors.
-- Functions that return status return RS_ERR (-1) for errors, RS_PASS (0) for success, RS_FAIL (-2) for failure (logical not error).
-- When errors occur, cbot sets errno accordingly.
-- common.h defines some macros:
-    - Return values for ints and pointers.
-    - Macros for creating and destroying typed objects with validation - CREATE_INST(), CREATE_STR(), FREE().
-    - Macros for validating arg pointers - VAL_PTR().
-    - Note that these macros use early returns to keep the if-nesting reasonable. Normally I disdain early returns but in this case the pluses outweigh.
+- All C projects use this [naming convention](CONVENTIONS.md).
+- The components in this collection generally follow the model described in [c_modular](https://github.com/cepthomas/c_modular).
 
 ## Tools
 - Debugging memory management in composites like dict is difficult. Tools like heob and valgrind exist but I cobbled together

@@ -1,5 +1,10 @@
 
-General naming.
+# Conventions
+- All C projects use this naming convention. It's basically the
+  [Barr Group standard](https://barrgroup.com/embedded-systems/books/embedded-c-coding-standard) with some minor adjustments, because.
+- Uses the model described in [c_modular](https://github.com/cepthomas/c_modular).
+
+## General Naming
   - variables are `int snake_case`.
   - private variables are `static int p_snake_case`.
   - constants and defines are `UPPER_CASE`.
@@ -7,16 +12,25 @@ General naming.
   - private functions are `p_MyFunc()`.
   - `int* pint`, not `int *pint`.
 
-Header files specify the public facing API.
+## Error Handling
+For a hardened system (such as embedded), most real errors are considered unrecoverable. Things like handling comm timeouts should be considered
+normal behavior and handled accordingly. So errors are very bad and usually result in hard crash/reset. This of course should never
+happen because they have all been caught in unit and integration testing, right?
+
+Rather than add a whole new error handling system, use existing C patterns:
+- Functions that return pointers return BAD_PTR (NULL) for errors.
+- Functions that return things like counts (where 0 is valid) return RS_ERR (-1) for errors. TODO what about valid negative numbers?
+- Functions that return status return RS_ERR (-1) for errors, RS_PASS (0) for success, RS_FAIL (-2) for failure (logical not internal).
+- When errors occur, set errno accordingly.
+- common.h defines some macros:
+    - Return values for ints and pointers.
+    - Macros for creating and destroying typed objects with validation - CREATE_INST(), CREATE_STR(), FREE().
+    - Macros for validating arg pointers - VAL_PTR().
+    - Note that these macros use early returns to keep the if-nesting reasonable. Normally I disdain early returns but in this case the pluses outweigh.
+
+
+## Documenting The Code
 ``` C
-#ifndef TEMPLATE_H
-#define TEMPLATE_H
-
-#include <stuff.h>
-
-/// @brief Declaration of a module named thing.
-
-//---------------- Public API ----------------------//
 
 /// Define a useful macro.
 /// @param stat blabla.
@@ -30,67 +44,35 @@ Header files specify the public facing API.
 /// Define a function pointer type.
 /// @param foo blabla.
 /// @return Something.
-typedef int (*thing_InterruptFunc_t)(int foo);
+typedef int (*modulex_InterruptFunc_t)(int foo);
 
 /// Define a discrete value type. Preferred method.
 typedef enum
 {
-    STATUS_OK = 0,  ///> I'm ok
-    STATUS_ERROR,   ///> Not so good.
-} status_t;
+    SOME_OK = 0,  ///> I'm ok
+    SOME_ERROR,   ///> Not so good.
+} some_t;
 
 /// Define a discrete value type. Second best method.
-const int STATUS_OK = 0;
+const int SOME_OK = 0;
 
 /// Define a discrete value type. Only if necessary.
-#define STATUS_OK 0
+#define SOME_OK 0
 
 /// Initialize the module.
 /// @param fp blabla.
 /// @return Status.
-status_t thing_Init(thing_InterruptFunc_t fp);
+int modulex_Init(modulex_InterruptFunc_t fp);
 
 /// Frees all data pointers, and the string struct.
 /// @return T/F.
-bool thing_Destroy(void);
+bool modulex_Destroy(void);
 
-#endif // TEMPLATE_H
-```
-
-Code files implement the functionality.
-``` C
-#include "template.h"
-
-//---------------- Private Declarations ------------------//
-
-/// What is.
+/// Private declarations look like this.
 int p_some_value = 0;
-
 
 /// Function blabla.
 /// @param index blabla.
 /// @return some value..
 long p_SomeUtility(int index);
-
-//---------------- Public API Implementation -------------//
-
-//--------------------------------------------------------//
-status_t thing_Init(thing_InterruptFunc_t fp)
-{
-    // Do something.
-}
-
-//--------------------------------------------------------//
-bool thing_Destroy(void)
-{
-    // Do something.
-}
-
-//---------------- Private Implementation ----------------//
-
-//--------------------------------------------------------//
-long p_SomeUtility(int index)
-{
-    // Do something.
-}
 ```
