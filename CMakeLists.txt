@@ -24,6 +24,7 @@ add_executable(cbot_test
     source/private/dict.c
     source/private/state_machine.c
     source/private/stringx.c
+    source/private/chksum.c
     pnut/pnut.cpp
     test/main.cpp
     test/test_common.cpp
@@ -32,6 +33,7 @@ add_executable(cbot_test
     test/test_dict.cpp
     test/test_pnut.cpp
     test/test_stringx.cpp
+    test/test_chksum.cpp
     test/test_sm.cpp
     test/lock.c
     )

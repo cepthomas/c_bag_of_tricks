@@ -13,4 +13,8 @@ cd ..
 rem Copy test files.
 copy test\files\* build
 
+cd build
+cbot_test
+cd ..
+
 rem pause
