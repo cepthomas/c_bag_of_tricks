@@ -12,8 +12,6 @@ extern "C"
 /////////////////////////////////////////////////////////////////////////////
 UT_SUITE(STR_BASIC, "Test basic stringx functions.")
 {
-    common_Init();
-
     // Basic ops.
     stringx_t* s1 = stringx_Create("  round and square  ");
     UT_NOT_NULL(stringx_Content(s1));
@@ -92,8 +90,6 @@ UT_SUITE(STR_BASIC, "Test basic stringx functions.")
 /////////////////////////////////////////////////////////////////////////////
 UT_SUITE(STR_FANCY, "Test fancier stringx functions.")
 {
-    common_Init();
-
     stringx_t* s1 = stringx_Create("  round and square  ");
     stringx_t* s2 = stringx_Create("");
 

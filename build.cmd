@@ -1,20 +1,20 @@
-:: Standard build - used by VS Code task.
+echo off
+cls
 
 :: Setup dirs and files.
 mkdir build
-cd build
+pushd build
 rem del /F /Q *.*
 
 :: Build the app.
 cmake -G "MinGW Makefiles" ..
 make
-cd ..
 
-rem Copy test files.
+rem cbot_test
+
+popd
+
+:: Copy test files.
 copy test\files\* build
-
-cd build
-cbot_test
-cd ..
 
 rem pause

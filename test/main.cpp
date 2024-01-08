@@ -14,15 +14,14 @@ int main()
     std::vector<std::string> whichSuites;
 
     whichSuites.emplace_back("CHKSUM");
-    // whichSuites.emplace_back("LOGGER");
-    // whichSuites.emplace_back("SM");
-    // whichSuites.emplace_back("COMMON");
-    // whichSuites.emplace_back("DICT");
-    // whichSuites.emplace_back("STR");
-    // whichSuites.emplace_back("LIST");
+    whichSuites.emplace_back("LOGGER");
+    whichSuites.emplace_back("SM");
+    whichSuites.emplace_back("COMMON");
+    whichSuites.emplace_back("DICT");
+    whichSuites.emplace_back("STR");
+    whichSuites.emplace_back("LIST");
 
     // Init system before running tests.
-    common_Init();
     FILE* fp = fopen("log_test.txt", "w");
     logger_Init(fp);
 

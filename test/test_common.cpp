@@ -11,27 +11,8 @@ extern "C"
 
 
 /////////////////////////////////////////////////////////////////////////////
-UT_SUITE(COMMON_TIME, "Test time common functions.")
-{
-    UT_EQUAL(common_Init(), 0);
-
-    UT_CLOSE(common_GetElapsedSec(), 0.0, 0.01);
-
-    sleep(1);
-    UT_CLOSE(common_GetElapsedSec(), 1.0, 0.01);
-
-    sleep(1);
-    UT_CLOSE(common_GetElapsedSec(), 2.0, 0.01);
-
-    return 0;
-}    
-
-
-/////////////////////////////////////////////////////////////////////////////
 UT_SUITE(COMMON_MEM, "Test memory probe functions. Make sure PROBE in common.h is set in common.h.")
 {
-    UT_EQUAL(common_Init(), 0);
-
     logger_SetFilters(LVL_DEBUG, CAT_MEM);
 
     const int STR_LEN = 16;

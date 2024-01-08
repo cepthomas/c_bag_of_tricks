@@ -3,30 +3,36 @@
 #include <string.h>
 #include <stdarg.h>
 #include <assert.h>
+#include <time.h>
+#include <sys/time.h>
 
+#include "common.h"
 #include "logger.h"
-
-
-/// @brief Definition of logger.
 
 
 //---------------- Private Declarations ------------------//
 
 /// Logging support items.
-log_level_t p_level = LVL_INFO;
-log_cat_t p_cat = CAT_ALL;
-FILE* p_fp = NULL;
+static log_level_t p_level = LVL_INFO;
+static log_cat_t p_cat = CAT_ALL;
+static FILE* p_fp = NULL;
 
+/// For timing.
+static double p_start_time = 0;
 
 /// Translate to human.
 /// @param level to translate.
 /// @return string version
-const char* p_XlatLogLevel(log_level_t level);
+static const char* p_XlatLogLevel(log_level_t level);
 
 /// Translate to human.
 /// @param cat to translate.
 /// @return string version
-const char* p_XlatLogCat(log_cat_t cat);
+static const char* p_XlatLogCat(log_cat_t cat);
+
+/// Returns the current number of seconds since the epoch.
+/// @return The sec.
+static double p_GetCurrentSec();
 
 
 //---------------- Public API Implementation -------------//
@@ -34,6 +40,7 @@ const char* p_XlatLogCat(log_cat_t cat);
 //--------------------------------------------------------//
 int logger_Init(FILE* fp)
 {
+    p_start_time = p_GetCurrentSec();
     VAL_PTR(fp, RS_ERR);
     p_fp = fp;
     return RS_PASS;
@@ -68,7 +75,10 @@ int logger_Log(log_level_t level, log_cat_t cat, int line, const char* format, .
         vsnprintf(buff, LOG_LINE_LEN-1, format, args);
         va_end(args);
 
-        fprintf(p_fp, "%03.6f,%s,%s,%d,%s\n", common_GetElapsedSec(), p_XlatLogLevel(level), p_XlatLogCat(cat), line, buff);
+        double current = p_GetCurrentSec();
+        double sec = current - p_start_time;
+
+        fprintf(p_fp, "%03.6f,%s,%s,%d,%s\n", sec, p_XlatLogLevel(level), p_XlatLogCat(cat), line, buff);
     }
 
     return RS_PASS;
@@ -110,3 +120,15 @@ const char* p_XlatLogCat(log_cat_t cat)
     }
     return buff;
 }    
+
+
+//--------------------------------------------------------//
+double p_GetCurrentSec()
+{
+    struct timeval tv;
+    struct timezone tz;
+    gettimeofday(&tv, &tz);
+    double sec = (double)tv.tv_sec + (double)tv.tv_usec / 1000000.0;
+    return sec;
+}
+

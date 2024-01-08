@@ -24,23 +24,15 @@ static const int RS_FAIL = -2;
 
 //-------------------------- Utilities --------------------------------//
 
-/// Startup.
-/// @return Status.
-int common_Init();
-
-/// Returns the number of milliseconds since the app was started.
-/// @return The msec.
-double common_GetElapsedSec(void);
+/// Validate pointer arg. If fails, early returns err.
+/// @param ptr Pointer.
+/// @param err Error value to return in case of failure.
+#define VAL_PTR(ptr, err) { if(ptr == NULL) { return err; } }
 
 /// Handler for alloc failures. Never returns - exits.
 /// @param line Number.
 /// @param file Name.
-void common_MemFail(int line, const char* file);
-
-/// Validate pointer arg. If fails, early returns err.
-/// @param ptr Pointer.
-/// @param err Error value to return in case of failure.
-#define VAL_PTR(ptr, err) if(ptr == NULL) { return err; }
+#define MEM_FAIL(line, file) { logger_Log(LVL_ERROR, CAT_MEM, line, "Alloc/free failure: %s", file); exit(1); }
 
 
 //-------------------------- Managed lifetime -----------------------------//
@@ -53,7 +45,7 @@ void common_MemFail(int line, const char* file);
 // Common part.
 #define _CREATE(var) \
     PROBE("+++", var, __LINE__, __FILE__); \
-    if(var == NULL) { common_MemFail(__LINE__, __FILE__); };
+    if(var == NULL) { MEM_FAIL(__LINE__, __FILE__); };
 
 /// Make an instance of a typed thing. Client is responsible for FREE().
 /// @param var Variable name.
@@ -72,7 +64,7 @@ void common_MemFail(int line, const char* file);
 /// Free the item.
 /// @param var Variable name.
 #define FREE(var) \
-    if(var == NULL) { common_MemFail(__LINE__, __FILE__); } \
+    if(var == NULL) { MEM_FAIL(__LINE__, __FILE__); } \
     PROBE("---", var, __LINE__, __FILE__); \
     free(var);
 

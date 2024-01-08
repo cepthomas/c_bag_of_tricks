@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.5)
 project(cbot_test)
 
 set(CMAKE_C_STANDARD 99)
-# set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 11)
 
 # needs -g to debug.
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall -Wno-deprecated-declarations")
@@ -18,7 +18,6 @@ include_directories(
 
 # Source files.
 add_executable(cbot_test
-    source/private/common.c
     source/private/logger.c
     source/private/list.c
     source/private/dict.c
@@ -36,4 +35,12 @@ add_executable(cbot_test
     test/test_chksum.cpp
     test/test_sm.cpp
     test/lock.c
+    )
+
+target_link_libraries(cbot_test
+    libgcc.a
+    libstdc++.a
+
+    # -static-libgcc and -static-libstdc++
+    # can't start because libgcc_s_dw2-1.dll is missing
     )
