@@ -22,7 +22,7 @@ int main()
     whichSuites.emplace_back("LIST");
 
     // Init system before running tests.
-    FILE* fp = fopen("log_test.txt", "w");
+    FILE* fp = fopen("log_test_out.txt", "w");
     logger_Init(fp);
 
     tm.RunSuites(whichSuites, 'r'); // 'r' for readable, 'x' for xml
