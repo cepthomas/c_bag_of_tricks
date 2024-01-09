@@ -1,6 +1,6 @@
 
 echo off
-cls
+rem cls
 pushd build
 cbot_test
 popd

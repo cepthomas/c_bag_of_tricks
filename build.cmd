@@ -1,5 +1,5 @@
 echo off
-cls
+rem cls
 
 :: Setup dirs and files.
 mkdir build
@@ -10,11 +10,7 @@ rem del /F /Q *.*
 cmake -G "MinGW Makefiles" ..
 make
 
-rem cbot_test
-
 popd
 
 :: Copy test files.
 copy test\files\* build
-
-rem pause
