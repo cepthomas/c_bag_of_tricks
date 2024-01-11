@@ -1,5 +1,5 @@
+
 echo off
-rem cls
 
 :: Setup dirs and files.
 mkdir build

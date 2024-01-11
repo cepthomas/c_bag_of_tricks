@@ -37,10 +37,4 @@ add_executable(cbot_test
     test/lock.c
     )
 
-target_link_libraries(cbot_test
-    libgcc.a
-    libstdc++.a
-
-    # -static-libgcc and -static-libstdc++
-    # can't start because libgcc_s_dw2-1.dll is missing
-    )
+# target_link_libraries(cbot_test libgcc.a libstdc++.a)

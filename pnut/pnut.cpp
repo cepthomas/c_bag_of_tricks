@@ -111,7 +111,6 @@ void TestManager::RunSuites(std::vector<std::string> which, char fmt)
 {
     _context.Reset();
     _context.Format = fmt;
-
     int caseCnt = 0;
     int failCnt = 0;
 
@@ -126,12 +125,14 @@ void TestManager::RunSuites(std::vector<std::string> which, char fmt)
         {
             for(std::vector<std::string>::iterator itRun = which.begin(); itRun != which.end(); ++itRun)
             {
-                if((*iter)->ID.find(*itRun) != std::string::npos)
+                // if((*iter)->ID.find(*itRun) != std::string::npos)
+                if((*iter)->ID.find(*itRun) == 0)
                 {
                     newSuite = true;
                 }
             }
         }
+printf("2222\n");
 
         if(newSuite)
         {
@@ -153,8 +154,10 @@ void TestManager::RunSuites(std::vector<std::string> which, char fmt)
                 (*iter)->RecordVerbatim(_context, oss.str());
             }
 
+printf("3333 %s\n", _context.CurrentSuiteId);
             /// Run the suite.
             (*iter)->Run(_context);
+printf("4444\n");
 
             /// Completed the suite, update the counts.
             failCnt += (*iter)->FailCnt;

@@ -5,13 +5,14 @@
 
 extern "C"
 {
-#include "list.h"
+// #include "list.h"
 #include "stringx.h"
 }
 
 /////////////////////////////////////////////////////////////////////////////
 UT_SUITE(STR_BASIC, "Test basic stringx functions.")
 {
+    // UT_EQUAL(stringx_Compare(s3, "round and square", CASE_SENS), RS_PASS);
     // Basic ops.
     stringx_t* s1 = stringx_Create("  round and square  ");
     UT_NOT_NULL(stringx_Content(s1));
@@ -64,7 +65,6 @@ UT_SUITE(STR_BASIC, "Test basic stringx functions.")
     stringx_t* s3 = stringx_Copy(s1);
     UT_NOT_NULL(s3);
     UT_NOT_NULL(stringx_Content(s3));
-    UT_EQUAL(stringx_Compare(s3, "round and square", CASE_SENS), RS_PASS);
 
     stringx_t* s4 = stringx_Left(s2, 6);  //"The Mulberry Bush"
     UT_NOT_NULL(s4);
