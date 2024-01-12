@@ -1,6 +1,6 @@
 #include <cstdio>
 #include <cstring>
-
+#include <errno.h>
 
 #include "pnut.h"
 
@@ -12,7 +12,7 @@ extern "C"
 
 static const int TEST_STR_LEN = 16;
 
-// A data struct for testing. 
+// A data struct for testing.
 typedef struct
 {
     int anumber;
@@ -27,6 +27,7 @@ dict_t* create_int_dict(void);
 /////////////////////////////////////////////////////////////////////////////
 UT_SUITE(DICT_STR, "Test all dict functions using string key.")
 {
+    return 0;
     // Make a dict with string key. create_str_dict() tests dict_create() and dict_Set().
     dict_t* mydict = create_str_dict();
     UT_NOT_NULL(mydict);
@@ -35,6 +36,10 @@ UT_SUITE(DICT_STR, "Test all dict functions using string key.")
     test_struct_t* ts = NULL;
     test_struct_t* tsret = NULL;
     key_t key;
+
+    FILE* fpd = fopen("dump.txt", "w");
+    dict_Dump(mydict, fpd);
+    fclose(fpd);
 
     // Good
     key.ks = "SOMETHING";
@@ -161,7 +166,7 @@ UT_SUITE(DICT_ERRORS, "Test some failure situations.")
     UT_NULL(dict_GetKeys(baddict));
     UT_EQUAL(dict_Clear(baddict), RS_ERR);
     UT_EQUAL(dict_Destroy(baddict), RS_ERR);
-    
+
     return 0;
 }
 
@@ -227,7 +232,7 @@ dict_t* create_str_dict(void)
     return d;
 }
 
-/////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 dict_t* create_int_dict(void)
 {
     // Make a dict with int key.

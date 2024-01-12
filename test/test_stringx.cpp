@@ -83,7 +83,7 @@ UT_SUITE(STR_BASIC, "Test basic stringx functions.")
     // Don't try to destroy the same object twice!
     //stringx_Destroy(s4);
 
-    return 0;
+    return 0; // pass
 }
 
 
@@ -117,5 +117,5 @@ UT_SUITE(STR_FANCY, "Test fancier stringx functions.")
     stringx_Destroy(s2);
     list_Destroy(parts);
 
-    return 0;
+    return 0; // pass
 }

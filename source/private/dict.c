@@ -161,7 +161,6 @@ int dict_Set(dict_t* d, key_t k, void* v)
 
     int ret = RS_PASS;
 
-
     // If it is in a bin already, replace the value.
     unsigned int bin = d->kt == KEY_STRING ? p_HashString(k.ks) : p_HashInt(k.ki);
     list_t* pl = d->bins[bin]; // shorthand
@@ -186,7 +185,7 @@ int dict_Set(dict_t* d, key_t k, void* v)
 
         if(found)
         {
-            // Need to FREE the original data then copy from the new..
+            // Need to FREE the original data then copy from the new.
             if(lkv->value != NULL)
             {
                 FREE(lkv->value);

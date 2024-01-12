@@ -75,6 +75,7 @@ public:
 
     /// All test suite specifications must supply this execution function.
     /// @param context The TestContext struct.
+    /// @return  context The TestContext struct.
     virtual int Run(TestContext& context) = 0;
 
     /// Compliance.
@@ -123,12 +124,13 @@ public:\
         TestManager::Instance().AddSuite(this);\
     }\
     int Run(TestContext&);\
-    ~id##_TestSuite(){} \
+    ~id##_TestSuite(){}\
 }id##_Instance;\
 int id##_TestSuite::Run(TestContext& testContext)
 
 /// Common code.
 #define PASS_COMMON \
+else\
 {\
     std::ostringstream oss;\
     RecordResult(testContext, true,  __FILE__, __LINE__, "");\
@@ -151,11 +153,11 @@ int id##_TestSuite::Run(TestContext& testContext)
 {\
 if(testContext.Format == 'r')\
     {\
-        std::ostringstream oss; \
-        oss << message << " " << info << std::endl; \
-        RecordVerbatim(testContext, oss.str()); \
+        std::ostringstream oss;\
+        oss << message << " " << info << std::endl;\
+        RecordVerbatim(testContext, oss.str());\
     }\
-}\
+}
 
 /// Checks whether the given condition is true.
 /// @param condition True?
@@ -196,15 +198,16 @@ if(testContext.Format == 'r')\
     PASS_COMMON\
 }
 
-/// Checks whether the value is not NULL.
+/// Checks whether the value is not NULL. Early exit failures because it's usually a bad pointer.
 /// @param value NULL?
 #define UT_NOT_NULL(value)\
 {\
     if((value) == NULL)\
     {\
         std::ostringstream oss;\
-        oss << "[" << value << "] should not be null";\
+        oss << "[" << value << "] should not be null -- FATAL";\
         RecordResult(testContext, false,  __FILE__, __LINE__, oss.str());\
+        return 1;\
     }\
     PASS_COMMON\
 }

@@ -125,14 +125,13 @@ void TestManager::RunSuites(std::vector<std::string> which, char fmt)
         {
             for(std::vector<std::string>::iterator itRun = which.begin(); itRun != which.end(); ++itRun)
             {
-                // if((*iter)->ID.find(*itRun) != std::string::npos)
-                if((*iter)->ID.find(*itRun) == 0)
+                int n = (*iter)->ID.find(*itRun);
+                if(n == 0) // beginning of name
                 {
                     newSuite = true;
                 }
             }
         }
-printf("2222\n");
 
         if(newSuite)
         {
@@ -154,10 +153,12 @@ printf("2222\n");
                 (*iter)->RecordVerbatim(_context, oss.str());
             }
 
-printf("3333 %s\n", _context.CurrentSuiteId);
             /// Run the suite.
-            (*iter)->Run(_context);
-printf("4444\n");
+            int res = (*iter)->Run(_context);
+            if (res != 0)
+            {
+                // Failed hard.
+            }
 
             /// Completed the suite, update the counts.
             failCnt += (*iter)->FailCnt;
