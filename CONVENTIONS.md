@@ -12,6 +12,13 @@
   - private functions are `p_MyFunc()`.
   - `int* pint`, not `int *pint`.
 
+## How to build/run/test
+- build.cmd - app
+- run.cmd - app
+- test.cmd - unit
+
+
+
 ## Error Handling
 For a hardened system (such as embedded), most real errors are considered unrecoverable. Things like handling comm timeouts should be considered
 normal behavior and handled accordingly. So errors are very bad and usually result in hard crash/reset. This of course should never
