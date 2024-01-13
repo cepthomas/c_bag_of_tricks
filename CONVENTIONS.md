@@ -1,5 +1,5 @@
 
-# Conventions TODO1 rework/reorg/relocate
+# Conventions TODO2 rework/reorg/relocate
 - All C projects use this naming convention. It's basically the
   [Barr Group standard](https://barrgroup.com/embedded-systems/books/embedded-c-coding-standard) with some minor adjustments, because.
 - Uses the model described in [c_modular](https://github.com/cepthomas/c_modular).
@@ -12,21 +12,21 @@
   - private functions are `p_MyFunc()`.
   - `int* pint`, not `int *pint`.
 
-## How to build/run/test
+## ============= How to build/run/test
 - build.cmd - app
 - run.cmd - app
 - test.cmd - unit
 
 
 
-## Error Handling
+## ============= Error Handling
 For a hardened system (such as embedded), most real errors are considered unrecoverable. Things like handling comm timeouts should be considered
 normal behavior and handled accordingly. So errors are very bad and usually result in hard crash/reset. This of course should never
 happen because they have all been caught in unit and integration testing, right?
 
 Rather than add a whole new error handling system, use existing C patterns:
 - Functions that return pointers return BAD_PTR (NULL) for errors.
-- Functions that return things like counts (where 0 is valid) return RS_ERR (-1) for errors. TODO what about valid negative numbers?
+- Functions that return things like counts (where 0 is valid) return RS_ERR (-1) for errors. ?????? what about valid negative numbers?
 - Functions that return status return RS_ERR (-1) for errors, RS_PASS (0) for success, RS_FAIL (-2) for failure (logical not internal).
 - When errors occur, set errno accordingly.
 - common.h defines some macros:
