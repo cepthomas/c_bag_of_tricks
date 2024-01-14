@@ -39,6 +39,10 @@
 - Higher level string manipulation.
 - See test_stringx.cpp for example of usage.
 
+## cli
+- Container for args with slicing and dicing into convenient parts.
+- See test_cli.cpp for example of usage.
+
 ## pnut
 Practically Nonexistent Unit Tester: A super lightweight unit test framework for C (or C++).
 It has gone through many useful and successful iterations and may as well bring you joy also.

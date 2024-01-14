@@ -24,6 +24,7 @@ add_executable(cbot_test
     source/private/state_machine.c
     source/private/stringx.c
     source/private/chksum.c
+    source/private/cli.c
     pnut/pnut.cpp
     test/main.cpp
     test/test_common.cpp
