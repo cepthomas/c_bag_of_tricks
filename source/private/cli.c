@@ -40,7 +40,7 @@ int cli_OpenStdio(void)
 {
     int stat = 0;
     _buff_index = -1;
-    _type = IF_STDIO;
+    _iftype = IF_STDIO;
     _prompt = "$";
 
     memset(_cli_buff, 0, CLI_BUFF_LEN);
@@ -56,7 +56,7 @@ int cli_OpenSocket(const char* ip, int port)
 {
     int stat = 0;
     _buff_index = -1;
-    _type = IF_SOCKET;
+    _iftype = IF_SOCKET;
     _prompt = "";
 
     memset(_cli_buff, 0, CLI_BUFF_LEN);
@@ -72,7 +72,7 @@ int cli_OpenSerial(int port, int baudrate)
 {
     int stat = 0;
     _buff_index = -1;
-    _type = IF_SERIAL;
+    _iftype = IF_SERIAL;
     _prompt = "$";
 
     memset(_cli_buff, 0, CLI_BUFF_LEN);
@@ -96,6 +96,8 @@ int cli_Destroy(void)
             break;
         case IF_SERIAL:
             break;
+        default:
+            break;
     }
 
     return stat;
@@ -114,17 +116,22 @@ const bool cli_ReadLine(cli_args_t* args)
 
     while (!process_done)
     {
-        case IF_STDIO:
-            c = _kbhit() ? (char)_getch() : -1;
-            break;
-        case IF_SOCKET:
-            // telnet - see sock.c
-            // while ((c = fgetc(p_CliIn)) != EOF)
-            // if (fread(&c, 1, 1, p_CliIn) > 0)
-            c = -1;
-            break;
-        case IF_SERIAL:
-            break;
+        switch(_iftype)
+        {
+            case IF_STDIO:
+                c = _kbhit() ? (char)_getch() : -1;
+                break;
+            case IF_SOCKET:
+                // telnet - see sock.c
+                // while ((c = fgetc(p_CliIn)) != EOF)
+                // if (fread(&c, 1, 1, p_CliIn) > 0)
+                c = -1;
+                break;
+            case IF_SERIAL:
+                break;
+            default:
+                break;
+        }
 
         switch(c)
         {
@@ -230,6 +237,9 @@ int cli_WriteLine(const char* format, ...)
         case IF_SERIAL:
             stat = 1;
             break;
+        default:
+            stat = 1;
+            break;
     }
 
     return stat;    
@@ -250,6 +260,9 @@ int cli_WriteChar(char c)
             // fputc();
             break;
         case IF_SERIAL:
+            stat = 1;
+            break;
+        default:
             stat = 1;
             break;
     }

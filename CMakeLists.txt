@@ -19,6 +19,7 @@ include_directories(
 # Source files.
 add_executable(cbot_test
     source/private/logger.c
+    source/private/error.c
     source/private/list.c
     source/private/dict.c
     source/private/state_machine.c
