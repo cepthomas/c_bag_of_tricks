@@ -9,7 +9,6 @@
 #include "cli.h"
 
 
-// TODO1 refactor and put in cbot plus these:
 // TOCO1 handle e.g. immediate single space bar.
 
 
@@ -17,6 +16,8 @@
 
 /// Max raw line.
 #define CLI_BUFF_LEN 128
+
+typedef enum { IF_NONE, IF_STDIO, IF_SOCKET, IF_SERIAL } ifType_t;
 
 /// CLI buffer to collect input chars.
 static char _cli_buff[MAX_CLI_ARGS * MAX_CLI_ARG_LEN];
@@ -27,28 +28,52 @@ static int _buff_index = -1;
 /// CLI prompt.
 static char* _prompt = "";
 
-/// TODO1 kludgy, fix. enum? sock.c, serial port
-static bool _stdio = true;
+/// The flavor.
+static ifType_t _iftype = IF_NONE;
 
 
 //---------------- API Implementation -----------------//
 
+
 //--------------------------------------------------------//
-int cli_Open(char type)
+int cli_OpenStdio(void)
 {
     int stat = 0;
     _buff_index = -1;
+    _type = IF_STDIO;
+    _prompt = "$";
 
-    if (type == 's')
-    {
-        _stdio = true;
-        _prompt = "$";
-    }
-    else
-    {
-        _stdio = false;
-        _prompt = "";
-    }
+    memset(_cli_buff, 0, CLI_BUFF_LEN);
+
+    // Prompt.
+    cli_WriteLine("");
+    return stat;
+}
+
+
+//--------------------------------------------------------//
+int cli_OpenSocket(const char* ip, int port)
+{
+    int stat = 0;
+    _buff_index = -1;
+    _type = IF_SOCKET;
+    _prompt = "";
+
+    memset(_cli_buff, 0, CLI_BUFF_LEN);
+
+    // Prompt.
+    cli_WriteLine("");
+    return stat;
+}
+
+
+//--------------------------------------------------------//
+int cli_OpenSerial(int port, int baudrate)
+{
+    int stat = 0;
+    _buff_index = -1;
+    _type = IF_SERIAL;
+    _prompt = "$";
 
     memset(_cli_buff, 0, CLI_BUFF_LEN);
 
@@ -63,6 +88,16 @@ int cli_Destroy(void)
 {
     int stat = 0;
 
+    switch(_iftype)
+    {
+        case IF_STDIO:
+            break;
+        case IF_SOCKET:
+            break;
+        case IF_SERIAL:
+            break;
+    }
+
     return stat;
 }
 
@@ -73,23 +108,23 @@ const bool cli_ReadLine(cli_args_t* args)
     bool line_done = false;
     char* serr = NULL;
 
-
     // Process each new char.
     char c = -1;
     bool process_done = false;
 
-    while (!process_done)// && ret == false)
+    while (!process_done)
     {
-        if (_stdio)
-        {
+        case IF_STDIO:
             c = _kbhit() ? (char)_getch() : -1;
-        }
-        else // telnet - see sock.c
-        {
+            break;
+        case IF_SOCKET:
+            // telnet - see sock.c
             // while ((c = fgetc(p_CliIn)) != EOF)
             // if (fread(&c, 1, 1, p_CliIn) > 0)
             c = -1;
-        }
+            break;
+        case IF_SERIAL:
+            break;
 
         switch(c)
         {
@@ -114,7 +149,7 @@ const bool cli_ReadLine(cli_args_t* args)
 
             default:
                 // Echo char.
-                putchar(c);
+                cli_WriteChar(c);
                 
                 // Save it.
                 _cli_buff[_buff_index++] = c;
@@ -185,15 +220,16 @@ int cli_WriteLine(const char* format, ...)
     vsnprintf(buff, CLI_BUFF_LEN-1, format, args);
     va_end(args);
 
-    if (_stdio)
+    switch(_iftype)
     {
-        printf("%s\r\n>", buff);
-    }
-    else // telnet
-    {
-        // fputs(buff, p_CliOut);
-        // fputs("\r\n", p_CliOut);
-        // fputs(_prompt, p_CliOut);
+        case IF_STDIO:
+            printf("%s\r\n>", buff);
+            break;
+        case IF_SOCKET:
+            break;
+        case IF_SERIAL:
+            stat = 1;
+            break;
     }
 
     return stat;    
@@ -205,14 +241,17 @@ int cli_WriteChar(char c)
 {
     int stat = 0;
 
-    if (_stdio)
+    switch(_iftype)
     {
-        putchar(c);
+        case IF_STDIO:
+            putchar(c);
+            break;
+        case IF_SOCKET:
+            // fputc();
+            break;
+        case IF_SERIAL:
+            stat = 1;
+            break;
     }
-    else // telnet
-    {
-        // fputc();
-    }
-
     return stat;    
 }

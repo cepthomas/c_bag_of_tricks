@@ -12,7 +12,7 @@ extern "C"
 
 
 /////////////////////////////////////////////////////////////////////////////
-UT_SUITE(CLI_MAIN, "TODO1 tests please.")
+UT_SUITE(CLI_MAIN, "TODO-T tests please.")
 {
     logger_SetFilters(LVL_DEBUG, CAT_ALL);
 

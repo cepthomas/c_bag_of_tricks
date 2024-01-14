@@ -6,7 +6,7 @@
 
 //---------------- Public API ----------------------//
 
-/// Convenience container for pre-digested args.
+/// Convenience container for processed args.
 #define MAX_CLI_ARGS 10
 #define MAX_CLI_ARG_LEN  32 // incl terminator
 typedef struct
@@ -18,24 +18,24 @@ typedef struct
 
 
 /// Open a cli using stdio.
-/// @param type Stdio or telnet or ...
-/// @param cmds Cli commands.
 /// @return status 0=ok
-int cli_Open(char type);
+int cli_OpenStdio(void);
+
+/// Open a cli using socket. TODO2
+/// @param ip
+/// @param port
+/// @return status 0=ok
+int cli_OpenSocket(const char* ip, int port);
+
+/// Open a cli using serial port. TODO2
+/// @param port
+/// @param baudrate
+/// @return status 0=ok
+int cli_OpenSerial(int port, int baudrate);
 
 /// Clean up component resources.
 /// @return Status.
 int cli_Destroy(void);
-
-// /// Read a line from a cli. This does not block. Buffers chars until EOL.
-// /// @param buff Data buffer. Will be a zero-terminated string.
-// /// @param num Max length of buff.
-// /// @return ready. True if buff has valid line.
-// bool cli_ReadLine(char* buff, int num);
-
-/// Read an EOL-terminated line from a cli. Does not block.
-/// @return line ptr if available otherwise NULL. ptr is transient and client must copy line now.
-// const char* cli_ReadLine(void);
 
 /// Read a line from a cli. This does not block. Buffers chars until EOL.
 /// @param args User supplied collection.
