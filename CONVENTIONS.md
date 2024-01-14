@@ -1,5 +1,5 @@
 
-# Conventions TODO2 rework/reorg/relocate
+# Conventions TODO-B rework/reorg/relocate
 - All C projects use this naming convention. It's basically the
   [Barr Group standard](https://barrgroup.com/embedded-systems/books/embedded-c-coding-standard) with some minor adjustments, because.
 - Uses the model described in [c_modular](https://github.com/cepthomas/c_modular).

@@ -21,13 +21,13 @@ typedef struct
 /// @return status 0=ok
 int cli_OpenStdio(void);
 
-/// Open a cli using socket. TODO2
-/// @param ip
+/// Open a cli using socket.
+/// @param host
 /// @param port
 /// @return status 0=ok
-int cli_OpenSocket(const char* ip, int port);
+int cli_OpenSocket(const char* host, int port);
 
-/// Open a cli using serial port. TODO2
+/// Open a cli using serial port.
 /// @param port
 /// @param baudrate
 /// @return status 0=ok

@@ -4,19 +4,8 @@
 #include <stdbool.h>
 #include <string.h>
 #include <math.h>
-// // lua
-// #include "lua.h"
-// #include "lualib.h"
-// #include "lauxlib.h"
-// // app
-// #include "midi.h"
-// #include "logger.h"
-// #include "ftimer.h"
-// #include "nebcommon.h"
-// #include "devmgr.h"
-// #include "luainterop.h"
-// #include "luainteropwork.h"
 
+// TODO1 ?? universal retstat, like OCD? harmonize with lua, neb, etc.
 
 // This file contains the definition of the return status used throughout Oasis code.
 // Originally this was a class, but was changed to an integer for performance reasons.

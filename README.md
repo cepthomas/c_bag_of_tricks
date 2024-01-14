@@ -8,6 +8,10 @@
 - Runtime components are plain C99 so should build and run on any win or nx platform using any compiler.
 - A VS Code workspace using mingw and CMake is supplied. Your PATH needs to include mingw.
 
+
+- cli - win only.
+
+
 ![logo](felix.jpg)
 
 # Conventions

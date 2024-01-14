@@ -1,11 +1,14 @@
-
-#include <time.h>
-#include <sys/time.h>
-#include <string.h>
-#include <conio.h>
-#include <stdarg.h>
-#include <stdbool.h>
 #include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <winsock2.h>
+#include <Ws2tcpip.h>
+#include <conio.h>
+#include <errno.h>
+// #include <time.h>
+// #include <sys/time.h>
+// #include <string.h>
+// #include <stdarg.h>
 #include "cli.h"
 
 
@@ -52,7 +55,7 @@ int cli_OpenStdio(void)
 
 
 //--------------------------------------------------------//
-int cli_OpenSocket(const char* ip, int port)
+int cli_OpenSocket(const char* host, int port) //TODO-FUT
 {
     int stat = 0;
     _buff_index = -1;
@@ -63,12 +66,27 @@ int cli_OpenSocket(const char* ip, int port)
 
     // Prompt.
     cli_WriteLine("");
+
+    // // Connect.
+    // struct hostent* h = gethostbyname(host);
+    // if(!h) { return 1; }
+    // char* ip = inet_ntoa(*(struct in_addr*)h->h_addr);
+    // _fd = socket(AF_INET, SOCK_STREAM, 0);
+    // if (_fd < 0) { return 2; }
+    // struct sockaddr_in saddr;
+    // memset(&saddr, 0, sizeof(saddr));
+    // saddr.sin_family = AF_INET;
+    // saddr.sin_port = htons(port);
+    // inet_aton(ip, &saddr.sin_addr);
+    // stat = connect(fd, (struct sockaddr*)&saddr, sizeof(saddr));
+    // if (stat < 0) { return 3; }
+
     return stat;
 }
 
 
 //--------------------------------------------------------//
-int cli_OpenSerial(int port, int baudrate)
+int cli_OpenSerial(int port, int baudrate) // TODO-FUT
 {
     int stat = 0;
     _buff_index = -1;
@@ -91,8 +109,13 @@ int cli_Destroy(void)
     switch(_iftype)
     {
         case IF_STDIO:
+            // Nothing.
             break;
         case IF_SOCKET:
+            // if (_fd > 0)
+            // {
+            //     close(_fd);
+            // }
             break;
         case IF_SERIAL:
             break;
@@ -119,13 +142,34 @@ const bool cli_ReadLine(cli_args_t* args)
         switch(_iftype)
         {
             case IF_STDIO:
-                c = _kbhit() ? (char)_getch() : -1;
+                {
+                    c = _kbhit() ? (char)_getch() : -1;
+                }
                 break;
             case IF_SOCKET:
-                // telnet - see sock.c
-                // while ((c = fgetc(p_CliIn)) != EOF)
-                // if (fread(&c, 1, 1, p_CliIn) > 0)
                 c = -1;
+                // {
+                //     int num_read = read(fd, &c, 1);
+                //     if (num_read == 1)
+                //     {
+                //         // A char is read.
+                //     }
+                //     else if (num_read == -1)
+                //     {
+                //         if (errno == EINTR) // Interrupted --> restart read
+                //         {
+                //             c = -1;
+                //         }
+                //         else // Some other error
+                //         {
+                //             return -1;              
+                //         }
+                //     }
+                //     else if (num_read == 0) // EOF
+                //     {      
+                //         return 0;
+                //     }
+                // }
                 break;
             case IF_SERIAL:
                 break;
