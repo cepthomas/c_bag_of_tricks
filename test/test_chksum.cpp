@@ -14,8 +14,8 @@ extern "C"
 /////////////////////////////////////////////////////////////////////////////
 UT_SUITE(CHKSUM_CRC, "Test crc32 generation.")
 {
-    // FILE* fp = fopen("hemingway_short.txt", "r");
-    FILE* fp = fopen("hemingway.txt", "r");
+    // FILE* fp = fopen("..\\test\\files\\hemingway_short.txt", "r");
+    FILE* fp = fopen("..\\test\\files\\hemingway.txt", "r");
 
     UT_NOT_NULL(fp);
 

@@ -12,6 +12,3 @@ cmake -G "MinGW Makefiles" ..
 make
 
 popd
-
-:: Copy test files.
-copy test\files\* build

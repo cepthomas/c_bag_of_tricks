@@ -132,7 +132,7 @@ UT_SUITE(DICT_DUMP, "Test the dump file creation.")
     UT_NOT_NULL(mydict);
 
     // Dump it.
-    FILE* fp = fopen("dict_str.csv", "w");
+    FILE* fp = fopen("dict_str_out.csv", "w");
     UT_NOT_NULL(fp);
     UT_EQUAL(dict_Dump(mydict, fp), RS_PASS);
     fclose(fp);
@@ -143,7 +143,7 @@ UT_SUITE(DICT_DUMP, "Test the dump file creation.")
     UT_NOT_NULL(mydict);
 
     // Dump it.
-    fp = fopen("dict_int.csv", "w");
+    fp = fopen("dict_int_out.csv", "w");
     UT_NOT_NULL(fp);
     UT_EQUAL(dict_Dump(mydict, fp), RS_PASS);
     fclose(fp);
@@ -177,7 +177,7 @@ dict_t* create_str_dict(void)
     dict_t* d = dict_Create(KEY_STRING);
 
     // Add some values.
-    FILE* fp = fopen("hemingway_short.txt", "r");
+    FILE* fp = fopen("..\\test\\files\\hemingway_short.txt", "r");
 
     char buff[64]; // I just know this.
     int buffind = 0;

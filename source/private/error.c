@@ -5,8 +5,6 @@
 #include <string.h>
 #include <math.h>
 
-// TODO1 ?? universal retstat, like OCD? harmonize with lua, neb, etc.
-
 // This file contains the definition of the return status used throughout Oasis code.
 // Originally this was a class, but was changed to an integer for performance reasons.
 
