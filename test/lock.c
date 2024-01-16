@@ -1,6 +1,7 @@
 
 #include <stdlib.h>
 #include "common.h"
+#include "status.h"
 #include "logger.h"
 #include "list.h"
 #include "lock.h"
@@ -118,7 +119,7 @@ sm_t* lock_Create()
 //--------------------------------------------------------//
 int lock_Destroy(void)
 {
-    int ret = RS_PASS;
+    int ret = CBOT_PASS;
 
     list_Destroy(p_current_entry);
     list_Destroy(p_combination);
@@ -131,7 +132,7 @@ int lock_Destroy(void)
 //--------------------------------------------------------//
 int lock_PressKey(char key)
 {
-    int ret = RS_PASS;
+    int ret = CBOT_PASS;
 
     LOG_DEBUG(CAT_SM, "LOCK: lock_PressKey(%c)", key);
 
@@ -194,7 +195,7 @@ const char* lock_Xlat(unsigned int id)
 //--------------------------------------------------------//
 int InitialEnter()
 {
-    int ret = RS_PASS;
+    int ret = CBOT_PASS;
 
     LOG_DEBUG(CAT_SM, "LOCK: InitialEnter()");
 
@@ -213,7 +214,7 @@ int InitialEnter()
 //--------------------------------------------------------//
 int LockedEnter(void)
 {
-    int ret = RS_PASS;
+    int ret = CBOT_PASS;
 
     LOG_DEBUG(CAT_SM, "LOCK: LockedEnter()");
     p_is_locked = true;
@@ -225,7 +226,7 @@ int LockedEnter(void)
 //--------------------------------------------------------//
 int ClearCurrentEntry(void)
 {
-    int ret = RS_PASS;
+    int ret = CBOT_PASS;
 
     LOG_DEBUG(CAT_SM, "LOCK: ClearCurrentEntry()");
     list_Clear(p_current_entry);
@@ -236,7 +237,7 @@ int ClearCurrentEntry(void)
 //--------------------------------------------------------//
 int LockedAddDigit(void)
 {
-    int ret = RS_PASS;
+    int ret = CBOT_PASS;
 
     LOG_DEBUG(CAT_SM, "LOCK: LockedAddDigit()");
 
@@ -251,9 +252,14 @@ int LockedAddDigit(void)
     list_IterStart(p_combination);
     list_IterStart(p_current_entry);
 
-    bool ok = list_Count(p_combination) == list_Count(p_current_entry);
+    int cnt_comb = 0;
+    list_Count(p_combination, &cnt_comb);
+    int cnt_current = 0;
+    list_Count(p_current_entry, &cnt_current);
 
-    for(int i = 0; i < list_Count(p_combination) && ok; i++)
+    bool ok = cnt_comb == cnt_current;
+
+    for(int i = 0; i < cnt_comb && ok; i++)
     {
         list_IterNext(p_combination, (void**)&dcomb);
         list_IterNext(p_current_entry, (void**)&dentry);
@@ -275,7 +281,7 @@ int LockedAddDigit(void)
 //--------------------------------------------------------//
 int SetComboAddDigit(void)
 {
-    int ret = RS_PASS;
+    int ret = CBOT_PASS;
 
     LOG_DEBUG(CAT_SM, "LOCK: SetComboAddDigit()");
 
@@ -289,11 +295,14 @@ int SetComboAddDigit(void)
 //--------------------------------------------------------//
 int SetCombo(void)
 {
-    int ret = RS_PASS;
+    int ret = CBOT_PASS;
 
     LOG_DEBUG(CAT_SM, "LOCK: SetCombo()");
 
-    if(list_Count(p_current_entry) > 0)
+    int cnt_current = 0;
+    list_Count(p_current_entry, &cnt_current);
+
+    if(cnt_current > 0)
     {
         list_Clear(p_combination);
 
@@ -323,7 +332,7 @@ int SetCombo(void)
 //--------------------------------------------------------//
 int UnlockedEnter(void)
 {
-    int ret = RS_PASS;
+    int ret = CBOT_PASS;
 
     LOG_DEBUG(CAT_SM, "LOCK: UnlockedEnter()");
     p_is_locked = false;
@@ -334,7 +343,7 @@ int UnlockedEnter(void)
 //--------------------------------------------------------//
 int TryDefault(void)
 {
-    int ret = RS_PASS;
+    int ret = CBOT_PASS;
 
     LOG_DEBUG(CAT_SM, "LOCK: TryDefault()");
     p_is_locked = true;

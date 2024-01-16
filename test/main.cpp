@@ -8,6 +8,8 @@ extern "C"
 
 int main()
 {
+    printf(">>>%ld\n", sizeof(int));
+    
     TestManager& tm = TestManager::Instance();
 
     // Run the requested tests. Could be obtained from the command line.

@@ -4,6 +4,7 @@
 #include <stdarg.h>
 
 #include "logger.h"
+#include "status.h"
 #include "state_machine.h"
 #include "list.h"
 
@@ -69,15 +70,15 @@ sm_t* sm_Create(xlat_t xlat, unsigned int def_state, unsigned int def_event)
 //--------------------------------------------------------//
 int sm_Destroy(sm_t* sm)
 {
-    VAL_PTR(sm, RS_ERR);
+    VAL_PTR(sm, CBOT_ERR);
 
-    int ret = RS_PASS;
+    int ret = CBOT_PASS;
 
     state_desc_t* st;
 
     // Clean up sub-list.
     list_IterStart(sm->state_descs);
-    while(RS_PASS == list_IterNext(sm->state_descs, (void**)&st))
+    while(CBOT_PASS == list_IterNext(sm->state_descs, (void**)&st))
     {
         list_Destroy(st->trans_descs);
     }
@@ -93,16 +94,16 @@ int sm_Destroy(sm_t* sm)
 //--------------------------------------------------------//
 int sm_Reset(sm_t* sm, unsigned int state_id)
 {
-    VAL_PTR(sm, RS_ERR);
+    VAL_PTR(sm, CBOT_ERR);
 
-    int ret = RS_PASS;
+    int ret = CBOT_PASS;
 
     state_desc_t* st;
 
     list_IterStart(sm->state_descs);
-    while(RS_PASS == list_IterNext(sm->state_descs, (void**)&st))
+    while(CBOT_PASS == list_IterNext(sm->state_descs, (void**)&st))
     {
-        VAL_PTR(st, RS_ERR);
+        VAL_PTR(st, CBOT_ERR);
         if(st->state_id == state_id) // found it
         {
             sm->current_state = st;
@@ -120,7 +121,7 @@ int sm_Reset(sm_t* sm, unsigned int state_id)
 //--------------------------------------------------------//
 int sm_GetState(sm_t* sm)
 {
-    VAL_PTR(sm, RS_ERR);
+    VAL_PTR(sm, CBOT_ERR);
 
     return sm->current_state->state_id;
 }
@@ -128,7 +129,7 @@ int sm_GetState(sm_t* sm)
 //--------------------------------------------------------//
 int sm_AddState(sm_t* sm, unsigned int state_id, const func_t func)
 {
-    int ret = RS_PASS;
+    int ret = CBOT_PASS;
 
     CREATE_INST(state_desc, state_desc_t);
 
@@ -150,7 +151,7 @@ int sm_AddState(sm_t* sm, unsigned int state_id, const func_t func)
 //--------------------------------------------------------//
 int sm_AddTransition(sm_t* sm, unsigned int event_id, const func_t func, unsigned int next_state)
 {
-    int ret = RS_PASS;
+    int ret = CBOT_PASS;
 
     CREATE_INST(trans_desc, trans_desc_t);
 
@@ -166,9 +167,9 @@ int sm_AddTransition(sm_t* sm, unsigned int event_id, const func_t func, unsigne
 //--------------------------------------------------------//
 int sm_ProcessEvent(sm_t* sm, unsigned int event_id)
 {
-    VAL_PTR(sm, RS_ERR);
+    VAL_PTR(sm, CBOT_ERR);
 
-    int ret = RS_PASS;
+    int ret = CBOT_PASS;
 
     // Transition functions may generate new events so keep a queue.
     // This allows current execution to complete before handling new event.
@@ -183,9 +184,9 @@ int sm_ProcessEvent(sm_t* sm, unsigned int event_id)
 
         // Process all events in the event queue.
         int* qevt;
-        while (RS_PASS == list_Pop(sm->event_queue, (void**)&qevt))
+        while (CBOT_PASS == list_Pop(sm->event_queue, (void**)&qevt))
         {
-            VAL_PTR(qevt, RS_ERR);
+            VAL_PTR(qevt, CBOT_ERR);
             unsigned int qevtid = *qevt;
             FREE(qevt);
 
@@ -201,7 +202,7 @@ int sm_ProcessEvent(sm_t* sm, unsigned int event_id)
             {
                 trans_desc_t* trans = NULL;
                 list_IterStart(sm->default_state->trans_descs);
-                while(RS_PASS == list_IterNext(sm->default_state->trans_descs, (void**)&trans))
+                while(CBOT_PASS == list_IterNext(sm->default_state->trans_descs, (void**)&trans))
                 {
                     if(trans->event_id == qevtid) // found it
                     {
@@ -215,7 +216,7 @@ int sm_ProcessEvent(sm_t* sm, unsigned int event_id)
             {
                 trans_desc_t* trans = NULL;
                 list_IterStart(sm->current_state->trans_descs);
-                while(RS_PASS == list_IterNext(sm->current_state->trans_descs, (void**)&trans))
+                while(CBOT_PASS == list_IterNext(sm->current_state->trans_descs, (void**)&trans))
                 {
                     if(trans->event_id == qevtid) // found it
                     {
@@ -249,7 +250,7 @@ int sm_ProcessEvent(sm_t* sm, unsigned int event_id)
                     state_desc_t* next_state = NULL;
                     list_IterStart(sm->state_descs);
 
-                    while(RS_PASS == list_IterNext(sm->state_descs, (void**)&st))
+                    while(CBOT_PASS == list_IterNext(sm->state_descs, (void**)&st))
                     {
                         if(st->state_id == trans_desc->next_state_id) // found it
                         {
@@ -295,10 +296,10 @@ int sm_ProcessEvent(sm_t* sm, unsigned int event_id)
 //--------------------------------------------------------//
 int sm_ToDot(sm_t* sm, FILE* fp)
 {
-    VAL_PTR(sm, RS_ERR);
-    VAL_PTR(fp, RS_ERR);
+    VAL_PTR(sm, CBOT_ERR);
+    VAL_PTR(fp, CBOT_ERR);
 
-    int ret = RS_PASS;
+    int ret = CBOT_PASS;
 
     // Init attributes for dot.
     fprintf(fp, "digraph StateDiagram {\n");
@@ -326,11 +327,11 @@ int sm_ToDot(sm_t* sm, FILE* fp)
     trans_desc_t* trans = NULL;
     list_IterStart(sm->state_descs);
     
-    while(RS_PASS == list_IterNext(sm->state_descs, (void**)&st))
+    while(CBOT_PASS == list_IterNext(sm->state_descs, (void**)&st))
     {
         // Iterate through the state transitions.
         list_IterStart(st->trans_descs);
-        while(RS_PASS == list_IterNext(st->trans_descs, (void**)&trans))
+        while(CBOT_PASS == list_IterNext(st->trans_descs, (void**)&trans))
         {
             fprintf(fp, "        \"%s\" -> \"%s\" [label=\"%s\"];\n",
                     sm->xlat(st->state_id),

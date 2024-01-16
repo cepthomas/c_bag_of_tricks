@@ -5,14 +5,10 @@
 #include <Ws2tcpip.h>
 #include <conio.h>
 #include <errno.h>
-// #include <time.h>
-// #include <sys/time.h>
-// #include <string.h>
-// #include <stdarg.h>
 #include "cli.h"
 
 
-// TOCO1 handle e.g. immediate single space bar.
+// TODO1 handle e.g. immediate single space bar.
 
 
 //---------------- Private ------------------------------//
@@ -55,7 +51,7 @@ int cli_OpenStdio(void)
 
 
 //--------------------------------------------------------//
-int cli_OpenSocket(const char* host, int port) //TODO-FUT
+int cli_OpenSocket(const char* host, int port) //FUTURE
 {
     int stat = 0;
     _buff_index = -1;
@@ -86,7 +82,7 @@ int cli_OpenSocket(const char* host, int port) //TODO-FUT
 
 
 //--------------------------------------------------------//
-int cli_OpenSerial(int port, int baudrate) // TODO-FUT
+int cli_OpenSerial(int port, int baudrate) // FUTURE
 {
     int stat = 0;
     _buff_index = -1;

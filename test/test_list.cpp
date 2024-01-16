@@ -6,6 +6,7 @@
 extern "C"
 {
 #include "common.h"
+#include "status.h"
 #include "list.h"
 }
 
@@ -40,28 +41,30 @@ UT_SUITE(LIST_ALL, "Test all list functions.")
 
     // Try to iterate an empty list.
     test_struct_t* data;
-    UT_EQUAL(list_IterStart(mylist), RS_FAIL);
-    UT_EQUAL(list_IterNext(mylist, (void**)&data), RS_FAIL);
+    UT_EQUAL(list_IterStart(mylist), CBOT_FAIL);
+    UT_EQUAL(list_IterNext(mylist, (void**)&data), CBOT_FAIL);
 
     // Add a node at the beginning.
-    UT_EQUAL(list_Push(mylist, ts[0]), RS_PASS);
+    UT_EQUAL(list_Push(mylist, ts[0]), CBOT_PASS);
 
     // Add a node at the beginning.
-    UT_EQUAL(list_Push(mylist, ts[1]), RS_PASS);
+    UT_EQUAL(list_Push(mylist, ts[1]), CBOT_PASS);
 
     // Add a node at the end.
-    UT_EQUAL(list_Append(mylist, ts[2]), RS_PASS);
+    UT_EQUAL(list_Append(mylist, ts[2]), CBOT_PASS);
 
     // Add a node at the beginning.
-    UT_EQUAL(list_Push(mylist, ts[3]), RS_PASS);
+    UT_EQUAL(list_Push(mylist, ts[3]), CBOT_PASS);
 
-    UT_EQUAL(list_Count(mylist), 4);
+    int cnt = 0;
+    list_Count(mylist, &cnt);
+    UT_EQUAL(cnt, 4);
 
     // Iterate through list.
-    UT_EQUAL(list_IterStart(mylist), RS_PASS);
+    UT_EQUAL(list_IterStart(mylist), CBOT_PASS);
     int state = 0;
 
-    while(RS_PASS == list_IterNext(mylist, (void**)&data))
+    while(CBOT_PASS == list_IterNext(mylist, (void**)&data))
     {
         UT_NOT_NULL(data);
 
@@ -90,11 +93,13 @@ UT_SUITE(LIST_ALL, "Test all list functions.")
     }
 
     // Try to take one more.
-    UT_EQUAL(list_IterNext(mylist, (void**)&data), RS_FAIL);
+    UT_EQUAL(list_IterNext(mylist, (void**)&data), CBOT_FAIL);
 
     // Test pop.
-    UT_EQUAL(list_Pop(mylist, (void**)&data), RS_PASS);
-    UT_EQUAL(list_Count(mylist), 3);
+    UT_EQUAL(list_Pop(mylist, (void**)&data), CBOT_PASS);
+    cnt = 0;
+    list_Count(mylist, &cnt);
+    UT_EQUAL(cnt, 3);
     UT_NOT_NULL(data);
     UT_EQUAL(data->anumber, 33);
     UT_STR_EQUAL(data->astring, "Ajay33");
@@ -103,11 +108,13 @@ UT_SUITE(LIST_ALL, "Test all list functions.")
     data = NULL;
 
     // Add another.
-    UT_EQUAL(list_Push(mylist, ts[4]), RS_PASS);
+    UT_EQUAL(list_Push(mylist, ts[4]), CBOT_PASS);
 
     // Test pop.
-    UT_EQUAL(list_Pop(mylist, (void**)&data), RS_PASS);
-    UT_EQUAL(list_Count(mylist), 3);
+    UT_EQUAL(list_Pop(mylist, (void**)&data), CBOT_PASS);
+    cnt = 0;
+    list_Count(mylist, &cnt);
+    UT_EQUAL(cnt, 3);
     UT_NOT_NULL(data);
     UT_EQUAL(data->anumber, 11);
     UT_STR_EQUAL(data->astring, "Ajay11");
@@ -116,22 +123,24 @@ UT_SUITE(LIST_ALL, "Test all list functions.")
     data = NULL;
 
     // Remove everything.
-    UT_EQUAL(list_Clear(mylist), RS_PASS);
+    UT_EQUAL(list_Clear(mylist), CBOT_PASS);
     UT_NOT_NULL(mylist);
-    UT_EQUAL(list_Count(mylist), 0);
-    UT_EQUAL(list_Destroy(mylist), RS_PASS);
+    cnt = 0;
+    list_Count(mylist, &cnt);
+    UT_EQUAL(cnt, 0);
+    UT_EQUAL(list_Destroy(mylist), CBOT_PASS);
 
     // Bad container.
     list_t* badlist = NULL;
-    UT_EQUAL(list_Push(badlist, ts[0]), RS_ERR);
-    UT_EQUAL(list_Append(badlist, ts[0]), RS_ERR);
-    UT_EQUAL(list_Push(badlist, ts[0]), RS_ERR);
-    UT_EQUAL(list_Count(badlist), RS_ERR);
-    UT_EQUAL(list_IterStart(badlist), RS_ERR);
-    UT_EQUAL(list_IterNext(badlist, (void**)&data), RS_ERR);
-    UT_EQUAL(list_Pop(badlist, (void**)&data), RS_ERR);
-    UT_EQUAL(list_Clear(badlist), RS_ERR);
-    UT_EQUAL(list_Destroy(badlist), RS_ERR);
+    UT_EQUAL(list_Push(badlist, ts[0]), CBOT_ERR);
+    UT_EQUAL(list_Append(badlist, ts[0]), CBOT_ERR);
+    UT_EQUAL(list_Push(badlist, ts[0]), CBOT_ERR);
+    UT_EQUAL(list_Count(badlist, &cnt), CBOT_ERR);
+    UT_EQUAL(list_IterStart(badlist), CBOT_ERR);
+    UT_EQUAL(list_IterNext(badlist, (void**)&data), CBOT_ERR);
+    UT_EQUAL(list_Pop(badlist, (void**)&data), CBOT_ERR);
+    UT_EQUAL(list_Clear(badlist), CBOT_ERR);
+    UT_EQUAL(list_Destroy(badlist), CBOT_ERR);
 
     return 0;
 }

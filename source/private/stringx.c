@@ -5,6 +5,7 @@
 #include <ctype.h>
 
 #include "common.h"
+#include "status.h"
 #include "stringx.h"
 
 /// @brief Definition of string thing.
@@ -22,7 +23,7 @@ struct stringx
 /// (Re)assign the underlying char pointer. Takes ownership of the string.
 /// @param s Source stringx.
 /// @param cs The new raw string or NULL for an empty stringx.
-/// @return RS_PASS | RS_ERR.
+/// @return CBOT_PASS | CBOT_ERR.
 static int p_Assign(stringx_t* s, char* cs);
 
 /// Case sensitive char matcher.
@@ -56,9 +57,9 @@ stringx_t* stringx_Create(const char* sinit)
 //--------------------------------------------------------//
 int stringx_Destroy(stringx_t* s)
 {
-    VAL_PTR(s, RS_ERR);
+    VAL_PTR(s, CBOT_ERR);
 
-    int ret = RS_PASS;
+    int ret = CBOT_PASS;
 
     if(s->raw != NULL)
     {
@@ -73,10 +74,10 @@ int stringx_Destroy(stringx_t* s)
 //--------------------------------------------------------//
 int stringx_Set(stringx_t* s, const char* sinit)
 {
-    VAL_PTR(s, RS_ERR);
-    VAL_PTR(sinit, RS_ERR);
+    VAL_PTR(s, CBOT_ERR);
+    VAL_PTR(sinit, CBOT_ERR);
 
-    int ret = RS_PASS;
+    int ret = CBOT_PASS;
 
     // Copy the contents.
     ret = p_Assign(s, p_Copy(sinit));
@@ -87,10 +88,10 @@ int stringx_Set(stringx_t* s, const char* sinit)
 //--------------------------------------------------------//
 int stringx_Append(stringx_t* s, stringx_t* sapp)
 {
-    VAL_PTR(s, RS_ERR);
-    VAL_PTR(sapp, RS_ERR);
+    VAL_PTR(s, CBOT_ERR);
+    VAL_PTR(sapp, CBOT_ERR);
 
-    int ret = RS_PASS;
+    int ret = CBOT_PASS;
 
     // This is a bit crude. Need to make smarter internal buffer to support growing.
     int slen = stringx_Len(s) + stringx_Len(sapp);
@@ -112,14 +113,14 @@ const char* stringx_Content(stringx_t* s)
 //--------------------------------------------------------//
 int stringx_Len(stringx_t* s)
 {
-    return s != NULL ? strlen(s->raw) : RS_ERR;
+    return s != NULL ? strlen(s->raw) : CBOT_ERR;
 }
 
 //--------------------------------------------------------//
 int stringx_Compare(stringx_t* s1, const char* s2, csens_t csens)
 {
-    VAL_PTR(s1, RS_ERR);
-    VAL_PTR(s2, RS_ERR);
+    VAL_PTR(s1, CBOT_ERR);
+    VAL_PTR(s2, CBOT_ERR);
 
     bool match = stringx_Len(s1) == strlen(s2);
 
@@ -128,14 +129,14 @@ int stringx_Compare(stringx_t* s1, const char* s2, csens_t csens)
         match = p_Match(s1->raw[i], s2[i], csens);
     }
 
-    return match ? RS_PASS : RS_FAIL;
+    return match ? CBOT_PASS : CBOT_FAIL;
 }
 
 //--------------------------------------------------------//
 int stringx_StartsWith(stringx_t* s1, const char* s2, csens_t csens)
 {
-    VAL_PTR(s1, RS_ERR);
-    VAL_PTR(s2, RS_ERR);
+    VAL_PTR(s1, CBOT_ERR);
+    VAL_PTR(s2, CBOT_ERR);
 
     bool match = stringx_Len(s1) >= strlen(s2);
 
@@ -144,14 +145,14 @@ int stringx_StartsWith(stringx_t* s1, const char* s2, csens_t csens)
         match = p_Match(s1->raw[i], s2[i], csens);
     }
 
-    return match ? RS_PASS : RS_FAIL;
+    return match ? CBOT_PASS : CBOT_FAIL;
 }
 
 //--------------------------------------------------------//
 int stringx_EndsWith(stringx_t* s1, const char* s2, csens_t csens)
 {
-    VAL_PTR(s1, RS_ERR);
-    VAL_PTR(s2, RS_ERR);
+    VAL_PTR(s1, CBOT_ERR);
+    VAL_PTR(s2, CBOT_ERR);
 
     bool match = stringx_Len(s1) >= strlen(s2);
     unsigned int ind1 = stringx_Len(s1) - strlen(s2);
@@ -161,14 +162,14 @@ int stringx_EndsWith(stringx_t* s1, const char* s2, csens_t csens)
         match = p_Match(s1->raw[ind1++], s2[i], csens);
     }
 
-    return match ? RS_PASS : RS_FAIL;
+    return match ? CBOT_PASS : CBOT_FAIL;
 }
 
 //--------------------------------------------------------//
 int stringx_Contains(stringx_t* s1, const char* s2, csens_t csens)
 {
-    VAL_PTR(s1, RS_ERR);
-    VAL_PTR(s2, RS_ERR);
+    VAL_PTR(s1, CBOT_ERR);
+    VAL_PTR(s2, CBOT_ERR);
 
     int index = -1;
 
@@ -198,7 +199,7 @@ int stringx_Contains(stringx_t* s1, const char* s2, csens_t csens)
         stringx_Destroy(cs2);
     }
 
-    return index >= 0 ? index : RS_FAIL;
+    return index >= 0 ? index : CBOT_FAIL;
 }
 
 //--------------------------------------------------------//
@@ -236,9 +237,9 @@ stringx_t* stringx_Left(stringx_t* s, unsigned int num)
 //--------------------------------------------------------//
 int stringx_Trim(stringx_t* s)
 {
-    VAL_PTR(s, RS_ERR);
+    VAL_PTR(s, CBOT_ERR);
 
-    int ret = RS_PASS;
+    int ret = CBOT_PASS;
 
     // __123 456___ len=12
 
@@ -283,9 +284,9 @@ int stringx_Trim(stringx_t* s)
 //--------------------------------------------------------//
 int stringx_ToUpper(stringx_t* s)
 {
-    VAL_PTR(s, RS_ERR);
+    VAL_PTR(s, CBOT_ERR);
 
-    int ret = RS_PASS;
+    int ret = CBOT_PASS;
 
     unsigned int len = strlen(s->raw);
 
@@ -303,9 +304,9 @@ int stringx_ToUpper(stringx_t* s)
 //--------------------------------------------------------//
 int stringx_ToLower(stringx_t* s)
 {
-    VAL_PTR(s, RS_ERR);
+    VAL_PTR(s, CBOT_ERR);
 
-    int ret = RS_PASS;
+    int ret = CBOT_PASS;
 
     unsigned int len = strlen(s->raw);
 
@@ -323,10 +324,10 @@ int stringx_ToLower(stringx_t* s)
 //--------------------------------------------------------//
 int stringx_Format(stringx_t* s, unsigned int maxlen, const char* format, ...)
 {
-    VAL_PTR(s, RS_ERR);
-    VAL_PTR(format, RS_ERR);
+    VAL_PTR(s, CBOT_ERR);
+    VAL_PTR(format, CBOT_ERR);
 
-    int ret = RS_PASS;
+    int ret = CBOT_PASS;
 
     CREATE_STR(buff, maxlen);
     va_list args;
@@ -369,8 +370,8 @@ list_t* stringx_Split(stringx_t* s, const char* delim)
 //--------------------------------------------------------//
 int p_Assign(stringx_t* s, char* cs)
 {
-    VAL_PTR(s, RS_ERR);
-    VAL_PTR(cs, RS_ERR);
+    VAL_PTR(s, CBOT_ERR);
+    VAL_PTR(cs, CBOT_ERR);
 
     // Flush old.
     if(s->raw != NULL)
@@ -382,7 +383,7 @@ int p_Assign(stringx_t* s, char* cs)
     s->raw = cs == NULL ? NULL : cs;
     // s->valid = true;
 
-    return RS_PASS;
+    return CBOT_PASS;
 }
 
 //--------------------------------------------------------//

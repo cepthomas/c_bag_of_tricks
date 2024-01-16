@@ -7,6 +7,7 @@
 extern "C"
 {
 #include "logger.h"
+#include "status.h"
 #include "lock.h"
 }
 

@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "common.h"
+#include "status.h"
 #include "list.h"
 
 
@@ -39,7 +40,7 @@ list_t* list_Create(void)
 //--------------------------------------------------------//
 int list_Destroy(list_t* l)
 {
-    VAL_PTR(l, RS_ERR);
+    VAL_PTR(l, CBOT_ERR);
 
     int ret = list_Clear(l);
     FREE(l);
@@ -50,9 +51,9 @@ int list_Destroy(list_t* l)
 //--------------------------------------------------------//
 int list_Clear(list_t* l)
 {
-    VAL_PTR(l, RS_ERR);
+    VAL_PTR(l, CBOT_ERR);
 
-    int ret = RS_PASS;
+    int ret = CBOT_PASS;
 
     // Remove all nodes and corresponding data.
     node_t* iter = l->head;
@@ -78,10 +79,10 @@ int list_Clear(list_t* l)
 //--------------------------------------------------------//
 int list_Push(list_t* l, void* data)
 {
-    VAL_PTR(l, RS_ERR);
-    VAL_PTR(data, RS_ERR);
+    VAL_PTR(l, CBOT_ERR);
+    VAL_PTR(data, CBOT_ERR);
 
-    int ret = RS_PASS;
+    int ret = CBOT_PASS;
 
     CREATE_INST(new_node, node_t);
     new_node->data = data;
@@ -112,10 +113,10 @@ int list_Push(list_t* l, void* data)
 //--------------------------------------------------------//
 int list_Append(list_t* l, void* data)
 {
-    VAL_PTR(l, RS_ERR);
-    VAL_PTR(data, RS_ERR);
+    VAL_PTR(l, CBOT_ERR);
+    VAL_PTR(data, CBOT_ERR);
 
-    int ret = RS_PASS;
+    int ret = CBOT_PASS;
 
     // Get current tail. Can be null.
     node_t* ctail = l->tail;
@@ -145,10 +146,10 @@ int list_Append(list_t* l, void* data)
 //--------------------------------------------------------//
 int list_Pop(list_t* l, void** data)
 {
-    VAL_PTR(l, RS_ERR);
-    VAL_PTR(data, RS_ERR);
+    VAL_PTR(l, CBOT_ERR);
+    VAL_PTR(data, CBOT_ERR);
 
-    int ret = RS_PASS;
+    int ret = CBOT_PASS;
 
     // Get current tail.
     node_t* ctail = l->tail;
@@ -176,41 +177,41 @@ int list_Pop(list_t* l, void** data)
     }
     else // no data there
     {
-        ret = RS_FAIL;
+        ret = CBOT_FAIL;
     }
 
     return ret;
 }
 
 //--------------------------------------------------------//
-int list_Count(list_t* l)
+int list_Count(list_t* l, int* pcnt)
 {
-    VAL_PTR(l, RS_ERR);
+    VAL_PTR(l, CBOT_ERR);
 
-    int ret = 0;
+    *pcnt = 0;
     node_t* iter = l->head;
     while(iter != NULL)
     {
-        ret++;
+        (*pcnt)++;
         iter = iter->next;
     }
 
-    return ret;
+    return CBOT_PASS;
 }
 
 //--------------------------------------------------------//
 int list_IterStart(list_t* l)
 {
-    VAL_PTR(l, RS_ERR);
+    VAL_PTR(l, CBOT_ERR);
 
-    int ret = RS_PASS;
+    int ret = CBOT_PASS;
 
     l->iter = l->head;
 
     node_t* nt = l->iter;
     if(nt == NULL)
     {
-        ret = RS_FAIL;
+        ret = CBOT_FAIL;
     }
 
     return ret;
@@ -219,10 +220,10 @@ int list_IterStart(list_t* l)
 //--------------------------------------------------------//
 int list_IterNext(list_t* l, void** data)
 {
-    VAL_PTR(l, RS_ERR);
-    VAL_PTR(data, RS_ERR);
+    VAL_PTR(l, CBOT_ERR);
+    VAL_PTR(data, CBOT_ERR);
 
-    int ret = RS_PASS;
+    int ret = CBOT_PASS;
 
     node_t* nt = l->iter;
     if(nt != NULL)
@@ -232,7 +233,7 @@ int list_IterNext(list_t* l, void** data)
     }
     else
     {
-        ret = RS_FAIL;
+        ret = CBOT_FAIL;
     }
 
     return ret;

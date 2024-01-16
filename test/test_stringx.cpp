@@ -5,6 +5,7 @@
 
 extern "C"
 {
+#include "status.h"
 // #include "list.h"
 #include "stringx.h"
 }
@@ -12,7 +13,7 @@ extern "C"
 /////////////////////////////////////////////////////////////////////////////
 UT_SUITE(STR_BASIC, "Test basic stringx functions.")
 {
-    // UT_EQUAL(stringx_Compare(s3, "round and square", CASE_SENS), RS_PASS);
+    // UT_EQUAL(stringx_Compare(s3, "round and square", CASE_SENS), CBOT_PASS);
     // Basic ops.
     stringx_t* s1 = stringx_Create("  round and square  ");
     UT_NOT_NULL(stringx_Content(s1));
@@ -32,34 +33,34 @@ UT_SUITE(STR_BASIC, "Test basic stringx functions.")
     stringx_Trim(s1);
     UT_STR_EQUAL(stringx_Content(s1), "round and square");
 
-    UT_EQUAL(stringx_StartsWith(s1, "round", CASE_SENS), RS_PASS);
-    UT_EQUAL(stringx_StartsWith(s1, "Round", CASE_SENS), RS_FAIL);
-    UT_EQUAL(stringx_StartsWith(s1, "Round", CASE_INSENS), RS_PASS);
-    UT_EQUAL(stringx_StartsWith(s1, "xxx", CASE_SENS), RS_FAIL);
-    UT_EQUAL(stringx_StartsWith(s1, "xxx", CASE_INSENS), RS_FAIL);
+    UT_EQUAL(stringx_StartsWith(s1, "round", CASE_SENS), CBOT_PASS);
+    UT_EQUAL(stringx_StartsWith(s1, "Round", CASE_SENS), CBOT_FAIL);
+    UT_EQUAL(stringx_StartsWith(s1, "Round", CASE_INSENS), CBOT_PASS);
+    UT_EQUAL(stringx_StartsWith(s1, "xxx", CASE_SENS), CBOT_FAIL);
+    UT_EQUAL(stringx_StartsWith(s1, "xxx", CASE_INSENS), CBOT_FAIL);
 
-    UT_EQUAL(stringx_EndsWith(s2, "bush", CASE_SENS), RS_FAIL);
-    UT_EQUAL(stringx_EndsWith(s2, "Bush", CASE_SENS), RS_PASS);
-    UT_EQUAL(stringx_EndsWith(s2, "bush", CASE_INSENS), RS_PASS);
-    UT_EQUAL(stringx_EndsWith(s2, "xxx", CASE_SENS), RS_FAIL);
-    UT_EQUAL(stringx_EndsWith(s2, "xxx", CASE_INSENS), RS_FAIL);
+    UT_EQUAL(stringx_EndsWith(s2, "bush", CASE_SENS), CBOT_FAIL);
+    UT_EQUAL(stringx_EndsWith(s2, "Bush", CASE_SENS), CBOT_PASS);
+    UT_EQUAL(stringx_EndsWith(s2, "bush", CASE_INSENS), CBOT_PASS);
+    UT_EQUAL(stringx_EndsWith(s2, "xxx", CASE_SENS), CBOT_FAIL);
+    UT_EQUAL(stringx_EndsWith(s2, "xxx", CASE_INSENS), CBOT_FAIL);
 
     UT_EQUAL(stringx_Contains(s1, "and squ", CASE_SENS), 6);
-    UT_EQUAL(stringx_Contains(s1, "anD squ", CASE_SENS), RS_FAIL);
+    UT_EQUAL(stringx_Contains(s1, "anD squ", CASE_SENS), CBOT_FAIL);
     UT_EQUAL(stringx_Contains(s1, "D squ", CASE_INSENS), 8);
-    UT_EQUAL(stringx_Contains(s1, "xxx", CASE_SENS), RS_FAIL);
-    UT_EQUAL(stringx_Contains(s1, "xxx", CASE_INSENS), RS_FAIL);
+    UT_EQUAL(stringx_Contains(s1, "xxx", CASE_SENS), CBOT_FAIL);
+    UT_EQUAL(stringx_Contains(s1, "xxx", CASE_INSENS), CBOT_FAIL);
 
-    UT_EQUAL(stringx_Compare(s1, "round and square", CASE_SENS), RS_PASS);
-    UT_EQUAL(stringx_Compare(s1, "roUnd and sQuare", CASE_INSENS), RS_PASS);
-    UT_EQUAL(stringx_Compare(s1, "roUnd and sQuare", CASE_SENS), RS_FAIL);
-    UT_EQUAL(stringx_Compare(s1, "xxx", CASE_SENS), RS_FAIL);
-    UT_EQUAL(stringx_Compare(s1, "xxx", CASE_INSENS), RS_FAIL);
+    UT_EQUAL(stringx_Compare(s1, "round and square", CASE_SENS), CBOT_PASS);
+    UT_EQUAL(stringx_Compare(s1, "roUnd and sQuare", CASE_INSENS), CBOT_PASS);
+    UT_EQUAL(stringx_Compare(s1, "roUnd and sQuare", CASE_SENS), CBOT_FAIL);
+    UT_EQUAL(stringx_Compare(s1, "xxx", CASE_SENS), CBOT_FAIL);
+    UT_EQUAL(stringx_Compare(s1, "xxx", CASE_INSENS), CBOT_FAIL);
 
     stringx_ToUpper(s1);
-    UT_EQUAL(stringx_Compare(s1, "ROUND AND SQUARE", CASE_SENS), RS_PASS);
+    UT_EQUAL(stringx_Compare(s1, "ROUND AND SQUARE", CASE_SENS), CBOT_PASS);
     stringx_ToLower(s1);
-    UT_EQUAL(stringx_Compare(s1, "round and square", CASE_SENS), RS_PASS);
+    UT_EQUAL(stringx_Compare(s1, "round and square", CASE_SENS), CBOT_PASS);
 
     // Copy ops.
     stringx_t* s3 = stringx_Copy(s1);
@@ -94,7 +95,9 @@ UT_SUITE(STR_FANCY, "Test fancier stringx functions.")
     stringx_t* s2 = stringx_Create("");
 
     list_t* parts = stringx_Split(s1, " ");
-    UT_EQUAL(list_Count(parts), 3);
+    int cnt = 0;
+    list_Count(parts, &cnt);
+    UT_EQUAL(cnt, 3);
     list_IterStart(parts);
     char* data;
     list_IterNext(parts, (void**)&data);
@@ -109,8 +112,8 @@ UT_SUITE(STR_FANCY, "Test fancier stringx functions.")
     double d = 44.99;
     const char* s = "xyzzy oooo";
 
-    UT_EQUAL(stringx_Format(s2, 100, "i:%d I am a GOOD formatted string with d:%f s:%s x:%0X", i, d, s, i), RS_PASS);
-    UT_EQUAL(stringx_Compare(s2, "i:123 I am a GOOD formatted string with d:44.990000 s:xyzzy oooo x:7B", CASE_SENS), RS_PASS);
+    UT_EQUAL(stringx_Format(s2, 100, "i:%d I am a GOOD formatted string with d:%f s:%s x:%0X", i, d, s, i), CBOT_PASS);
+    UT_EQUAL(stringx_Compare(s2, "i:123 I am a GOOD formatted string with d:44.990000 s:xyzzy oooo x:7B", CASE_SENS), CBOT_PASS);
 
     // Clean up.
     stringx_Destroy(s1);

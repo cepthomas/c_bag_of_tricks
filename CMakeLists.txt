@@ -6,11 +6,9 @@ cmake_minimum_required(VERSION 3.5)
 
 project(cbot_test)
 
-# set(CMAKE_C_STANDARD 99)
-# set(CMAKE_CXX_STANDARD 11)
-
-# needs -g to debug.
+set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall")
+set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall")
 
 
@@ -23,7 +21,7 @@ include_directories(
 # Source files.
 add_executable(cbot_test
     source/private/logger.c
-    source/private/error.c
+    source/private/status.c
     source/private/list.c
     source/private/dict.c
     source/private/state_machine.c
@@ -43,4 +41,7 @@ add_executable(cbot_test
     test/lock.c
     )
 
-# target_link_libraries(cbot_test libgcc.a libstdc++.a)
+# target_link_libraries(cbot_test
+#     libgcc.a
+#     libstdc++.a
+#     )

@@ -7,19 +7,12 @@
 
 #include "logger.h"
 
-//-------------------------- Return codes -----------------------------//
+
+//-------------------------- Definitions --------------------------------//
 
 /// Defines an error (allocation, iniitialization, etc) for a function that returns a pointer.
-#define BAD_PTR NULL
-
-/// Defines success for a function that returns int status.
-static const int RS_PASS = 0;
-
-/// Defines an error (memory, invalid data, etc) for a function that returns int status.
-static const int RS_ERR = -1;
-
-/// Defines failure (expected, end of iteration, etc) for a function that returns int status.
-static const int RS_FAIL = -2;
+/// This is distinct from NULL which may be valid/non-fail e.g. end of iteration.
+#define BAD_PTR (void*)-1
 
 
 //-------------------------- Utilities --------------------------------//
