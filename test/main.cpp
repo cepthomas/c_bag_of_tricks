@@ -24,7 +24,6 @@ int main()
     // Init system before running tests.
     FILE* fp = fopen("log_test_out.txt", "w");
     logger_Init(fp);
-
     tm.RunSuites(whichSuites, 'r'); // 'r' for readable, 'x' for xml
 
     return 0;

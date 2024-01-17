@@ -113,7 +113,6 @@ void TestManager::RunSuites(std::vector<std::string> which, char fmt)
     _context.Format = fmt;
     int caseCnt = 0;
     int failCnt = 0;
-
     time_t tStart = time(NULL);
 
     // Run through to execute suites.

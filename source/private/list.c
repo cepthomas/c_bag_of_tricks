@@ -175,7 +175,7 @@ int list_Pop(list_t* l, void** data)
     }
     else // no data there
     {
-        ret =  MAKE_FAIL_ERRNO(EITEREND);
+        ret = EITEREND;
     }
 
     return ret;
@@ -209,7 +209,7 @@ int list_IterStart(list_t* l)
     node_t* nt = l->iter;
     if(nt == NULL)
     {
-        ret = MAKE_FAIL_ERRNO(EITEREND);
+        ret = EITEREND;
     }
 
     return ret;
@@ -231,7 +231,7 @@ int list_IterNext(list_t* l, void** data)
     }
     else
     {
-        ret = MAKE_FAIL_ERRNO(EITEREND);
+        ret = EITEREND;
     }
 
     return ret;

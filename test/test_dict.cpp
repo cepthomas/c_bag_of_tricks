@@ -28,7 +28,6 @@ dict_t* create_int_dict(void);
 /////////////////////////////////////////////////////////////////////////////
 UT_SUITE(DICT_STR, "Test all dict functions using string key.")
 {
-    return 0;
     // Make a dict with string key. create_str_dict() tests dict_create() and dict_Set().
     dict_t* mydict = create_str_dict();
     UT_NOT_NULL(mydict);
@@ -39,9 +38,9 @@ UT_SUITE(DICT_STR, "Test all dict functions using string key.")
     test_struct_t* tsret = NULL;
     key_t key;
 
-    FILE* fpd = fopen("dump.txt", "w");
-    dict_Dump(mydict, fpd);
-    fclose(fpd);
+    // FILE* fpd = fopen("dump.txt", "w");
+    // dict_Dump(mydict, fpd);
+    // fclose(fpd);
 
     // Good
     key.ks = "SOMETHING";

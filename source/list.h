@@ -42,7 +42,7 @@ int list_Append(list_t* l, void* data);
 /// Remove and return the end.
 /// @param l The list opaque pointer.
 /// @param data Where to put the data. Client takes ownership of it now!
-/// @return status or -EITEREND.
+/// @return status or EITEREND.
 int list_Pop(list_t* l, void** data);
 
 /// Size of the list.
@@ -52,13 +52,13 @@ int list_Count(list_t* l);
 
 /// Initialize iterator.
 /// @param l The list opaque pointer.
-/// @return status or -EITEREND.
+/// @return status or EITEREND.
 int list_IterStart(list_t* l);
 
 /// Next iteration in list.
 /// @param l The list opaque pointer.
 /// @param data Where to put the data.
-/// @return status or -EITEREND.
+/// @return status or EITEREND.
 int list_IterNext(list_t* l, void** data);
 
 #endif // LIST_H

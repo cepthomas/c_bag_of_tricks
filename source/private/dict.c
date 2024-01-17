@@ -104,7 +104,7 @@ int dict_Clear(dict_t* d)
         kv_t* kv;
         list_IterStart(pl);
 
-        while(list_IterNext(pl, (void**)&kv) != EEMPTY)
+        while(list_IterNext(pl, (void**)&kv) != EITEREND)
         {
             if(d->kt == KEY_STRING && kv->skey != NULL)
             {
