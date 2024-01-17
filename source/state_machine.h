@@ -2,7 +2,7 @@
 #define STATE_MACHINE_H
 
 #include <stdio.h>
-#include "common.h"
+//#include "common.h"
 
 
 /// @brief Declaration of state machine.

@@ -4,7 +4,7 @@
 
 #include <stdbool.h>
 #include <string.h>
-#include "common.h"
+//#include "common.h"
 #include "list.h"
 
 
@@ -30,7 +30,7 @@ stringx_t* stringx_Create(const char* sinit);
 
 /// Frees all data pointers, and the string struct.
 /// @param s Source stringx. After this returns it is no longer valid.
-/// @return CBOT_PASS | CBOT_ERR.
+/// @return status.
 int stringx_Destroy(stringx_t* s);
 
 /// Get the contained data.
@@ -40,51 +40,51 @@ const char* stringx_Content(stringx_t* s);
 
 /// Size of the string.
 /// @param s Source stringx.
-/// @return The size | CBOT_ERR.
+/// @return The size | EARGNULL.
 int stringx_Len(stringx_t* s);
 
 /// Set s to new value.
 /// @param s Source stringx.
 /// @param sinit The new value. If NULL, content will be "".
-/// @return CBOT_PASS | CBOT_ERR.
+/// @return status.
 int stringx_Set(stringx_t* s, const char* sinit);
 
 /// Convert to upper case IN PLACE.
 /// @param s Source stringx.
-/// @return CBOT_PASS | CBOT_ERR.
+/// @return status.
 int stringx_ToUpper(stringx_t* s);
 
 /// Convert to lower case IN PLACE.
 /// @param s Source stringx.
-/// @return CBOT_PASS | CBOT_ERR.
+/// @return status.
 int stringx_ToLower(stringx_t* s);
 
 /// Compare strings.
 /// @param s1 Source stringx.
 /// @param s2 The test value.
 /// @param csens Case sensitivity.
-/// @return CBOT_PASS if equal | CBOT_FAIL if not | CBOT_ERR.
+/// @return like strcmp() | EARGNULL.
 int stringx_Compare(stringx_t* s1, const char* s2, csens_t csens);
 
 /// Test if string starts with.
 /// @param s1 Source stringx.
 /// @param s2 The test value.
 /// @param csens Case sensitivity.
-/// @return CBOT_PASS if true | CBOT_FAIL if not | CBOT_ERR.
-int stringx_StartsWith(stringx_t* s1, const char* s2, csens_t csens);
+/// @return T/F.
+bool stringx_StartsWith(stringx_t* s1, const char* s2, csens_t csens);
 
 /// Test if string ends with.
 /// @param s1 Source stringx.
 /// @param s2 The test value.
 /// @param csens Case sensitivity.
-/// @return CBOT_PASS if true | CBOT_FAIL if not | CBOT_ERR.
-int stringx_EndsWith(stringx_t* s1, const char* s2, csens_t csens);
+/// @return T/F.
+bool stringx_EndsWith(stringx_t* s1, const char* s2, csens_t csens);
 
 /// Test if string contains.
 /// @param s1 Source stringx.
 /// @param s2 The test value.
 /// @param csens Case sensitivity.
-/// @return Index of match | CBOT_ERR.
+/// @return like strstr() | EARGNULL.
 int stringx_Contains(stringx_t* s1, const char* s2, csens_t csens);
 
 /// Copy a stringx.
@@ -100,20 +100,20 @@ stringx_t* stringx_Left(stringx_t* s, unsigned int num);
 
 /// Trim whitespace from both ends IN PLACE.
 /// @param s Source stringx.
-/// @return CBOT_PASS | CBOT_ERR.
+/// @return status | EARGNULL.
 int stringx_Trim(stringx_t* s);
 
 /// Append a string to the stringx.
 /// @param s Source stringx.
 /// @param sapp String to append.
-/// @return CBOT_PASS | CBOT_ERR.
+/// @return status | EARGNULL.
 int stringx_Append(stringx_t* s, stringx_t* sapp);
 
 /// Format the string IN PLACE.
 /// @param s Source stringx.
 /// @param maxlen Client must give us a clue.
 /// @param format Standard format string and args.
-/// @return CBOT_PASS | CBOT_ERR. Not used right now but in future could check arg validity.
+/// @return status - not used right now but in future could check arg validity.
 int stringx_Format(stringx_t* s, unsigned int maxlen, const char* format, ...);
 
 /// Split the string into parts by token.

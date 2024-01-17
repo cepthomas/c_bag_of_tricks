@@ -5,14 +5,9 @@
 #include <stdbool.h>
 #include <errno.h>
 
-#include "logger.h"
-
-
-//-------------------------- Definitions --------------------------------//
-
-/// Defines an error (allocation, iniitialization, etc) for a function that returns a pointer.
-/// This is distinct from NULL which may be valid/non-fail e.g. end of iteration.
-#define BAD_PTR (void*)-1
+// #include "logger.h" //TODO1 remove dependency - interface
+// Cli command handler.
+// typedef int (* const logger_t)(const cli_command_desc_t* pcmd, cli_args_t* args);
 
 
 //-------------------------- Utilities --------------------------------//
@@ -20,12 +15,13 @@
 /// Validate pointer arg. If fails, early returns err.
 /// @param ptr Pointer.
 /// @param err Error value to return in case of failure.
-#define VAL_PTR(ptr, err) { if(ptr == NULL) { return err; } }
+#define VAL_PTR(ptr, err) { if(ptr == NULL) { return err; } } // log __LINE__
 
 /// Handler for alloc failures. Never returns - exits.
 /// @param line Number.
 /// @param file Name.
-#define MEM_FAIL(line, file) { logger_Log(LVL_ERROR, CAT_MEM, line, "Alloc/free failure: %s", file); exit(1); }
+#define MEM_FAIL(line, file) { printf("Alloc/free failure: %s(%d)", file, line); exit(1); }
+// #define MEM_FAIL(line, file) { logger_Log(LVL_ERROR, CAT_MEM, line, "Alloc/free failure: %s", file); exit(1); }
 
 
 //-------------------------- Managed lifetime -----------------------------//

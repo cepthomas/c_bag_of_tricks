@@ -4,13 +4,10 @@
 #include <string.h>
 #include <math.h>
 
-#include "common.h"
+#include "diagnostics.h"
 #include "status.h"
 #include "list.h"
 #include "dict.h"
-
-
-/// @brief Definition of dictionary thing.
 
 
 //---------------- Private Declarations ------------------//
@@ -74,9 +71,9 @@ dict_t* dict_Create(keyType_t kt)
 //--------------------------------------------------------//
 int dict_Destroy(dict_t* d)
 {
-    VAL_PTR(d, CBOT_ERR);
+    VAL_PTR(d, EARGNULL);
 
-    int ret = CBOT_PASS;
+    int ret = ENOERR;
 
     // Clean up user data.
     dict_Clear(d);
@@ -95,22 +92,20 @@ int dict_Destroy(dict_t* d)
 //--------------------------------------------------------//
 int dict_Clear(dict_t* d)
 {
-    VAL_PTR(d, CBOT_ERR);
+    VAL_PTR(d, EARGNULL);
 
-    int ret = CBOT_PASS;
+    int ret = ENOERR;
 
     for(int i = 0; i < DICT_NUM_BINS; i++)
     {
         list_t* pl = d->bins[i]; // shorthand
-        VAL_PTR(pl, CBOT_ERR);
 
         // Remove custom user data.
         kv_t* kv;
         list_IterStart(pl);
 
-        while(CBOT_PASS == list_IterNext(pl, (void**)&kv))
+        while(list_IterNext(pl, (void**)&kv) != EEMPTY)
         {
-            VAL_PTR(kv, CBOT_ERR);
             if(d->kt == KEY_STRING && kv->skey != NULL)
             {
                 FREE(kv->skey);
@@ -133,49 +128,47 @@ int dict_Clear(dict_t* d)
 }
 
 //--------------------------------------------------------//
-int dict_Count(dict_t* d, int* pcnt)
+int dict_Count(dict_t* d)
 {
-    VAL_PTR(d, CBOT_ERR);
+    VAL_PTR(d, MAKE_FAIL_ERRNO(EARGNULL));
 
-    *pcnt = 0;
-    for(int i = 0; i < DICT_NUM_BINS && *pcnt >= 0; i++)
+    int cnt = 0;
+    
+    for(int i = 0; i < DICT_NUM_BINS && cnt >= 0; i++)
     {
-        int bcnt = 0;
-        list_Count(d->bins[i], &bcnt);
+        int bcnt = list_Count(d->bins[i]);
         if(bcnt >= 0)
         {
-            (*pcnt) += bcnt;
+            cnt += bcnt;
         }
         else
         {
-            (*pcnt) = bcnt; // ng
+            cnt = bcnt; // ng
+            break;
         }
     }
 
-    return CBOT_PASS;
+    return cnt;
 }
 
 //--------------------------------------------------------//
 int dict_Set(dict_t* d, key_t k, void* v)
 {
-    VAL_PTR(d, CBOT_ERR);
-    VAL_PTR(v, CBOT_ERR);
+    VAL_PTR(d, EARGNULL);
+    VAL_PTR(v, EARGNULL);
 
-    int ret = CBOT_PASS;
+    int ret = ENOERR;
 
     // If it is in a bin already, replace the value.
     unsigned int bin = d->kt == KEY_STRING ? p_HashString(k.ks) : p_HashInt(k.ki);
     list_t* pl = d->bins[bin]; // shorthand
-    VAL_PTR(pl, CBOT_ERR);
 
     list_IterStart(pl);
     kv_t* lkv;
     bool found = false;
 
-    while(CBOT_PASS == list_IterNext(pl, (void**)&lkv) && !found)
+    while(list_IterNext(pl, (void**)&lkv) == ENOERR && !found)
     {
-        VAL_PTR(lkv, CBOT_ERR);
-
         if(d->kt == KEY_STRING)
         {
             found = (strcmp(lkv->skey, k.ks) == 0);
@@ -212,9 +205,9 @@ int dict_Set(dict_t* d, key_t k, void* v)
 //--------------------------------------------------------//
 int dict_Get(dict_t* d, key_t k, void** v)
 {
-    VAL_PTR(d, CBOT_ERR);
+    VAL_PTR(d, EARGNULL);
 
-    int ret = CBOT_FAIL;
+    int ret = EINVALIDKEY;
 
     // Is it in the bin?
     unsigned int bin = d->kt == KEY_STRING ? p_HashString(k.ks) : p_HashInt(k.ki);
@@ -224,15 +217,13 @@ int dict_Get(dict_t* d, key_t k, void** v)
     kv_t* lkv;
     bool found = false;
 
-    while(CBOT_PASS == list_IterNext(pl, (void**)&lkv) && !found)
+    while(list_IterNext(pl, (void**)&lkv) == ENOERR && !found)
     {
-        VAL_PTR(lkv, CBOT_ERR);
-
         if(d->kt == KEY_STRING)
         {
             if(strcmp(lkv->skey, k.ks) == 0)
             {
-                ret = CBOT_PASS;
+                ret = 0;
                 *v = lkv->value;
                 found = true;
             }
@@ -241,7 +232,7 @@ int dict_Get(dict_t* d, key_t k, void** v)
         {
             if(lkv->ikey == k.ki)
             {
-                ret = CBOT_PASS;
+                ret = 0;
                 *v = lkv->value;
                 found = true;
             }
@@ -262,19 +253,16 @@ list_t* dict_GetKeys(dict_t* d)
     for(int i = 0; i < DICT_NUM_BINS; i++)
     {
         list_t* pl = d->bins[i]; // shorthand
-        VAL_PTR(pl, BAD_PTR);
 
         list_IterStart(pl);
 
         kv_t* kv;
 
-        while(CBOT_PASS == list_IterNext(pl, (void**)&kv))
+        while(list_IterNext(pl, (void**)&kv) == ENOERR)
         {
-            VAL_PTR(kv, BAD_PTR);
             if(d->kt == KEY_STRING)
             {
                 // Copy only.
-                VAL_PTR(kv->skey, BAD_PTR);
                 CREATE_STR(s, strlen(kv->skey));
                 strcpy(s, kv->skey);
                 list_Append(l, s);
@@ -293,15 +281,14 @@ list_t* dict_GetKeys(dict_t* d)
 //--------------------------------------------------------//
 int dict_Dump(dict_t* d, FILE* fp)
 {
-    VAL_PTR(d, CBOT_ERR);
-    VAL_PTR(fp, CBOT_ERR);
+    VAL_PTR(d, EARGNULL);
+    VAL_PTR(fp, EARGNULL);
 
-    int ret = CBOT_PASS;
+    int ret = ENOERR;
 
     // Preamble.
     fprintf(fp, "type,bins,total\n");
-    int cnt = 0;
-    dict_Count(d, &cnt);
+    int cnt = dict_Count(d);
     fprintf(fp, "%d,%d,%d\n\n", d->kt, DICT_NUM_BINS, cnt);
 
     // Content.
@@ -310,9 +297,7 @@ int dict_Dump(dict_t* d, FILE* fp)
     for(int i = 0; i < DICT_NUM_BINS; i++)
     {
         list_t* pl = d->bins[i]; // shorthand
-        VAL_PTR(pl, CBOT_ERR);
-
-        list_Count(pl, &cnt);
+        cnt = list_Count(pl);
         fprintf(fp, "%d,%d", i, cnt);
 
         list_IterStart(pl);

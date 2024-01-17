@@ -7,7 +7,7 @@
 #include <time.h>
 #include <sys/time.h>
 
-#include "common.h"
+#include "diagnostics.h"
 #include "status.h"
 #include "logger.h"
 
@@ -45,7 +45,7 @@ static const char* p_XlatLogCat(log_cat_t cat);
 //--------------------------------------------------------//
 int logger_Init(FILE* fp)
 {
-    VAL_PTR(fp, CBOT_ERR);
+    VAL_PTR(fp, EARGNULL);
     p_fp = fp;
 
     LARGE_INTEGER f;
@@ -54,7 +54,7 @@ int logger_Init(FILE* fp)
     QueryPerformanceCounter(&f);
     p_start_tick = f.QuadPart;
 
-    return CBOT_PASS;
+    return ENOERR;
 }
 
 //--------------------------------------------------------//
@@ -62,14 +62,14 @@ int logger_SetFilters(log_level_t level, log_cat_t cat)
 {
     p_level = level;
     p_cat = cat;
-    return CBOT_PASS;
+    return ENOERR;
 }
 
 //--------------------------------------------------------//
 int logger_Log(log_level_t level, log_cat_t cat, int line, const char* format, ...)
 {
-    VAL_PTR(p_fp, CBOT_ERR);
-    VAL_PTR(format, CBOT_ERR);
+    VAL_PTR(p_fp, EARGNULL);
+    VAL_PTR(format, EARGNULL);
 
     #define LOG_LINE_LEN 100
     static char buff[LOG_LINE_LEN];
@@ -92,7 +92,7 @@ int logger_Log(log_level_t level, log_cat_t cat, int line, const char* format, .
         fprintf(p_fp, "%03.6f,%s,%s,%d,%s\n", sec, p_XlatLogLevel(level), p_XlatLogCat(cat), line, buff);
     }
 
-    return CBOT_PASS;
+    return ENOERR;
 }
 
 

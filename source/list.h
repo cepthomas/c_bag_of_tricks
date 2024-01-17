@@ -19,47 +19,46 @@ list_t* list_Create(void);
 
 /// Deletes all nodes and associated data pointers.
 /// @param l The list opaque pointer.
-/// @return CBOT_PASS | CBOT_ERR.
+/// @return status.
 int list_Clear(list_t* l);
 
 /// Deletes all nodes and frees associated data pointers, frees the list struct.
 /// @param l The list opaque pointer.
-/// @return CBOT_PASS | CBOT_ERR.
+/// @return status.
 int list_Destroy(list_t* l);
 
 /// Add a node at the beginning.
 /// @param l The list opaque pointer.
 /// @param data Data to add. NOTE can't contain pointers.
-/// @return CBOT_PASS | CBOT_ERR.
+/// @return status.
 int list_Push(list_t* l, void* data);
 
 /// Add a node at the end.
 /// @param l The list opaque pointer.
 /// @param data Data to add. NOTE can't contain pointers.
-/// @return CBOT_PASS | CBOT_ERR.
+/// @return status.
 int list_Append(list_t* l, void* data);
 
-/// Remove and return the end. Returns false if at end.
+/// Remove and return the end.
 /// @param l The list opaque pointer.
 /// @param data Where to put the data. Client takes ownership of it now!
-/// @return CBOT_PASS | CBOT_ERR | CBOT_FAIL.
+/// @return status or -EITEREND.
 int list_Pop(list_t* l, void** data);
 
 /// Size of the list.
 /// @param l The list opaque pointer.
-/// @param pcnt Where to put the answer.
-/// @return CBOT_PASS | CBOT_ERR.
-int list_Count(list_t* l, int* pcnt);
+/// @return count or -EEMPTY.
+int list_Count(list_t* l);
 
 /// Initialize iterator.
 /// @param l The list opaque pointer.
-/// @return CBOT_PASS | CBOT_ERR | CBOT_FAIL (if empty).
+/// @return status or -EITEREND.
 int list_IterStart(list_t* l);
 
 /// Next iteration in list.
 /// @param l The list opaque pointer.
 /// @param data Where to put the data.
-/// @return CBOT_PASS | CBOT_ERR | CBOT_FAIL (if empty or at end)
+/// @return status or -EITEREND.
 int list_IterNext(list_t* l, void** data);
 
 #endif // LIST_H

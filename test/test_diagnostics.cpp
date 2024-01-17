@@ -6,14 +6,14 @@
 
 extern "C"
 {
-#include "common.h"
+#include "diagnostics.h"
 }
 
 
 /////////////////////////////////////////////////////////////////////////////
-UT_SUITE(COMMON_MEM, "Test memory probe functions. Make sure PROBE in common.h is set in common.h.")
+UT_SUITE(DIAG_MEM, "Test memory probe functions. Make sure PROBE is set in diagnostics.h.")
 {
-    logger_SetFilters(LVL_DEBUG, CAT_MEM);
+ //   logger_SetFilters(LVL_DEBUG, CAT_MEM);
 
     const int STR_LEN = 16;
     const int NUM_TS = 20;

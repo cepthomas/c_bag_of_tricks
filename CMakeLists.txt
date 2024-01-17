@@ -21,7 +21,6 @@ include_directories(
 # Source files.
 add_executable(cbot_test
     source/private/logger.c
-    source/private/status.c
     source/private/list.c
     source/private/dict.c
     source/private/state_machine.c
@@ -30,7 +29,7 @@ add_executable(cbot_test
     source/private/cli.c
     pnut/pnut.cpp
     test/main.cpp
-    test/test_common.cpp
+    test/test_diagnostics.cpp
     test/test_logger.cpp
     test/test_list.cpp
     test/test_dict.cpp

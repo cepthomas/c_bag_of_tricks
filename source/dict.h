@@ -28,32 +28,31 @@ dict_t* dict_Create(keyType_t kt);
 
 /// Deletes all nodes and associated data pointers.
 /// @param d The dictionary opaque pointer.
-/// @return CBOT_PASS | CBOT_ERR.
+/// @return status.
 int dict_Clear(dict_t* d);
 
 /// Deletes all nodes and frees associated data pointers, frees the dict struct.
 /// @param d The dictionary opaque pointer.
-/// @return CBOT_PASS | CBOT_ERR.
+/// @return status.
 int dict_Destroy(dict_t* d);
 
 /// Size of the dict.
 /// @param d The dict opaque pointer.
-/// @param pcnt Where to put the answer.
-/// @return CBOT_PASS | CBOT_ERR.
-int dict_Count(dict_t* d, int* pcnt);
+/// @return count or error if <0.
+int dict_Count(dict_t* d);
 
 /// Set a value using a key. Also used to remove.
 /// @param d The dictionary opaque pointer.
 /// @param k The key.
 /// @param v The value. NOTE value can't contain pointers.
-/// @return CBOT_PASS | CBOT_ERR.
+/// @return status.
 int dict_Set(dict_t* d, key_t k, void* v);
 
 /// Get a value using a key.
 /// @param d The dictionary opaque pointer.
 /// @param k The key.
 /// @param v Pointer to where to put the associated data.
-/// @return CBOT_PASS | CBOT_FAIL | CBOT_ERR.
+/// @return status.
 int dict_Get(dict_t* d, key_t k, void** v);
 
 /// Get a list of all key_t. NOTE - client must destroy the returned list.
@@ -64,7 +63,7 @@ list_t* dict_GetKeys(dict_t* d);
 /// Dump contents of the dict to file.
 /// @param d Pertinent dictionary.
 /// @param fp Output stream.
-/// @return CBOT_PASS | CBOT_ERR.
+/// @return status.
 int dict_Dump(dict_t* d, FILE* fp);
 
 #endif // DICT_H

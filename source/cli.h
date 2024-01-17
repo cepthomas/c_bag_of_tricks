@@ -18,23 +18,23 @@ typedef struct
 
 
 /// Open a cli using stdio.
-/// @return status 0=ok
+/// @return status.
 int cli_OpenStdio(void);
 
 /// Open a cli using socket.
 /// @param host
 /// @param port
-/// @return status 0=ok
+/// @return status.
 int cli_OpenSocket(const char* host, int port);
 
 /// Open a cli using serial port.
 /// @param port
 /// @param baudrate
-/// @return status 0=ok
+/// @return status.
 int cli_OpenSerial(int port, int baudrate);
 
 /// Clean up component resources.
-/// @return Status.
+/// @return status.
 int cli_Destroy(void);
 
 /// Read a line from a cli. This does not block. Buffers chars until EOL.
@@ -44,12 +44,12 @@ const bool cli_ReadLine(cli_args_t* args);
 
 /// Write a line to a cli.
 /// @param buff Line to send to user.
-/// @return status 0=ok
+/// @return status.
 int cli_WriteLine(const char* format, ...);
 
 /// Write a car to a cli.
 /// @param c Char to send to user.
-/// @return status 0=ok
+/// @return status.
 int cli_WriteChar(char c);
 
 #endif // CLI_H
