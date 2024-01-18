@@ -111,15 +111,15 @@ const char* stringx_Content(stringx_t* s)
 //--------------------------------------------------------//
 int stringx_Len(stringx_t* s)
 {
-    VAL_PTR(s, -EARGNULL);
+    VAL_PTR(s, -EARGNULL);  // negative
     return strlen(s->raw);
 }
 
 //--------------------------------------------------------//
 int stringx_Compare(stringx_t* s1, const char* s2, bool csens)
 {
-    VAL_PTR(s1, -EARGNULL);
-    VAL_PTR(s2, -EARGNULL);
+    VAL_PTR(s1, -EARGNULL);  // negative
+    VAL_PTR(s2, -EARGNULL);  // negative
 
     int ret = -999;
     if (csens)
@@ -141,8 +141,8 @@ int stringx_Compare(stringx_t* s1, const char* s2, bool csens)
 //--------------------------------------------------------//
 int stringx_Contains(stringx_t* s1, const char* s2, bool csens)
 {
-    VAL_PTR(s1, -EARGNULL);
-    VAL_PTR(s2, -EARGNULL);
+    VAL_PTR(s1, -EARGNULL);  // negative
+    VAL_PTR(s2, -EARGNULL);  // negative
 
     int index = -1;
 
@@ -158,18 +158,18 @@ int stringx_Contains(stringx_t* s1, const char* s2, bool csens)
     else
     {
         // Need to convert to lower case before comparing. //TODO2 kinda clumsy
-        stringx_t* cs1 = stringx_Copy(s1);
-        stringx_ToLower(cs1);
-        stringx_t* cs2 = stringx_Create(s2);
-        stringx_ToLower(cs2);
+        stringx_t* lc1 = stringx_Copy(s1);
+        stringx_ToLower(lc1);
+        stringx_t* lc2 = stringx_Create(s2);
+        stringx_ToLower(lc2);
 
-        char* p = strstr(cs1->raw, cs2->raw);
+        char* p = strstr(lc1->raw, lc2->raw);
         if(p != NULL)
         {
-            index = p - cs1->raw;
+            index = p - lc1->raw;
         }
-        stringx_Destroy(cs1);
-        stringx_Destroy(cs2);
+        stringx_Destroy(lc1);
+        stringx_Destroy(lc2);
     }
 
     // Match impedance.

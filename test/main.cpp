@@ -22,9 +22,13 @@ int main()
     whichSuites.emplace_back("DICT");
 
     // Init system before running tests.
-    FILE* fp = fopen("log_test_out.txt", "w");
-    logger_Init(fp);
+    // FILE* fp = fopen("log_test_out.txt", "w");
+    // logger_Init(fp);
+    // tm.RunSuites(whichSuites, 'r'); // 'r' for readable, 'x' for xml
+    // close(fp);
+    
+    logger_Init(stdout);
     tm.RunSuites(whichSuites, 'r'); // 'r' for readable, 'x' for xml
-
+    
     return 0;
 }

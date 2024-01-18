@@ -15,7 +15,7 @@ typedef enum
     LVL_ERROR = 3
 } log_level_t;
 
-/// Log categories. Add more as needed - and update p_XlatLogCat(). Make client configurable?
+/// Log categories. Add more as needed - and update p_XlatLogCat(). TODO2 Make client configurable.
 typedef enum
 {
     CAT_INIT     = 1 << 0,
@@ -32,7 +32,7 @@ typedef enum
 
 
 /// Initialize the module.
-/// @param fp File to write to.
+/// @param fp File stream to write to.
 /// @return Status.
 int logger_Init(FILE* fp);
 

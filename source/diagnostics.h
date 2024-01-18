@@ -3,30 +3,21 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
-#include <errno.h>
-
-
-
-//-------------------------- Utilities --------------------------------//
-
-/// Validate pointer arg. If fails, early returns err.
-/// @param ptr Pointer.
-/// @param err Error value to return in case of failure.
-#define VAL_PTR(ptr, err) { if(ptr == NULL) { return err; } } // TODO1 printf w/__LINE__
-
-/// Handler for alloc failures. Never returns - exits.
-/// @param line Number.
-/// @param file Name.
-#define MEM_FAIL(line, file) { printf("Alloc/free failure: %s(%d)", file, line); exit(1); }
-// #define MEM_FAIL(line, file) { logger_Log(LVL_ERROR, CAT_MEM, line, "Alloc/free failure: %s", file); exit(1); }
+#include "logger.h"
 
 
 //-------------------------- Managed lifetime -----------------------------//
 
 /// A crude memory alloc/free probe mechanism. Used to detect leaks during the collections development.
 /// Enable it being changing the define below, building, then run proc_mem.py. You can strip it out if you want.
-//#define PROBE(mark, var, ln, fn) logger_Log(LVL_DEBUG, CAT_MEM, __LINE__, "%s,%p,%d,\"%s\"", mark, var, __LINE__, fn)
 #define PROBE(mark, var, ln, fn)
+//#define PROBE(mark, var, ln, fn) logger_Log(LVL_DEBUG, CAT_MEM, __LINE__, "%s,%p,%d,\"%s\"", mark, var, __LINE__, fn)
+
+/// Handler for alloc failures. Never returns - exits.
+/// @param line Number.
+/// @param file Name.
+#define MEM_FAIL(line, file) exit(1)
+// #define MEM_FAIL(line, file) { logger_Log(LVL_ERROR, CAT_MEM, line, "MEM_FAIL: %s", file); exit(1); }
 
 // Common part.
 #define _CREATE(var) \
