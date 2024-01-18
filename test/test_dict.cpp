@@ -51,7 +51,7 @@ UT_SUITE(DICT_STR, "Test all dict functions using string key.")
 
     // Bad
     key.ks = "AAAAAA";
-    UT_EQUAL(dict_Get(mydict, key, (void**)&ts), EINVALIDKEY);
+    UT_EQUAL(dict_Get(mydict, key, (void**)&ts), EINVALIDINDEX);
 
     // Replace one.
     // Create data payload.
@@ -109,7 +109,7 @@ UT_SUITE(DICT_INT, "Test some dict functions using int key.")
     // ng
     ts = NULL;
     key.ki = 444;
-    UT_EQUAL(dict_Get(mydict, key, (void**)&ts), EINVALIDKEY);
+    UT_EQUAL(dict_Get(mydict, key, (void**)&ts), EINVALIDINDEX);
     UT_NULL(ts);
 
     list_t* keys = dict_GetKeys(mydict);

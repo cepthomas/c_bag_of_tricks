@@ -14,6 +14,16 @@
 
 # Components
 
+## status
+
+Rather than add a whole new status and error handling system, this (ab)uses existing C patterns:
+- Most functions return an int status code consisting of standard errno values, plus
+  additional cbot specific values starting at 200.
+- Some functions return numerical values like count/length/index which are always >= 0.
+  For errors they return the negative of the offending errno for easy testing and extraction by the caller.
+- Functions (usually low-level) that return pointers return BAD_PTR for hard alloc errors and
+  NULL for normal operations such as indicating end of iteration.
+
 ## state_machine
 - Semi-hierarchical state machine for C.
 - Generates diagrams via [dot](https://www.graphviz.org/).
@@ -53,4 +63,3 @@ See test-pnut.cpp for an example of how to write unit tests and main.cpp of how 
 - Debugging memory management in composites like dict is difficult. Tools like heob and valgrind exist but I cobbled together
   something compatible with the CREATE/FREE macros. With this feature turned on (see run-probe.cmd), the app spews out all alloc() and
   free() calls, which is then fed through proc_mem.py to detect leaks and danglers. Crude but works ok.
-

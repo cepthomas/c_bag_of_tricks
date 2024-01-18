@@ -5,9 +5,6 @@
 #include <stdbool.h>
 #include <errno.h>
 
-// #include "logger.h" //TODO1 remove dependency - interface
-// Cli command handler.
-// typedef int (* const logger_t)(const cli_command_desc_t* pcmd, cli_args_t* args);
 
 
 //-------------------------- Utilities --------------------------------//
@@ -15,7 +12,7 @@
 /// Validate pointer arg. If fails, early returns err.
 /// @param ptr Pointer.
 /// @param err Error value to return in case of failure.
-#define VAL_PTR(ptr, err) { if(ptr == NULL) { return err; } } // log __LINE__
+#define VAL_PTR(ptr, err) { if(ptr == NULL) { return err; } } // TODO1 printf w/__LINE__
 
 /// Handler for alloc failures. Never returns - exits.
 /// @param line Number.

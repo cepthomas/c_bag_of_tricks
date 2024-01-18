@@ -2,7 +2,7 @@
 #ifndef LIST_H
 #define LIST_H
 
-/// @brief Declaration of list thing. It's a double linked list implementation.
+/// A rudimentary list thing. It's a double linked list implementation.
 /// You can use the data pointers for your own application any way you like.
 /// Note that clear() and destroy() will free() them for you but if your data
 /// type contains other pointers you will have to manually free those yourself first.
@@ -42,23 +42,23 @@ int list_Append(list_t* l, void* data);
 /// Remove and return the end.
 /// @param l The list opaque pointer.
 /// @param data Where to put the data. Client takes ownership of it now!
-/// @return status or EITEREND.
+/// @return status.
 int list_Pop(list_t* l, void** data);
 
 /// Size of the list.
 /// @param l The list opaque pointer.
-/// @return count or -EEMPTY.
+/// @return count | negative errno.
 int list_Count(list_t* l);
 
 /// Initialize iterator.
 /// @param l The list opaque pointer.
-/// @return status or EITEREND.
+/// @return status.
 int list_IterStart(list_t* l);
 
 /// Next iteration in list.
 /// @param l The list opaque pointer.
 /// @param data Where to put the data.
-/// @return status or EITEREND.
+/// @return status.
 int list_IterNext(list_t* l, void** data);
 
 #endif // LIST_H

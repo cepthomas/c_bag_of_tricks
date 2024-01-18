@@ -29,7 +29,7 @@ static int p_Assign(stringx_t* s, char* cs);
 /// @param c2 Second char.
 /// @param csens Case sensitivity.
 /// @return True if match.
-static bool p_Match(char c1, char c2, csens_t csens);
+static bool p_Match(char c1, char c2, bool csens);
 
 /// Copy a const string.
 /// @param sinit String to copy. If NULL, a valid empty string is created.
@@ -111,72 +111,43 @@ const char* stringx_Content(stringx_t* s)
 //--------------------------------------------------------//
 int stringx_Len(stringx_t* s)
 {
-    VAL_PTR(s, MAKE_FAIL_ERRNO(EARGNULL));
+    VAL_PTR(s, -EARGNULL);
     return strlen(s->raw);
 }
 
 //--------------------------------------------------------//
-int stringx_Compare(stringx_t* s1, const char* s2, csens_t csens)
+int stringx_Compare(stringx_t* s1, const char* s2, bool csens)
 {
-    VAL_PTR(s1, -1);
-    VAL_PTR(s2,  1);
+    VAL_PTR(s1, -EARGNULL);
+    VAL_PTR(s2, -EARGNULL);
 
-    bool match = stringx_Len(s1) == strlen(s2);
-    for(unsigned int i = 0; i < strlen(s2) && match; i++)
+    int ret = -999;
+    if (csens)
     {
-        match = p_Match(s1->raw[i], s2[i], csens);
-        if (!match)
-        {
-            return s1->raw[i] > s2[i] ? 1 : -1;
-        }
+        ret = strcmp(s1->raw, s2);
+    }
+    else
+    {
+        ret = strcasecmp(s1->raw, s2);
     }
 
-    return 0;
+    // Impedance match.
+    if (ret > 0) ret = 1;
+    if (ret < 0) ret = 2;
+
+    return ret;
 }
 
 //--------------------------------------------------------//
-bool stringx_StartsWith(stringx_t* s1, const char* s2, csens_t csens)
+int stringx_Contains(stringx_t* s1, const char* s2, bool csens)
 {
-    VAL_PTR(s1, false);
-    VAL_PTR(s2, false);
-
-    bool match = stringx_Len(s1) >= strlen(s2);
-
-    for(unsigned int i = 0; i < strlen(s2) && match; i++)
-    {
-        match = p_Match(s1->raw[i], s2[i], csens);
-    }
-
-    return match;
-}
-
-//--------------------------------------------------------//
-bool stringx_EndsWith(stringx_t* s1, const char* s2, csens_t csens)
-{
-    VAL_PTR(s1, false);
-    VAL_PTR(s2, false);
-
-    bool match = stringx_Len(s1) >= strlen(s2);
-    unsigned int ind1 = stringx_Len(s1) - strlen(s2);
-
-    for(unsigned int i = 0; i < strlen(s2) && match; i++)
-    {
-        match = p_Match(s1->raw[ind1++], s2[i], csens);
-    }
-
-    return match;
-}
-
-//--------------------------------------------------------//
-int stringx_Contains(stringx_t* s1, const char* s2, csens_t csens)
-{
-    VAL_PTR(s1, EARGNULL);
-    VAL_PTR(s2, EARGNULL);
+    VAL_PTR(s1, -EARGNULL);
+    VAL_PTR(s2, -EARGNULL);
 
     int index = -1;
 
     // Use strstr to do the hard work.
-    if(csens == CASE_SENS)
+    if(csens)
     {
         char* p = strstr(s1->raw, s2);
         if(p != NULL)
@@ -186,7 +157,7 @@ int stringx_Contains(stringx_t* s1, const char* s2, csens_t csens)
     }
     else
     {
-        // Need to convert to lower case before comparing.
+        // Need to convert to lower case before comparing. //TODO2 kinda clumsy
         stringx_t* cs1 = stringx_Copy(s1);
         stringx_ToLower(cs1);
         stringx_t* cs2 = stringx_Create(s2);
@@ -201,7 +172,41 @@ int stringx_Contains(stringx_t* s1, const char* s2, csens_t csens)
         stringx_Destroy(cs2);
     }
 
-    return index >= 0 ? index : -1;
+    // Match impedance.
+    return index >= 0 ? index : -EINVALIDINDEX;
+}
+
+//--------------------------------------------------------//
+bool stringx_StartsWith(stringx_t* s1, const char* s2, bool csens)
+{
+    VAL_PTR(s1, false);
+    VAL_PTR(s2, false);
+
+    bool match = stringx_Len(s1) >= strlen(s2);
+
+    for (unsigned int i = 0; i < stringx_Len(s1) && i < strlen(s2) && match; i++)
+    {
+        match = p_Match(s1->raw[i], s2[i], csens);
+    }
+
+    return match;
+}
+
+//--------------------------------------------------------//
+bool stringx_EndsWith(stringx_t* s1, const char* s2, bool csens)
+{
+    VAL_PTR(s1, false);
+    VAL_PTR(s2, false);
+
+    bool match = stringx_Len(s1) >= strlen(s2);
+    unsigned int ind1 = stringx_Len(s1) - strlen(s2);
+
+    for (unsigned int i = 0; i < stringx_Len(s1) && i < strlen(s2) && match; i++)
+    {
+        match = p_Match(s1->raw[ind1++], s2[i], csens);
+    }
+
+    return match;
 }
 
 //--------------------------------------------------------//
@@ -250,7 +255,7 @@ int stringx_Trim(stringx_t* s)
     int len = (int)strlen(s->raw);
 
     // Find first.
-    for(int i = 0; first < 0 && i < len; i++)
+    for (int i = 0; first < 0 && i < len; i++)
     {
         if(!isspace(s->raw[i]))
         {
@@ -259,7 +264,7 @@ int stringx_Trim(stringx_t* s)
     }
 
     // Find last.
-    for(int i = len - 1; last < 0 && i >= 0; i--)
+    for (int i = len - 1; last < 0 && i >= 0; i--)
     {
         if(!isspace(s->raw[i]))
         {
@@ -292,7 +297,7 @@ int stringx_ToUpper(stringx_t* s)
 
     unsigned int len = strlen(s->raw);
 
-    for(unsigned int i = 0; i < len; i++)
+    for (unsigned int i = 0; i < len; i++)
     {
         if(isalpha(s->raw[i]))
         {
@@ -312,7 +317,7 @@ int stringx_ToLower(stringx_t* s)
 
     unsigned int len = strlen(s->raw);
 
-    for(unsigned int i = 0; i < len; i++)
+    for (unsigned int i = 0; i < len; i++)
     {
         if(isalpha(s->raw[i]))
         {
@@ -403,9 +408,9 @@ char* p_Copy(const char* sinit)
 }
 
 //--------------------------------------------------------//
-bool p_Match(char c1, char c2, csens_t csens)
+bool p_Match(char c1, char c2, bool csens)
 {
     // A=65 Z=90 a=97 z=122
-    bool match = csens == CASE_INSENS ? toupper(c1) == toupper(c2) : c1 == c2;
+    bool match = csens ? c1 == c2 : toupper(c1) == toupper(c2);
     return match;
 }

@@ -104,7 +104,7 @@ int dict_Clear(dict_t* d)
         kv_t* kv;
         list_IterStart(pl);
 
-        while(list_IterNext(pl, (void**)&kv) != EITEREND)
+        while(list_IterNext(pl, (void**)&kv) == ENOERR)
         {
             if(d->kt == KEY_STRING && kv->skey != NULL)
             {
@@ -118,10 +118,14 @@ int dict_Clear(dict_t* d)
                 kv->value = NULL;
             }
 
-            // kv gets freed in list_clear()
+            // kv gets freed in list_clear() below.
         }
 
         ret = list_Clear(pl);
+        if (ret != ENOERR)
+        {
+            break; // hosed, return now.
+        }
     }
 
     return ret;
@@ -130,7 +134,7 @@ int dict_Clear(dict_t* d)
 //--------------------------------------------------------//
 int dict_Count(dict_t* d)
 {
-    VAL_PTR(d, MAKE_FAIL_ERRNO(EARGNULL));
+    VAL_PTR(d, -EARGNULL); // negative
 
     int cnt = 0;
     
@@ -141,9 +145,9 @@ int dict_Count(dict_t* d)
         {
             cnt += bcnt;
         }
-        else
+        else // error, bail out.
         {
-            cnt = bcnt; // ng
+            cnt = bcnt;
             break;
         }
     }
@@ -207,7 +211,7 @@ int dict_Get(dict_t* d, key_t k, void** v)
 {
     VAL_PTR(d, EARGNULL);
 
-    int ret = EINVALIDKEY;
+    int ret = EINVALIDINDEX;
 
     // Is it in the bin?
     unsigned int bin = d->kt == KEY_STRING ? p_HashString(k.ks) : p_HashInt(k.ki);
@@ -223,7 +227,7 @@ int dict_Get(dict_t* d, key_t k, void** v)
         {
             if(strcmp(lkv->skey, k.ks) == 0)
             {
-                ret = 0;
+                ret = ENOERR;
                 *v = lkv->value;
                 found = true;
             }
@@ -232,7 +236,7 @@ int dict_Get(dict_t* d, key_t k, void** v)
         {
             if(lkv->ikey == k.ki)
             {
-                ret = 0;
+                ret = ENOERR;
                 *v = lkv->value;
                 found = true;
             }
@@ -289,6 +293,11 @@ int dict_Dump(dict_t* d, FILE* fp)
     // Preamble.
     fprintf(fp, "type,bins,total\n");
     int cnt = dict_Count(d);
+    if (cnt < 0)
+    {
+        fprintf(fp, "Bad count:%d\n", -cnt);
+        return -cnt;
+    }
     fprintf(fp, "%d,%d,%d\n\n", d->kt, DICT_NUM_BINS, cnt);
 
     // Content.
@@ -298,6 +307,12 @@ int dict_Dump(dict_t* d, FILE* fp)
     {
         list_t* pl = d->bins[i]; // shorthand
         cnt = list_Count(pl);
+        if (cnt < 0)
+        {
+            fprintf(fp, "Bad count:%d\n", -cnt);
+            return -cnt;
+        }
+
         fprintf(fp, "%d,%d", i, cnt);
 
         list_IterStart(pl);

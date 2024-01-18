@@ -41,8 +41,8 @@ UT_SUITE(LIST_ALL, "Test all list functions.")
 
     // Try to iterate an empty list.
     test_struct_t* data;
-    UT_EQUAL(list_IterStart(mylist), EEMPTY);
-    UT_EQUAL(list_IterNext(mylist, (void**)&data), EEMPTY);
+    UT_EQUAL(list_IterStart(mylist), EINVALIDINDEX);
+    UT_EQUAL(list_IterNext(mylist, (void**)&data), EINVALIDINDEX);
 
     // Add a node at the beginning.
     UT_EQUAL(list_Push(mylist, ts[0]), ENOERR);
@@ -92,7 +92,7 @@ UT_SUITE(LIST_ALL, "Test all list functions.")
     }
 
     // Try to take one more.
-    UT_EQUAL(list_IterNext(mylist, (void**)&data), EEMPTY);
+    UT_EQUAL(list_IterNext(mylist, (void**)&data), EINVALIDINDEX);
 
     // Test pop.
     UT_EQUAL(list_Pop(mylist, (void**)&data), ENOERR);
@@ -131,7 +131,7 @@ UT_SUITE(LIST_ALL, "Test all list functions.")
     UT_EQUAL(list_Push(badlist, ts[0]), EARGNULL);
     UT_EQUAL(list_Append(badlist, ts[0]), EARGNULL);
     UT_EQUAL(list_Push(badlist, ts[0]), EARGNULL);
-    UT_EQUAL(list_Count(badlist), EARGNULL);
+    UT_EQUAL(list_Count(badlist), -EARGNULL);
     UT_EQUAL(list_IterStart(badlist), EARGNULL);
     UT_EQUAL(list_IterNext(badlist, (void**)&data), EARGNULL);
     UT_EQUAL(list_Pop(badlist, (void**)&data), EARGNULL);

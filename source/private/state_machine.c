@@ -4,7 +4,7 @@
 #include <stdarg.h>
 
 #include "diagnostics.h"
-#include "logger.h" // TODO1 generic stream
+#include "logger.h"
 #include "status.h"
 #include "state_machine.h"
 #include "list.h"

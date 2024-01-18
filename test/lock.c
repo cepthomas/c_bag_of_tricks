@@ -255,7 +255,7 @@ int LockedAddDigit(void)
     int cnt_comb = list_Count(p_combination);
     int cnt_current = list_Count(p_current_entry);
 
-    bool ok = cnt_comb == cnt_current;
+    bool ok = cnt_comb >= 0 && cnt_current >= 0 && cnt_comb == cnt_current;
 
     for(int i = 0; i < cnt_comb && ok; i++)
     {

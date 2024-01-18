@@ -6,7 +6,6 @@
 
 extern "C"
 {
-//#include "common.h"
 #include "chksum.h"
 }
 

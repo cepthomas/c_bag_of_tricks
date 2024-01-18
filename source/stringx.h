@@ -4,21 +4,13 @@
 
 #include <stdbool.h>
 #include <string.h>
-//#include "common.h"
 #include "list.h"
 
 
-/// @brief Declaration of string thing.
+/// A smarter string thing.
 
 
 //---------------- Public API ----------------------//
-
-/// Case sensitivity for ops.
-typedef enum
-{
-    CASE_SENS,
-    CASE_INSENS
-} csens_t;
 
 /// Opaque string object.
 typedef struct stringx stringx_t;
@@ -40,7 +32,7 @@ const char* stringx_Content(stringx_t* s);
 
 /// Size of the string.
 /// @param s Source stringx.
-/// @return The size | EARGNULL.
+/// @return The size | negative errno.
 int stringx_Len(stringx_t* s);
 
 /// Set s to new value.
@@ -63,29 +55,29 @@ int stringx_ToLower(stringx_t* s);
 /// @param s1 Source stringx.
 /// @param s2 The test value.
 /// @param csens Case sensitivity.
-/// @return like strcmp() | EARGNULL.
-int stringx_Compare(stringx_t* s1, const char* s2, csens_t csens);
+/// @return 0=same | 1=s1 greater | 2=s2 greater | -EARGNULL
+int stringx_Compare(stringx_t* s1, const char* s2, bool csens);
+
+/// Test if string contains.
+/// @param s1 Source stringx.
+/// @param s2 The test value.
+/// @param csens Case sensitivity.
+/// @return index | -EINVALIDINDEX | -EARGNULL
+int stringx_Contains(stringx_t* s1, const char* s2, bool csens);
 
 /// Test if string starts with.
 /// @param s1 Source stringx.
 /// @param s2 The test value.
 /// @param csens Case sensitivity.
 /// @return T/F.
-bool stringx_StartsWith(stringx_t* s1, const char* s2, csens_t csens);
+bool stringx_StartsWith(stringx_t* s1, const char* s2, bool csens);
 
 /// Test if string ends with.
 /// @param s1 Source stringx.
 /// @param s2 The test value.
 /// @param csens Case sensitivity.
 /// @return T/F.
-bool stringx_EndsWith(stringx_t* s1, const char* s2, csens_t csens);
-
-/// Test if string contains.
-/// @param s1 Source stringx.
-/// @param s2 The test value.
-/// @param csens Case sensitivity.
-/// @return like strstr() | EARGNULL.
-int stringx_Contains(stringx_t* s1, const char* s2, csens_t csens);
+bool stringx_EndsWith(stringx_t* s1, const char* s2, bool csens);
 
 /// Copy a stringx.
 /// @param s Source stringx.

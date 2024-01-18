@@ -4,7 +4,7 @@
 
 #include "list.h"
 
-/// @brief Declaration of a rudimentary dictionary thing.
+/// A rudimentary dictionary thing.
 /// You can use the value pointers for your own application any way you like.
 /// Note that clear() and destroy() will free() them for you but if your data
 /// type contains other pointers you will have to manually free those yourself first.
@@ -36,9 +36,9 @@ int dict_Clear(dict_t* d);
 /// @return status.
 int dict_Destroy(dict_t* d);
 
-/// Size of the dict.
-/// @param d The dict opaque pointer.
-/// @return count or error if <0.
+/// Size of the dictionary.
+/// @param d The dictionary opaque pointer.
+/// @return count | negative errno.
 int dict_Count(dict_t* d);
 
 /// Set a value using a key. Also used to remove.

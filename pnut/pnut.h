@@ -198,14 +198,14 @@ if(testContext.Format == 'r')\
     PASS_COMMON\
 }
 
-/// Checks whether the value is not NULL. Early exit failures because it's usually a bad pointer.
+/// Checks whether the value is not NULL. Failure exits early because it's usually a bad pointer.
 /// @param value NULL?
 #define UT_NOT_NULL(value)\
 {\
     if((value) == NULL)\
     {\
         std::ostringstream oss;\
-        oss << "[" << value << "] should not be null -- FATAL";\
+        oss << "[" << value << "] should not be null";\
         RecordResult(testContext, false,  __FILE__, __LINE__, oss.str());\
         return 1;\
     }\

@@ -113,6 +113,7 @@ void TestManager::RunSuites(std::vector<std::string> which, char fmt)
     _context.Format = fmt;
     int caseCnt = 0;
     int failCnt = 0;
+    int fatalCnt = 0;
     time_t tStart = time(NULL);
 
     // Run through to execute suites.
@@ -156,7 +157,9 @@ void TestManager::RunSuites(std::vector<std::string> which, char fmt)
             int res = (*iter)->Run(_context);
             if (res != 0)
             {
-                // Failed hard.
+                // The suite failed fatally.
+                (*iter)->RecordVerbatim(_context, "^^^^^^^^^^^^^^^^ FATAL");
+                fatalCnt++;
             }
 
             /// Completed the suite, update the counts.
@@ -200,7 +203,7 @@ void TestManager::RunSuites(std::vector<std::string> which, char fmt)
     if(_context.Format == 'x')
     {
         std::cout << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << std::endl;
-        std::cout << "<testsuites" << " tests=" << caseCnt << " failures=" << failCnt << " time=" << dur << ">" << std::endl;
+        std::cout << "<testsuites" << " tests=" << caseCnt << " failures=" << failCnt << " fatal=" << fatalCnt << " time=" << dur << ">" << std::endl;
     }
     else // readable
     {
@@ -210,7 +213,8 @@ void TestManager::RunSuites(std::vector<std::string> which, char fmt)
         std::cout << "# Duration: " << dur << std::endl;
         std::cout << "# Cases Run: " << caseCnt << std::endl;
         std::cout << "# Cases Failed: " << failCnt << std::endl;
-        std::cout << "# Test Result: " << ((failCnt > 0) ? "Fail" : "Pass") << std::endl;
+        std::cout << "# Fatal Suites: " << fatalCnt << std::endl;
+        std::cout << "# Test Result: " << ((failCnt > 0) || (fatalCnt > 0) ? "Fail" : "Pass") << std::endl;
         std::cout << "#--------------------------------------------------------------------" << std::endl;
     }
 

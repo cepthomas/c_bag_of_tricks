@@ -4,8 +4,6 @@
 #include <stdio.h>
 
 
-/// @brief Declaration of a logger module.
-
 //---------------- Public API ----------------------//
 
 /// Log levels. See https://stackoverflow.com/a/2031209.

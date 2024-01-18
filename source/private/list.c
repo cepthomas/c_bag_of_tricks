@@ -175,7 +175,7 @@ int list_Pop(list_t* l, void** data)
     }
     else // no data there
     {
-        ret = EITEREND;
+        ret = EINVALIDINDEX;
     }
 
     return ret;
@@ -184,7 +184,7 @@ int list_Pop(list_t* l, void** data)
 //--------------------------------------------------------//
 int list_Count(list_t* l)
 {
-    VAL_PTR(l, MAKE_FAIL_ERRNO(EARGNULL));
+    VAL_PTR(l, -EARGNULL); // negative
 
     int cnt = 0;
     node_t* iter = l->head;
@@ -209,7 +209,7 @@ int list_IterStart(list_t* l)
     node_t* nt = l->iter;
     if(nt == NULL)
     {
-        ret = EITEREND;
+        ret = EINVALIDINDEX;
     }
 
     return ret;
@@ -231,7 +231,7 @@ int list_IterNext(list_t* l, void** data)
     }
     else
     {
-        ret = EITEREND;
+        ret = EINVALIDINDEX;
     }
 
     return ret;
