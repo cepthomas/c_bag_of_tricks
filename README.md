@@ -46,6 +46,28 @@ Rather than add a whole new status and error handling system, this (ab)uses exis
 - Container for args with slicing and dicing into convenient parts. Windows only.
 - See test_cli.cpp for example of usage.
 
+## ftimer
+A fast (msec) timer based on Windows multimedia timer. The win multimedia timer is erratic with possible
+errors of many msec.
+
+This component attempts to reduce the error by running at one msec and managing the requested periods manually.
+This is accomplished by using a stopwatch (modelled after the C# class) to actually measure the elapsed time
+rather than trust the mm timer period. It seems to be an improvement with roughly +-1 msec precision on an
+unloaded system. That should be good enough for midi.
+
+See `test_ftimer.cpp` for usage.
+
+## stopwatch
+
+Stopwatch similar to the .NET component. [Beware of QueryPerformanceCounter()](https://www.virtualdub.org/blog2/entry_106.html)
+
+## timeanalyzer
+
+Takes repeated time samples and performs some basic statistics.
+
+
+# Tools
+
 ## pnut
 Practically Nonexistent Unit Tester: A super lightweight unit test framework for C (or C++).
 It has gone through many useful and successful iterations and may as well bring you joy also.
@@ -59,7 +81,7 @@ It is plain C++ with a little bit of stl so will build and run on any win or nx 
 
 See test-pnut.cpp for an example of how to write unit tests and main.cpp of how to run them.
 
-## Tools
+## diagnostics
 - Debugging memory management in composites like dict is difficult. Tools like heob and valgrind exist but I cobbled together
   something compatible with the CREATE/FREE macros. With this feature turned on (see run-probe.cmd), the app spews out all alloc() and
   free() calls, which is then fed through proc_mem.py to detect leaks and danglers. Crude but works ok.

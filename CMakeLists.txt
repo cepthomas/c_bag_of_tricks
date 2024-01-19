@@ -27,6 +27,8 @@ add_executable(cbot_test
     source/private/stringx.c
     source/private/chksum.c
     source/private/cli.c
+    source/private/ftimer.c
+    source/private/stopwatch.c
     pnut/pnut.cpp
     test/main.cpp
     test/test_diagnostics.cpp
@@ -38,9 +40,10 @@ add_executable(cbot_test
     test/test_chksum.cpp
     test/test_sm.cpp
     test/lock.c
+    test/test_ftimer.cpp
+    test/test_stopwatch.cpp
     )
 
-# target_link_libraries(cbot_test
-#     libgcc.a
-#     libstdc++.a
-#     )
+target_link_libraries(cbot_test
+    libwinmm.a
+    )
