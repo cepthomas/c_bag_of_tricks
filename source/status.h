@@ -1,12 +1,7 @@
 #ifndef STATUS_H
 #define STATUS_H
 
-#include <stdlib.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <errno.h>
-#include <string.h>
-
+#include "logger.h"
 
 //---------------- Additional errnos -------------------//
 

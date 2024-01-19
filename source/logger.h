@@ -31,8 +31,8 @@ typedef enum
 } log_cat_t;
 
 
-/// Initialize the module.
-/// @param fp File stream to write to.
+/// Initialize the module. If not called, logger_Log() is ignored.
+/// @param fp File stream to write to. Can be stdout.
 /// @return Status.
 int logger_Init(FILE* fp);
 

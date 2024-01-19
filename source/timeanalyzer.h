@@ -1,13 +1,9 @@
 #ifndef TIME_ANALYZER_H
 #define TIME_ANALYZER_H
 
-
 #include <windows.h>
 #include <stdbool.h>
 
-
-/// Number of data points to grab for statistics. TODO2 make user selectable.
-#define NUM_SAMPLES 100
 
 /// Analysis results in msec.
 typedef struct time_results
@@ -21,14 +17,15 @@ typedef struct time_results
 
 
 /// Initialize.
+/// @param num_samples how many
 /// @return status
-bool timeanalyzer_Init(void); // TODO2 need unit tests.
+int timeanalyzer_Init(int max_samples);
 
 /// Resets everything.
 void timeanalyzer_Reset(void);
 
 /// Start or stop the analysis.
-/// @param[in] on T/F
+/// @param on T/F
 /// @return running
 bool timeanalyzer_Run(bool on);
 
@@ -36,7 +33,7 @@ bool timeanalyzer_Run(bool on);
 void timeanalyzer_Arm(void);
 
 /// Capture a time value.
-/// @param[in] name desc
+/// @param name desc
 /// @return pointer to results if completed else NULL.
 time_results_t* timeanalyzer_Grab(void);
 

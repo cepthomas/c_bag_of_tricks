@@ -57,7 +57,7 @@ int stringx_Destroy(stringx_t* s)
 {
     VAL_PTR(s, EARGNULL);
 
-    int ret = 0;
+    int stat = ENOERR;
 
     if(s->raw != NULL)
     {
@@ -66,7 +66,7 @@ int stringx_Destroy(stringx_t* s)
     }
     FREE(s);
 
-    return ret;
+    return stat;
 }
 
 //--------------------------------------------------------//
@@ -75,12 +75,12 @@ int stringx_Set(stringx_t* s, const char* sinit)
     VAL_PTR(s, EARGNULL);
     VAL_PTR(sinit, EARGNULL);
 
-    int ret = 0;
+    int stat = ENOERR;
 
     // Copy the contents.
-    ret = p_Assign(s, p_Copy(sinit));
+    stat = p_Assign(s, p_Copy(sinit));
 
-    return ret;
+    return stat;
 }
 
 //--------------------------------------------------------//
@@ -89,22 +89,23 @@ int stringx_Append(stringx_t* s, stringx_t* sapp)
     VAL_PTR(s, EARGNULL);
     VAL_PTR(sapp, EARGNULL);
 
-    int ret = 0;
+    int stat = ENOERR;
 
     // This is a bit crude. Need to make smarter internal buffer to support growing.
     int slen = stringx_Len(s) + stringx_Len(sapp);
     CREATE_STR(snew, slen);
     strcpy(snew, s->raw);
     strcpy(snew + stringx_Len(s), sapp->raw);
-    ret = p_Assign(s, snew);
+    stat = p_Assign(s, snew);
 
-    return ret;
+    return stat;
 }
 
 //--------------------------------------------------------//
 const char* stringx_Content(stringx_t* s)
 {
     VAL_PTR(s, BAD_PTR);
+
     return s->raw;
 }
 
@@ -112,6 +113,7 @@ const char* stringx_Content(stringx_t* s)
 int stringx_Len(stringx_t* s)
 {
     VAL_PTR(s, -EARGNULL);  // negative
+
     return strlen(s->raw);
 }
 
@@ -121,7 +123,7 @@ int stringx_Compare(stringx_t* s1, const char* s2, bool csens)
     VAL_PTR(s1, -EARGNULL);  // negative
     VAL_PTR(s2, -EARGNULL);  // negative
 
-    int ret = -999;
+    int ret = 0;
     if (csens)
     {
         ret = strcmp(s1->raw, s2);
@@ -246,7 +248,7 @@ int stringx_Trim(stringx_t* s)
 {
     VAL_PTR(s, EARGNULL);
 
-    int ret = 0;
+    int stat = ENOERR;
 
     // __123 456___ len=12
 
@@ -285,7 +287,7 @@ int stringx_Trim(stringx_t* s)
         p_Assign(s, cs);
     }
 
-    return ret;
+    return stat;
 }
 
 //--------------------------------------------------------//
@@ -293,7 +295,7 @@ int stringx_ToUpper(stringx_t* s)
 {
     VAL_PTR(s, EARGNULL);
 
-    int ret = 0;
+    int stat = ENOERR;
 
     unsigned int len = strlen(s->raw);
 
@@ -305,7 +307,7 @@ int stringx_ToUpper(stringx_t* s)
         }
     }
 
-    return ret;
+    return stat;
 }
 
 //--------------------------------------------------------//
@@ -313,7 +315,7 @@ int stringx_ToLower(stringx_t* s)
 {
     VAL_PTR(s, EARGNULL);
 
-    int ret = 0;
+    int stat = ENOERR;
 
     unsigned int len = strlen(s->raw);
 
@@ -325,7 +327,7 @@ int stringx_ToLower(stringx_t* s)
         }
     }
 
-    return ret;
+    return stat;
 }
 
 //--------------------------------------------------------//
@@ -334,7 +336,7 @@ int stringx_Format(stringx_t* s, unsigned int maxlen, const char* format, ...)
     VAL_PTR(s, EARGNULL);
     VAL_PTR(format, EARGNULL);
 
-    int ret = 0;
+    int stat = ENOERR;
 
     CREATE_STR(buff, maxlen);
     va_list args;
@@ -343,7 +345,7 @@ int stringx_Format(stringx_t* s, unsigned int maxlen, const char* format, ...)
 
     p_Assign(s, buff);
   
-    return ret;
+    return stat;
 }
 
 //--------------------------------------------------------//

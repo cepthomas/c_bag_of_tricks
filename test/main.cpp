@@ -20,18 +20,15 @@ int main()
     // whichSuites.emplace_back("LIST");
     // whichSuites.emplace_back("STR");
     // whichSuites.emplace_back("DICT");
-
     whichSuites.emplace_back("FTIMER");
     whichSuites.emplace_back("STOPWATCH");
 
     // Init system before running tests.
     // FILE* fp = fopen("log_test_out.txt", "w");
     // logger_Init(fp);
-    // tm.RunSuites(whichSuites, 'r'); // 'r' for readable, 'x' for xml
-    // close(fp);
-    
     logger_Init(stdout);
     tm.RunSuites(whichSuites, 'r'); // 'r' for readable, 'x' for xml
+    // close(fp);
     
     return 0;
 }

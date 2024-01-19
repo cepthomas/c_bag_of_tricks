@@ -1,5 +1,4 @@
 
-#include <unistd.h>
 #include <sys/stat.h>
 
 #include "pnut.h"

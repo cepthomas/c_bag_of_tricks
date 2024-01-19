@@ -6,6 +6,7 @@
 #include <conio.h>
 #include <errno.h>
 
+#include "status.h"
 #include "cli.h"
 
 
@@ -38,7 +39,7 @@ static ifType_t _iftype = IF_NONE;
 //--------------------------------------------------------//
 int cli_OpenStdio(void)
 {
-    int stat = 0;
+    int stat = ENOERR;
     _buff_index = -1;
     _iftype = IF_STDIO;
     _prompt = "$";
@@ -54,7 +55,7 @@ int cli_OpenStdio(void)
 //--------------------------------------------------------//
 int cli_OpenSocket(const char* host, int port) //FUTURE
 {
-    int stat = 0;
+    int stat = ENOERR;
     _buff_index = -1;
     _iftype = IF_SOCKET;
     _prompt = "";
@@ -85,7 +86,7 @@ int cli_OpenSocket(const char* host, int port) //FUTURE
 //--------------------------------------------------------//
 int cli_OpenSerial(int port, int baudrate) // FUTURE
 {
-    int stat = 0;
+    int stat = ENOERR;
     _buff_index = -1;
     _iftype = IF_SERIAL;
     _prompt = "$";
@@ -101,7 +102,7 @@ int cli_OpenSerial(int port, int baudrate) // FUTURE
 //--------------------------------------------------------//
 int cli_Destroy(void)
 {
-    int stat = 0;
+    int stat = ENOERR;
 
     switch(_iftype)
     {
@@ -247,7 +248,6 @@ const bool cli_ReadLine(cli_args_t* args)
             memset(_cli_buff, 0, CLI_BUFF_LEN);
             line_done = false;
             _buff_index = 0;
-
         }
 
     }
@@ -259,7 +259,7 @@ const bool cli_ReadLine(cli_args_t* args)
 //--------------------------------------------------------//
 int cli_WriteLine(const char* format, ...)
 {
-    int stat = 0;
+    int stat = ENOERR;
 
     static char buff[CLI_BUFF_LEN];
 
@@ -290,7 +290,7 @@ int cli_WriteLine(const char* format, ...)
 //--------------------------------------------------------//
 int cli_WriteChar(char c)
 {
-    int stat = 0;
+    int stat = ENOERR;
 
     switch(_iftype)
     {
@@ -307,5 +307,6 @@ int cli_WriteChar(char c)
             stat = 1;
             break;
     }
+    
     return stat;    
 }

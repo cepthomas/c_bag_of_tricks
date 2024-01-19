@@ -3,7 +3,6 @@
 #include <cstdio>
 #include <cstring>
 #include <stdlib.h>
-#include <unistd.h>
 
 #include "pnut.h"
 
@@ -45,8 +44,8 @@ UT_SUITE(FTIMER_BASIC, "Test all ftimer functions.")
     stopwatch_Init();
     
     // Happy path.
-    unsigned res = 5;
-    UT_EQUAL(ftimer_Init(PeriodicInterruptFunc, res), 0);
+    int stat = ftimer_Init(PeriodicInterruptFunc, 5);
+    UT_EQUAL(stat, 0);
 
     // Grab the stopwatch time.
     p_last_msec = stopwatch_TotalElapsedMsec();
@@ -54,11 +53,12 @@ UT_SUITE(FTIMER_BASIC, "Test all ftimer functions.")
     // Go.
     UT_EQUAL(ftimer_Run(17), 0);
 
-    int timeout = 3;
-    while(ftimer_IsRunning())// && timeout > 0)
+    int timeout = 30; // safety
+    while(ftimer_IsRunning() && timeout > 0)
     {
-        sleep(1);
+        Sleep(100);
         timeout--;
+        // printf("timeout:%d\n", timeout);
     }
 
     ftimer_Destroy();

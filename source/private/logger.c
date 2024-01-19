@@ -68,28 +68,30 @@ int logger_SetFilters(log_level_t level, log_cat_t cat)
 //--------------------------------------------------------//
 int logger_Log(log_level_t level, log_cat_t cat, int line, const char* format, ...)
 {
-    VAL_PTR(p_fp, EARGNULL);
     VAL_PTR(format, EARGNULL);
 
-    #define LOG_LINE_LEN 100
-    static char buff[LOG_LINE_LEN];
-
-    // Check filters.
-    if((level >= p_level) && (cat & p_cat))
+    if (p_fp != NULL)
     {
-        va_list args;
-        va_start(args, format);
-        // The content.
-        vsnprintf(buff, LOG_LINE_LEN-1, format, args);
-        va_end(args);
+        #define LOG_LINE_LEN 100
+        static char buff[LOG_LINE_LEN];
 
-        // Timestamp.
-        LARGE_INTEGER f;
-        QueryPerformanceCounter(&f);
-        long long elapsed_ticks = f.QuadPart - p_start_tick;
-        double sec = (double)(elapsed_ticks / p_ticks_per_sec);
+        // Check filters.
+        if((level >= p_level) && (cat & p_cat))
+        {
+            va_list args;
+            va_start(args, format);
+            // The content.
+            vsnprintf(buff, LOG_LINE_LEN-1, format, args);
+            va_end(args);
 
-        fprintf(p_fp, "%03.6f,%s,%s,%d,%s\n", sec, p_XlatLogLevel(level), p_XlatLogCat(cat), line, buff);
+            // Timestamp.
+            LARGE_INTEGER f;
+            QueryPerformanceCounter(&f);
+            long long elapsed_ticks = f.QuadPart - p_start_tick;
+            double sec = (double)(elapsed_ticks / p_ticks_per_sec);
+
+            fprintf(p_fp, "%03.6f,%s,%s,%d,%s\n", sec, p_XlatLogLevel(level), p_XlatLogCat(cat), line, buff);
+        }
     }
 
     return ENOERR;

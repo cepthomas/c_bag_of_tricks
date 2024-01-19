@@ -1,6 +1,8 @@
 
 #include <windows.h>
 #include <stdio.h>
+
+#include "status.h"
 #include "ftimer.h"
 
 
@@ -13,7 +15,7 @@ static ftimer_InterruptFunc_t p_interrupt_func = NULL;
 static unsigned p_period = 0;
 
 /// Resolution of p_period.
-static unsigned p_ft_res = 10;
+static unsigned p_ft_res = 0;
 
 /// System mmtimer resource.
 static MMRESULT p_sys_handle = 0;
@@ -24,11 +26,8 @@ static void CALLBACK p_TimerCallback(UINT uID, UINT uMsg, DWORD_PTR dwUser, DWOR
 /// Where we are in p_period.
 static double p_accum_msec = 0.0;
 
-/// Timer status.
-static int p_status = 0;
-
-/// Timer status.
-static bool p_running = false;
+/// Timer state. 0=stopped 1=running -1=invalid.
+static int p_state = -1;
 
 /// Simple stats.
 static double p_tmin = 1000;
@@ -48,30 +47,38 @@ static double p_ticks_per_msec;
 //--------------------------------------------------------//
 int ftimer_Init(ftimer_InterruptFunc_t fp, unsigned ft_res)
 {
-    if(fp == NULL || ft_res < 1)
+    VAL_PTR(fp, EARGNULL);
+    int stat = ENOERR;
+
+    if(ft_res < 1)
     {
-        p_status = -2;
+        stat = EINVAL;
+        p_ft_res = 0;
+        p_state = -1;
     }
     else
     {
-        LARGE_INTEGER f;
-        QueryPerformanceFrequency(&f);
-        p_ticks_per_msec = (double)f.QuadPart / 1000.0;
-
-        p_interrupt_func = fp;
         p_ft_res = ft_res;
+        p_state = 0;
     }
 
+    LARGE_INTEGER f;
+    QueryPerformanceFrequency(&f);
+    p_ticks_per_msec = (double)f.QuadPart / 1000.0;
+    p_interrupt_func = fp;
     p_tmin = 1000;
     p_tmax = 0;
-
-    return p_status;
+    //printf("ftimer_Init() p_state=%d\n", p_state);
+    return stat;
 }
 
 //--------------------------------------------------------//
 int ftimer_Run(unsigned period)
 {
-    if(p_status == 0)
+    int stat = ENOERR;
+    //printf("ftimer_Run()1 p_state=%d stat=%d period=%d\n", p_state, stat, period);
+
+    if(p_state >= 0)
     {
         p_period = period;
 
@@ -84,7 +91,7 @@ int ftimer_Run(unsigned period)
                 p_sys_handle = 0;
             }
 
-            p_running = true;
+            p_state = 1;
             p_accum_msec = 0.0;
             LARGE_INTEGER f;
             QueryPerformanceCounter(&f);
@@ -99,18 +106,24 @@ int ftimer_Run(unsigned period)
             }
 
             p_sys_handle = 0;
-            p_status = -1;
-            p_running = false;
+            p_state = 0;
             //printf("p_tmin:%g p_tmax:%g\n", p_tmin, p_tmax);
         }
     }
+    else
+    {
+        stat = EINVAL;
+    }
+    //printf("ftimer_Run()2 p_state=%d stat=%d\n", p_state, stat);
 
-    return p_status;
+    return stat;
 }
 
 //--------------------------------------------------------//
 int ftimer_Destroy(void)
 {
+    int stat = ENOERR;
+
     if(p_sys_handle > 0)
     {
         timeKillEvent(p_sys_handle);
@@ -119,16 +132,15 @@ int ftimer_Destroy(void)
     p_sys_handle = 0;
     p_period = 0;
     p_interrupt_func = NULL;
-    p_status = 0;
-    p_running = false;
+    p_state = -1;
 
-    return p_status;
+    return stat;
 }
 
 //--------------------------------------------------------//
 bool ftimer_IsRunning(void)
 {
-    return p_running;    
+    return p_state == 1;    
 }
 
 //---------------- Private Implementation -------------//
@@ -136,30 +148,20 @@ bool ftimer_IsRunning(void)
 //--------------------------------------------------------//
 void CALLBACK p_TimerCallback(UINT uID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2)
 {
-    if(p_running)
+    if(p_state == 1)
     {
+        // printf(".");
         // When are we?
         LARGE_INTEGER f;
         QueryPerformanceCounter(&f);
         long long elapsed_ticks = f.QuadPart - p_last_tick;
         double msec = (double)(elapsed_ticks / p_ticks_per_msec);
 
-        // // When are we?
-        // double t = stopwatch_ElapsedMsec();
-
-        // // Arm for next capture.
-        // stopwatch_Reset();
-
         p_tmin = msec < p_tmin ? msec : p_tmin;
         p_tmax = msec > p_tmax ? msec : p_tmax;
 
-        // double msec = msec - p_last_msec;
-        // p_last_msec = msec;
-
         // Check for expirations.
-        // p_current_msec += msec;
         p_accum_msec += msec;
-
         const double ALLOWANCE = 0.5; // msec
 
         if((p_period - p_accum_msec) < ALLOWANCE)

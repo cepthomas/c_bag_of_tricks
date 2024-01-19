@@ -17,19 +17,19 @@ typedef void (*ftimer_InterruptFunc_t)(double msec);
 /// Initialize the module.
 /// @param fp Callback function on period.
 /// @param ft_res Resolution of fast timer.
-/// @return 0=ok -1=bad arg 2=internal failure
+/// @return status
 int ftimer_Init(ftimer_InterruptFunc_t fp, unsigned ft_res);
 
 /// Enter the forever loop.
 /// @param Desired period in msec or 0 to stop.
-/// @return Status on exit.
+/// @return status
 int ftimer_Run(unsigned period);
 
 /// Clean up module resources.
-/// @return 0=ok -1=bad arg 2=internal failure
+/// @return status
 int ftimer_Destroy(void);
 
-/// Current status.
+/// Current state.
 /// @return T/F
 bool ftimer_IsRunning(void);
 

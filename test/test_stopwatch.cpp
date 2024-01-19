@@ -1,6 +1,5 @@
 
-//#include <Windows.h>
-#include <unistd.h>
+#include <Windows.h>
 #include <cstdio>
 #include <cstring>
 
@@ -23,7 +22,7 @@ UT_SUITE(STOPWATCH_BASIC, "Test all stopwatch functions.")
     stopwatch_Reset();
     UT_CLOSE(stopwatch_ElapsedMsec(), 0.0, 0.01);
 
-    sleep(1);
+    Sleep(1000);
 
     UT_CLOSE(stopwatch_ElapsedMsec(), 1000.0, 5.0); // because sleep() is sloppy TODO2 still off a bit on first one.
 

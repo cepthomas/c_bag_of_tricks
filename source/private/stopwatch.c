@@ -39,12 +39,10 @@ void stopwatch_Init(void)
         p_last_tick = 0;
 
         LARGE_INTEGER f;
-        if (QueryPerformanceFrequency(&f))
-        {
-            p_inited = true;
-            p_ticks_per_msec = (double)f.QuadPart / 1000.0;
-            stopwatch_Reset();
-        }
+        QueryPerformanceFrequency(&f);
+        p_inited = true;
+        p_ticks_per_msec = (double)f.QuadPart / 1000.0;
+        stopwatch_Reset();
     }
 }
 
