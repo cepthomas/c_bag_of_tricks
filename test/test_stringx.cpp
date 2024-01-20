@@ -5,8 +5,7 @@
 
 extern "C"
 {
-#include "status.h"
-// #include "list.h"
+#include "cbot.h"
 #include "stringx.h"
 }
 
@@ -46,10 +45,10 @@ UT_SUITE(STR_BASIC, "Test basic stringx functions.")
     UT_FALSE(stringx_EndsWith(s2, "xyz", false));
 
     UT_EQUAL(stringx_Contains(s1, "and squ", true), 6);
-    UT_EQUAL(stringx_Contains(s1, "anD squ", true), -EINVALIDINDEX);
+    UT_EQUAL(stringx_Contains(s1, "anD squ", true), -CBOT_ERR_INVALID_INDEX);
     UT_EQUAL(stringx_Contains(s1, "D squ", false), 8);
-    UT_EQUAL(stringx_Contains(s1, "xyz", true), -EINVALIDINDEX);
-    UT_EQUAL(stringx_Contains(s1, "xyz", false), -EINVALIDINDEX);
+    UT_EQUAL(stringx_Contains(s1, "xyz", true), -CBOT_ERR_INVALID_INDEX);
+    UT_EQUAL(stringx_Contains(s1, "xyz", false), -CBOT_ERR_INVALID_INDEX);
 
     UT_EQUAL(stringx_Compare(s1, "round and square", true), 0);
     UT_EQUAL(stringx_Compare(s1, "roUnd and sQuare", false), 0);
@@ -111,8 +110,8 @@ UT_SUITE(STR_FANCY, "Test fancier stringx functions.")
     double d = 44.99;
     const char* s = "xyzzy oooo";
 
-    UT_EQUAL(stringx_Format(s2, 100, "i:%d I am a GOOD formatted string with d:%f s:%s x:%0X", i, d, s, i), ENOERR);
-    UT_EQUAL(stringx_Compare(s2, "i:123 I am a GOOD formatted string with d:44.990000 s:xyzzy oooo x:7B", true), ENOERR);
+    UT_EQUAL(stringx_Format(s2, 100, "i:%d I am a GOOD formatted string with d:%f s:%s x:%0X", i, d, s, i), CBOT_ERR_NO_ERR);
+    UT_EQUAL(stringx_Compare(s2, "i:123 I am a GOOD formatted string with d:44.990000 s:xyzzy oooo x:7B", true), CBOT_ERR_NO_ERR);
 
     // Clean up.
     stringx_Destroy(s1);

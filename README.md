@@ -14,16 +14,6 @@
 
 # Components
 
-## status
-
-Rather than add a whole new status and error handling system, this (ab)uses existing C patterns:
-- Most functions return an int status code consisting of standard errno values, plus
-  additional cbot specific values starting at 200.
-- Some functions return numerical values like count/length/index which are always >= 0.
-  For errors they return the negative of the offending errno for easy testing and extraction by the caller.
-- Functions (usually low-level) that return pointers return BAD_PTR for hard alloc errors and
-  NULL for normal operations such as indicating end of iteration.
-
 ## state_machine
 - Semi-hierarchical state machine for C.
 - Generates diagrams via [dot](https://www.graphviz.org/).
@@ -65,6 +55,13 @@ Stopwatch similar to the .NET component. [Beware of QueryPerformanceCounter()](h
 
 Takes repeated time samples and performs some basic statistics.
 
+# Status
+
+- Most functions return an int status code of 0 or in the range of 100 and 127.
+- Some functions return numerical values like count/length/index which are always >= 0.
+  For errors, they return the negative of the status code for easy testing and extraction by the caller.
+- Functions (usually low-level) that return pointers return BAD_PTR for hard alloc errors and
+  NULL for normal and recoverable operations such as indicating end of iteration.
 
 # Tools
 

@@ -5,7 +5,8 @@
 #include <math.h>
 
 #include "diagnostics.h"
-#include "status.h"
+#include "cbot.h"
+#include "cbot_internal.h"
 #include "list.h"
 #include "dict.h"
 
@@ -71,9 +72,9 @@ dict_t* dict_Create(keyType_t kt)
 //--------------------------------------------------------//
 int dict_Destroy(dict_t* d)
 {
-    VAL_PTR(d, EARGNULL);
+    VAL_PTR(d, CBOT_ERR_ARG_NULL);
 
-    int ret = ENOERR;
+    int ret = CBOT_ERR_NO_ERR;
 
     // Clean up user data.
     dict_Clear(d);
@@ -92,9 +93,9 @@ int dict_Destroy(dict_t* d)
 //--------------------------------------------------------//
 int dict_Clear(dict_t* d)
 {
-    VAL_PTR(d, EARGNULL);
+    VAL_PTR(d, CBOT_ERR_ARG_NULL);
 
-    int ret = ENOERR;
+    int ret = CBOT_ERR_NO_ERR;
 
     for(int i = 0; i < DICT_NUM_BINS; i++)
     {
@@ -104,7 +105,7 @@ int dict_Clear(dict_t* d)
         kv_t* kv;
         list_IterStart(pl);
 
-        while(list_IterNext(pl, (void**)&kv) == ENOERR)
+        while(list_IterNext(pl, (void**)&kv) == CBOT_ERR_NO_ERR)
         {
             if(d->kt == KEY_STRING && kv->skey != NULL)
             {
@@ -122,7 +123,7 @@ int dict_Clear(dict_t* d)
         }
 
         ret = list_Clear(pl);
-        if (ret != ENOERR)
+        if (ret != CBOT_ERR_NO_ERR)
         {
             break; // hosed, return now.
         }
@@ -134,7 +135,7 @@ int dict_Clear(dict_t* d)
 //--------------------------------------------------------//
 int dict_Count(dict_t* d)
 {
-    VAL_PTR(d, -EARGNULL); // negative
+    VAL_PTR(d, -CBOT_ERR_ARG_NULL); // negative
 
     int cnt = 0;
     
@@ -158,10 +159,10 @@ int dict_Count(dict_t* d)
 //--------------------------------------------------------//
 int dict_Set(dict_t* d, key_t k, void* v)
 {
-    VAL_PTR(d, EARGNULL);
-    VAL_PTR(v, EARGNULL);
+    VAL_PTR(d, CBOT_ERR_ARG_NULL);
+    VAL_PTR(v, CBOT_ERR_ARG_NULL);
 
-    int ret = ENOERR;
+    int ret = CBOT_ERR_NO_ERR;
 
     // If it is in a bin already, replace the value.
     unsigned int bin = d->kt == KEY_STRING ? p_HashString(k.ks) : p_HashInt(k.ki);
@@ -171,7 +172,7 @@ int dict_Set(dict_t* d, key_t k, void* v)
     kv_t* lkv;
     bool found = false;
 
-    while(list_IterNext(pl, (void**)&lkv) == ENOERR && !found)
+    while(list_IterNext(pl, (void**)&lkv) == CBOT_ERR_NO_ERR && !found)
     {
         if(d->kt == KEY_STRING)
         {
@@ -209,9 +210,9 @@ int dict_Set(dict_t* d, key_t k, void* v)
 //--------------------------------------------------------//
 int dict_Get(dict_t* d, key_t k, void** v)
 {
-    VAL_PTR(d, EARGNULL);
+    VAL_PTR(d, CBOT_ERR_ARG_NULL);
 
-    int ret = EINVALIDINDEX;
+    int ret = CBOT_ERR_INVALID_INDEX;
 
     // Is it in the bin?
     unsigned int bin = d->kt == KEY_STRING ? p_HashString(k.ks) : p_HashInt(k.ki);
@@ -221,13 +222,13 @@ int dict_Get(dict_t* d, key_t k, void** v)
     kv_t* lkv;
     bool found = false;
 
-    while(list_IterNext(pl, (void**)&lkv) == ENOERR && !found)
+    while(list_IterNext(pl, (void**)&lkv) == CBOT_ERR_NO_ERR && !found)
     {
         if(d->kt == KEY_STRING)
         {
             if(strcmp(lkv->skey, k.ks) == 0)
             {
-                ret = ENOERR;
+                ret = CBOT_ERR_NO_ERR;
                 *v = lkv->value;
                 found = true;
             }
@@ -236,7 +237,7 @@ int dict_Get(dict_t* d, key_t k, void** v)
         {
             if(lkv->ikey == k.ki)
             {
-                ret = ENOERR;
+                ret = CBOT_ERR_NO_ERR;
                 *v = lkv->value;
                 found = true;
             }
@@ -262,7 +263,7 @@ list_t* dict_GetKeys(dict_t* d)
 
         kv_t* kv;
 
-        while(list_IterNext(pl, (void**)&kv) == ENOERR)
+        while(list_IterNext(pl, (void**)&kv) == CBOT_ERR_NO_ERR)
         {
             if(d->kt == KEY_STRING)
             {
@@ -285,10 +286,10 @@ list_t* dict_GetKeys(dict_t* d)
 //--------------------------------------------------------//
 int dict_Dump(dict_t* d, FILE* fp)
 {
-    VAL_PTR(d, EARGNULL);
-    VAL_PTR(fp, EARGNULL);
+    VAL_PTR(d, CBOT_ERR_ARG_NULL);
+    VAL_PTR(fp, CBOT_ERR_ARG_NULL);
 
-    int ret = ENOERR;
+    int ret = CBOT_ERR_NO_ERR;
 
     // Preamble.
     fprintf(fp, "type,bins,total\n");

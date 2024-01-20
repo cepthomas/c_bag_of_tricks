@@ -8,7 +8,8 @@
 #include <sys/time.h>
 
 #include "diagnostics.h"
-#include "status.h"
+#include "cbot.h"
+#include "cbot_internal.h"
 #include "logger.h"
 
 
@@ -45,7 +46,7 @@ static const char* p_XlatLogCat(log_cat_t cat);
 //--------------------------------------------------------//
 int logger_Init(FILE* fp)
 {
-    VAL_PTR(fp, EARGNULL);
+    VAL_PTR(fp, CBOT_ERR_ARG_NULL);
     p_fp = fp;
 
     LARGE_INTEGER f;
@@ -54,7 +55,7 @@ int logger_Init(FILE* fp)
     QueryPerformanceCounter(&f);
     p_start_tick = f.QuadPart;
 
-    return ENOERR;
+    return CBOT_ERR_NO_ERR;
 }
 
 //--------------------------------------------------------//
@@ -62,13 +63,13 @@ int logger_SetFilters(log_level_t level, log_cat_t cat)
 {
     p_level = level;
     p_cat = cat;
-    return ENOERR;
+    return CBOT_ERR_NO_ERR;
 }
 
 //--------------------------------------------------------//
 int logger_Log(log_level_t level, log_cat_t cat, int line, const char* format, ...)
 {
-    VAL_PTR(format, EARGNULL);
+    VAL_PTR(format, CBOT_ERR_ARG_NULL);
 
     if (p_fp != NULL)
     {
@@ -94,7 +95,7 @@ int logger_Log(log_level_t level, log_cat_t cat, int line, const char* format, .
         }
     }
 
-    return ENOERR;
+    return CBOT_ERR_NO_ERR;
 }
 
 
@@ -109,7 +110,7 @@ const char* p_XlatLogLevel(log_level_t level)
         case LVL_INFO:  strcpy(buff,  "INF"); break;
         case LVL_DEBUG: strcpy(buff,  "DBG"); break;
         case LVL_ERROR: strcpy(buff,  "ERR"); break;
-        default: snprintf(buff, 20-1, "???%d", level); break;
+        default: snprintf(buff, sizeof(buff)-1, "???%d", level); break;
     }
     return buff;
 }    
@@ -129,7 +130,7 @@ const char* p_XlatLogCat(log_cat_t cat)
         case CAT_SM:      strcpy(buff, "SM"); break;
         case CAT_MEM:     strcpy(buff, "MEM"); break;
         case CAT_USER:    strcpy(buff, "USER"); break;
-        default: snprintf(buff, 20-1,  "???CAT_%d", cat); break;
+        default: snprintf(buff, sizeof(buff)-1,  "???CAT_%d", cat); break;
     }
     return buff;
 }    

@@ -39,8 +39,8 @@ int cli_Destroy(void);
 
 /// Read a line from a cli. This does not block. Buffers chars until EOL.
 /// @param args User supplied collection.
-/// @return True if line complete and new args filled in.
-const bool cli_ReadLine(cli_args_t* args);
+/// @return status | ENODATA.
+int cli_ReadLine(cli_args_t* args);
 
 /// Write a line to a cli.
 /// @param buff Line to send to user.

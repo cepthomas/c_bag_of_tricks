@@ -2,7 +2,8 @@
 #include <windows.h>
 #include <stdio.h>
 
-#include "status.h"
+#include "cbot.h"
+#include "cbot_internal.h"
 #include "ftimer.h"
 
 
@@ -47,8 +48,8 @@ static double p_ticks_per_msec;
 //--------------------------------------------------------//
 int ftimer_Init(ftimer_InterruptFunc_t fp, unsigned ft_res)
 {
-    VAL_PTR(fp, EARGNULL);
-    int stat = ENOERR;
+    VAL_PTR(fp, CBOT_ERR_ARG_NULL);
+    int stat = CBOT_ERR_NO_ERR;
 
     if(ft_res < 1)
     {
@@ -75,7 +76,7 @@ int ftimer_Init(ftimer_InterruptFunc_t fp, unsigned ft_res)
 //--------------------------------------------------------//
 int ftimer_Run(unsigned period)
 {
-    int stat = ENOERR;
+    int stat = CBOT_ERR_NO_ERR;
     //printf("ftimer_Run()1 p_state=%d stat=%d period=%d\n", p_state, stat, period);
 
     if(p_state >= 0)
@@ -122,7 +123,7 @@ int ftimer_Run(unsigned period)
 //--------------------------------------------------------//
 int ftimer_Destroy(void)
 {
-    int stat = ENOERR;
+    int stat = CBOT_ERR_NO_ERR;
 
     if(p_sys_handle > 0)
     {

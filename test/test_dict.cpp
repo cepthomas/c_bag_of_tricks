@@ -1,13 +1,12 @@
 #include <cstdio>
 #include <cstring>
-#include <errno.h>
 
 #include "pnut.h"
 
 extern "C"
 {
 #include "diagnostics.h"
-#include "status.h"
+#include "cbot.h"
 #include "dict.h"
 }
 
@@ -44,14 +43,14 @@ UT_SUITE(DICT_STR, "Test all dict functions using string key.")
 
     // Good
     key.ks = "SOMETHING";
-    UT_EQUAL(dict_Get(mydict, key, (void**)&ts), ENOERR);
+    UT_EQUAL(dict_Get(mydict, key, (void**)&ts), CBOT_ERR_NO_ERR);
     UT_NOT_NULL(ts);
     UT_EQUAL(ts->anumber, 138);
     UT_STR_EQUAL(ts->astring, "Ajay_138");
 
     // Bad
     key.ks = "AAAAAA";
-    UT_EQUAL(dict_Get(mydict, key, (void**)&ts), EINVALIDINDEX);
+    UT_EQUAL(dict_Get(mydict, key, (void**)&ts), CBOT_ERR_INVALID_INDEX);
 
     // Replace one.
     // Create data payload.
@@ -65,7 +64,7 @@ UT_SUITE(DICT_STR, "Test all dict functions using string key.")
     cnt = dict_Count(mydict);
     UT_EQUAL(cnt, 184);
     // Content should have.
-    UT_EQUAL(dict_Get(mydict, key, (void**)&tsret), ENOERR);
+    UT_EQUAL(dict_Get(mydict, key, (void**)&tsret), CBOT_ERR_NO_ERR);
     UT_NOT_NULL(tsret);
     UT_EQUAL(tsret->anumber, 9999);
     UT_STR_EQUAL(tsret->astring, "Ajay_9999");
@@ -78,12 +77,12 @@ UT_SUITE(DICT_STR, "Test all dict functions using string key.")
     // Should look at some ...
 
     // Clean up everything.
-    UT_EQUAL(dict_Clear(mydict), ENOERR);
+    UT_EQUAL(dict_Clear(mydict), CBOT_ERR_NO_ERR);
     UT_NOT_NULL(mydict);
     cnt = dict_Count(mydict);
     UT_EQUAL(cnt, 0);
-    UT_EQUAL(dict_Destroy(mydict), ENOERR);
-    UT_EQUAL(list_Destroy(keys), ENOERR);
+    UT_EQUAL(dict_Destroy(mydict), CBOT_ERR_NO_ERR);
+    UT_EQUAL(list_Destroy(keys), CBOT_ERR_NO_ERR);
 
     return 0;
 }
@@ -102,14 +101,14 @@ UT_SUITE(DICT_INT, "Test some dict functions using int key.")
 
     // good
     key.ki = 155;
-    UT_EQUAL(dict_Get(mydict, key, (void**)&ts), ENOERR);
+    UT_EQUAL(dict_Get(mydict, key, (void**)&ts), CBOT_ERR_NO_ERR);
     UT_NOT_NULL(ts);
     UT_EQUAL(ts->anumber, 1155);
     UT_STR_EQUAL(ts->astring, "Boo_1155");
     // ng
     ts = NULL;
     key.ki = 444;
-    UT_EQUAL(dict_Get(mydict, key, (void**)&ts), EINVALIDINDEX);
+    UT_EQUAL(dict_Get(mydict, key, (void**)&ts), CBOT_ERR_INVALID_INDEX);
     UT_NULL(ts);
 
     list_t* keys = dict_GetKeys(mydict);
@@ -119,12 +118,12 @@ UT_SUITE(DICT_INT, "Test some dict functions using int key.")
     // Should look at some ...
 
     // Remove everything.
-    UT_EQUAL(dict_Clear(mydict), ENOERR);
+    UT_EQUAL(dict_Clear(mydict), CBOT_ERR_NO_ERR);
     UT_NOT_NULL(mydict);
     cnt = dict_Count(mydict);
     UT_EQUAL(cnt, 0);
-    UT_EQUAL(dict_Destroy(mydict), ENOERR);
-    UT_EQUAL(list_Destroy(keys), ENOERR);
+    UT_EQUAL(dict_Destroy(mydict), CBOT_ERR_NO_ERR);
+    UT_EQUAL(list_Destroy(keys), CBOT_ERR_NO_ERR);
 
 //    FREE(kv);
 
@@ -141,7 +140,7 @@ UT_SUITE(DICT_DUMP, "Test the dump file creation.")
     // Dump it.
     FILE* fp = fopen("dict_str_out.csv", "w");
     UT_NOT_NULL(fp);
-    UT_EQUAL(dict_Dump(mydict, fp), ENOERR);
+    UT_EQUAL(dict_Dump(mydict, fp), CBOT_ERR_NO_ERR);
     fclose(fp);
     dict_Destroy(mydict);
 
@@ -152,7 +151,7 @@ UT_SUITE(DICT_DUMP, "Test the dump file creation.")
     // Dump it.
     fp = fopen("dict_int_out.csv", "w");
     UT_NOT_NULL(fp);
-    UT_EQUAL(dict_Dump(mydict, fp), ENOERR);
+    UT_EQUAL(dict_Dump(mydict, fp), CBOT_ERR_NO_ERR);
     fclose(fp);
     dict_Destroy(mydict);
 
@@ -167,12 +166,12 @@ UT_SUITE(DICT_ERRORS, "Test some failure situations.")
 
     // Bad container.
     dict_t* baddict = NULL;
-    UT_EQUAL(dict_Set(baddict, key, value), EARGNULL);
-    UT_EQUAL(dict_Dump(baddict, NULL), EARGNULL);
-    UT_EQUAL(dict_Get(baddict, key, &value), EARGNULL);
+    UT_EQUAL(dict_Set(baddict, key, value), CBOT_ERR_ARG_NULL);
+    UT_EQUAL(dict_Dump(baddict, NULL), CBOT_ERR_ARG_NULL);
+    UT_EQUAL(dict_Get(baddict, key, &value), CBOT_ERR_ARG_NULL);
     UT_EQUAL(dict_GetKeys(baddict), BAD_PTR);
-    UT_EQUAL(dict_Clear(baddict), EARGNULL);
-    UT_EQUAL(dict_Destroy(baddict), EARGNULL);
+    UT_EQUAL(dict_Clear(baddict), CBOT_ERR_ARG_NULL);
+    UT_EQUAL(dict_Destroy(baddict), CBOT_ERR_ARG_NULL);
 
     return 0;
 }

@@ -6,7 +6,7 @@
 extern "C"
 {
 #include "logger.h"
-#include "status.h"
+#include "cbot.h"
 #include "lock.h"
 }
 

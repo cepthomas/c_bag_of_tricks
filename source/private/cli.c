@@ -4,9 +4,8 @@
 #include <winsock2.h>
 #include <Ws2tcpip.h>
 #include <conio.h>
-#include <errno.h>
 
-#include "status.h"
+#include "cbot.h"
 #include "cli.h"
 
 
@@ -39,7 +38,7 @@ static ifType_t _iftype = IF_NONE;
 //--------------------------------------------------------//
 int cli_OpenStdio(void)
 {
-    int stat = ENOERR;
+    int stat = CBOT_ERR_NO_ERR;
     _buff_index = -1;
     _iftype = IF_STDIO;
     _prompt = "$";
@@ -55,7 +54,7 @@ int cli_OpenStdio(void)
 //--------------------------------------------------------//
 int cli_OpenSocket(const char* host, int port) //FUTURE
 {
-    int stat = ENOERR;
+    int stat = CBOT_ERR_NO_ERR;
     _buff_index = -1;
     _iftype = IF_SOCKET;
     _prompt = "";
@@ -86,7 +85,7 @@ int cli_OpenSocket(const char* host, int port) //FUTURE
 //--------------------------------------------------------//
 int cli_OpenSerial(int port, int baudrate) // FUTURE
 {
-    int stat = ENOERR;
+    int stat = CBOT_ERR_NO_ERR;
     _buff_index = -1;
     _iftype = IF_SERIAL;
     _prompt = "$";
@@ -102,7 +101,7 @@ int cli_OpenSerial(int port, int baudrate) // FUTURE
 //--------------------------------------------------------//
 int cli_Destroy(void)
 {
-    int stat = ENOERR;
+    int stat = CBOT_ERR_NO_ERR;
 
     switch(_iftype)
     {
@@ -126,16 +125,16 @@ int cli_Destroy(void)
 
 
 //--------------------------------------------------------//
-const bool cli_ReadLine(cli_args_t* args)
+int cli_ReadLine(cli_args_t* args)
 {
     bool line_done = false;
     char* serr = NULL;
 
     // Process each new char.
     char c = -1;
-    bool process_done = false;
+    bool chars_done = false;
 
-    while (!process_done)
+    while (!chars_done)
     {
         switch(_iftype)
         {
@@ -178,7 +177,7 @@ const bool cli_ReadLine(cli_args_t* args)
         switch(c)
         {
             case -1:
-                process_done = true;
+                chars_done = true;
                 break;
 
             case '\n':
@@ -189,7 +188,7 @@ const bool cli_ReadLine(cli_args_t* args)
                 // Echo return.
                 cli_WriteLine("");
 
-                // Line process_done.
+                // Line chars_done.
                 line_done = true;
 
                 // Echo prompt.
@@ -246,20 +245,18 @@ const bool cli_ReadLine(cli_args_t* args)
 
             // Clear buffer.
             memset(_cli_buff, 0, CLI_BUFF_LEN);
-            line_done = false;
             _buff_index = 0;
         }
-
     }
 
-    return line_done;
+    return line_done ? CBOT_ERR_NO_ERR : CBOT_ERR_NO_DATA;
 }
 
 
 //--------------------------------------------------------//
 int cli_WriteLine(const char* format, ...)
 {
-    int stat = ENOERR;
+    int stat = CBOT_ERR_NO_ERR;
 
     static char buff[CLI_BUFF_LEN];
 
@@ -290,7 +287,7 @@ int cli_WriteLine(const char* format, ...)
 //--------------------------------------------------------//
 int cli_WriteChar(char c)
 {
-    int stat = ENOERR;
+    int stat = CBOT_ERR_NO_ERR;
 
     switch(_iftype)
     {

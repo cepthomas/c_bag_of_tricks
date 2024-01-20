@@ -5,7 +5,8 @@
 #include <ctype.h>
 
 #include "diagnostics.h"
-#include "status.h"
+#include "cbot.h"
+#include "cbot_internal.h"
 #include "stringx.h"
 
 
@@ -55,9 +56,9 @@ stringx_t* stringx_Create(const char* sinit)
 //--------------------------------------------------------//
 int stringx_Destroy(stringx_t* s)
 {
-    VAL_PTR(s, EARGNULL);
+    VAL_PTR(s, CBOT_ERR_ARG_NULL);
 
-    int stat = ENOERR;
+    int stat = CBOT_ERR_NO_ERR;
 
     if(s->raw != NULL)
     {
@@ -72,10 +73,10 @@ int stringx_Destroy(stringx_t* s)
 //--------------------------------------------------------//
 int stringx_Set(stringx_t* s, const char* sinit)
 {
-    VAL_PTR(s, EARGNULL);
-    VAL_PTR(sinit, EARGNULL);
+    VAL_PTR(s, CBOT_ERR_ARG_NULL);
+    VAL_PTR(sinit, CBOT_ERR_ARG_NULL);
 
-    int stat = ENOERR;
+    int stat = CBOT_ERR_NO_ERR;
 
     // Copy the contents.
     stat = p_Assign(s, p_Copy(sinit));
@@ -86,10 +87,10 @@ int stringx_Set(stringx_t* s, const char* sinit)
 //--------------------------------------------------------//
 int stringx_Append(stringx_t* s, stringx_t* sapp)
 {
-    VAL_PTR(s, EARGNULL);
-    VAL_PTR(sapp, EARGNULL);
+    VAL_PTR(s, CBOT_ERR_ARG_NULL);
+    VAL_PTR(sapp, CBOT_ERR_ARG_NULL);
 
-    int stat = ENOERR;
+    int stat = CBOT_ERR_NO_ERR;
 
     // This is a bit crude. Need to make smarter internal buffer to support growing.
     int slen = stringx_Len(s) + stringx_Len(sapp);
@@ -112,7 +113,7 @@ const char* stringx_Content(stringx_t* s)
 //--------------------------------------------------------//
 int stringx_Len(stringx_t* s)
 {
-    VAL_PTR(s, -EARGNULL);  // negative
+    VAL_PTR(s, -CBOT_ERR_ARG_NULL);  // negative
 
     return strlen(s->raw);
 }
@@ -120,8 +121,8 @@ int stringx_Len(stringx_t* s)
 //--------------------------------------------------------//
 int stringx_Compare(stringx_t* s1, const char* s2, bool csens)
 {
-    VAL_PTR(s1, -EARGNULL);  // negative
-    VAL_PTR(s2, -EARGNULL);  // negative
+    VAL_PTR(s1, -CBOT_ERR_ARG_NULL);  // negative
+    VAL_PTR(s2, -CBOT_ERR_ARG_NULL);  // negative
 
     int ret = 0;
     if (csens)
@@ -143,8 +144,8 @@ int stringx_Compare(stringx_t* s1, const char* s2, bool csens)
 //--------------------------------------------------------//
 int stringx_Contains(stringx_t* s1, const char* s2, bool csens)
 {
-    VAL_PTR(s1, -EARGNULL);  // negative
-    VAL_PTR(s2, -EARGNULL);  // negative
+    VAL_PTR(s1, -CBOT_ERR_ARG_NULL);  // negative
+    VAL_PTR(s2, -CBOT_ERR_ARG_NULL);  // negative
 
     int index = -1;
 
@@ -175,7 +176,7 @@ int stringx_Contains(stringx_t* s1, const char* s2, bool csens)
     }
 
     // Match impedance.
-    return index >= 0 ? index : -EINVALIDINDEX;
+    return index >= 0 ? index : -CBOT_ERR_INVALID_INDEX;
 }
 
 //--------------------------------------------------------//
@@ -246,9 +247,9 @@ stringx_t* stringx_Left(stringx_t* s, unsigned int num)
 //--------------------------------------------------------//
 int stringx_Trim(stringx_t* s)
 {
-    VAL_PTR(s, EARGNULL);
+    VAL_PTR(s, CBOT_ERR_ARG_NULL);
 
-    int stat = ENOERR;
+    int stat = CBOT_ERR_NO_ERR;
 
     // __123 456___ len=12
 
@@ -293,9 +294,9 @@ int stringx_Trim(stringx_t* s)
 //--------------------------------------------------------//
 int stringx_ToUpper(stringx_t* s)
 {
-    VAL_PTR(s, EARGNULL);
+    VAL_PTR(s, CBOT_ERR_ARG_NULL);
 
-    int stat = ENOERR;
+    int stat = CBOT_ERR_NO_ERR;
 
     unsigned int len = strlen(s->raw);
 
@@ -313,9 +314,9 @@ int stringx_ToUpper(stringx_t* s)
 //--------------------------------------------------------//
 int stringx_ToLower(stringx_t* s)
 {
-    VAL_PTR(s, EARGNULL);
+    VAL_PTR(s, CBOT_ERR_ARG_NULL);
 
-    int stat = ENOERR;
+    int stat = CBOT_ERR_NO_ERR;
 
     unsigned int len = strlen(s->raw);
 
@@ -333,10 +334,10 @@ int stringx_ToLower(stringx_t* s)
 //--------------------------------------------------------//
 int stringx_Format(stringx_t* s, unsigned int maxlen, const char* format, ...)
 {
-    VAL_PTR(s, EARGNULL);
-    VAL_PTR(format, EARGNULL);
+    VAL_PTR(s, CBOT_ERR_ARG_NULL);
+    VAL_PTR(format, CBOT_ERR_ARG_NULL);
 
-    int stat = ENOERR;
+    int stat = CBOT_ERR_NO_ERR;
 
     CREATE_STR(buff, maxlen);
     va_list args;
@@ -379,8 +380,8 @@ list_t* stringx_Split(stringx_t* s, const char* delim)
 //--------------------------------------------------------//
 int p_Assign(stringx_t* s, char* cs)
 {
-    VAL_PTR(s, EARGNULL);
-    VAL_PTR(cs, EARGNULL);
+    VAL_PTR(s, CBOT_ERR_ARG_NULL);
+    VAL_PTR(cs, CBOT_ERR_ARG_NULL);
 
     // Flush old.
     if(s->raw != NULL)
@@ -392,7 +393,7 @@ int p_Assign(stringx_t* s, char* cs)
     s->raw = cs == NULL ? NULL : cs;
     // s->valid = true;
 
-    return ENOERR;
+    return CBOT_ERR_NO_ERR;
 }
 
 //--------------------------------------------------------//

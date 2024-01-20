@@ -8,8 +8,10 @@
 
 //---------------- Privates ------------------------------//
 
+#define MAX_SAMPLES 100
+
 /// How many.
-static int _max_samples = 0;
+static int _num_samples = 0;
 
 // State.
 static bool _running = false;
@@ -33,7 +35,7 @@ static int _skip_count = 0;
 //static int _skip = 0;
 
 /// Accumulated data points.
-static double _samples[_max_samples];
+static double _samples[MAX_SAMPLES];
 
 /// Location in _samples.
 static int _sample_index = 0;
@@ -64,18 +66,27 @@ static double _TicksToMsec(long ticks)
 //---------------- Public API ----------------------------//
 
 //--------------------------------------------------------//
-int timeanalyzer_Init(int max_samples)
+int timeanalyzer_Init(int num_samples)
 {
-    _max_samples = max_samples;
-    _last_tick = 0;
-    timeanalyzer_Reset();
+    int stat = CBOT_ERR_NO_ERR;
+    if (num_samples > MAX_SAMPLES)
+    {
+        stat = EINVAL;
+        _valid = false;
+    }
+    else
+    {
+        _num_samples = num_samples;
+        _valid = true;
+    }
 
     LARGE_INTEGER f;
     QueryPerformanceFrequency(&f);
-    _valid = true;
     _ticks_per_msec = (double)f.QuadPart / 1000.0;
+    _last_tick = 0;
+    timeanalyzer_Reset();
 
-    return ENOERR;
+    return stat;
 }
 
 
@@ -131,7 +142,7 @@ time_results_t* timeanalyzer_Grab()
     }
     _last_tick = et;
 
-    if (_sample_index >= _max_samples)
+    if (_sample_index >= _num_samples)
     {
         // Process the collected stuff.
         _results.mean = 0;
@@ -139,7 +150,7 @@ time_results_t* timeanalyzer_Grab()
         _results.max = -HUGE_VAL;
         _results.sd = 0;
 
-        for (int i = 0; i < _max_samples; i++)
+        for (int i = 0; i < _num_samples; i++)
         {
             _results.mean += _samples[i];
             _results.min = _samples[i] < _results.min ? _samples[i] : _results.min;
@@ -147,16 +158,16 @@ time_results_t* timeanalyzer_Grab()
         }
 
         // Mean.
-        _results.mean /= _max_samples;
+        _results.mean /= _num_samples;
 
         // Std dev.
         double sum_of_squares = 0;
-        for (int i = 0; i < _max_samples; i++)
+        for (int i = 0; i < _num_samples; i++)
         {
             sum_of_squares += pow((_samples[i] - _results.mean), 2);
         }
 
-        _results.sd = sum_of_squares / (_max_samples - 1);
+        _results.sd = sum_of_squares / (_num_samples - 1);
         _results.sd = sqrt(_results.sd);
 
         stats = true;

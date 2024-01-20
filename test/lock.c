@@ -1,7 +1,7 @@
 
 #include <stdlib.h>
 #include "diagnostics.h"
-#include "status.h"
+#include "cbot.h"
 #include "logger.h"
 #include "list.h"
 #include "lock.h"
@@ -81,7 +81,6 @@ sm_t* lock_Create()
 
     // Build the FSM.
     p_sm = sm_Create(lock_Xlat, ST_DEFAULT, EVT_DEFAULT);
-    VAL_PTR(p_sm, BAD_PTR);
 
     sm_AddState(p_sm, ST_INITIAL,                   InitialEnter);
     sm_AddTransition(p_sm, EVT_IS_LOCKED,           NULL,                   ST_LOCKED);
@@ -119,7 +118,7 @@ sm_t* lock_Create()
 //--------------------------------------------------------//
 int lock_Destroy(void)
 {
-    int ret = ENOERR;
+    int ret = CBOT_ERR_NO_ERR;
 
     list_Destroy(p_current_entry);
     list_Destroy(p_combination);
@@ -132,7 +131,7 @@ int lock_Destroy(void)
 //--------------------------------------------------------//
 int lock_PressKey(char key)
 {
-    int ret = ENOERR;
+    int ret = CBOT_ERR_NO_ERR;
 
     LOG_DEBUG(CAT_SM, "LOCK: lock_PressKey(%c)", key);
 
@@ -195,7 +194,7 @@ const char* lock_Xlat(unsigned int id)
 //--------------------------------------------------------//
 int InitialEnter()
 {
-    int ret = ENOERR;
+    int ret = CBOT_ERR_NO_ERR;
 
     LOG_DEBUG(CAT_SM, "LOCK: InitialEnter()");
 
@@ -214,7 +213,7 @@ int InitialEnter()
 //--------------------------------------------------------//
 int LockedEnter(void)
 {
-    int ret = ENOERR;
+    int ret = CBOT_ERR_NO_ERR;
 
     LOG_DEBUG(CAT_SM, "LOCK: LockedEnter()");
     p_is_locked = true;
@@ -226,7 +225,7 @@ int LockedEnter(void)
 //--------------------------------------------------------//
 int ClearCurrentEntry(void)
 {
-    int ret = ENOERR;
+    int ret = CBOT_ERR_NO_ERR;
 
     LOG_DEBUG(CAT_SM, "LOCK: ClearCurrentEntry()");
     list_Clear(p_current_entry);
@@ -237,7 +236,7 @@ int ClearCurrentEntry(void)
 //--------------------------------------------------------//
 int LockedAddDigit(void)
 {
-    int ret = ENOERR;
+    int ret = CBOT_ERR_NO_ERR;
 
     LOG_DEBUG(CAT_SM, "LOCK: LockedAddDigit()");
 
@@ -279,7 +278,7 @@ int LockedAddDigit(void)
 //--------------------------------------------------------//
 int SetComboAddDigit(void)
 {
-    int ret = ENOERR;
+    int ret = CBOT_ERR_NO_ERR;
 
     LOG_DEBUG(CAT_SM, "LOCK: SetComboAddDigit()");
 
@@ -293,7 +292,7 @@ int SetComboAddDigit(void)
 //--------------------------------------------------------//
 int SetCombo(void)
 {
-    int ret = ENOERR;
+    int ret = CBOT_ERR_NO_ERR;
 
     LOG_DEBUG(CAT_SM, "LOCK: SetCombo()");
 
@@ -329,7 +328,7 @@ int SetCombo(void)
 //--------------------------------------------------------//
 int UnlockedEnter(void)
 {
-    int ret = ENOERR;
+    int ret = CBOT_ERR_NO_ERR;
 
     LOG_DEBUG(CAT_SM, "LOCK: UnlockedEnter()");
     p_is_locked = false;
@@ -340,7 +339,7 @@ int UnlockedEnter(void)
 //--------------------------------------------------------//
 int TryDefault(void)
 {
-    int ret = ENOERR;
+    int ret = CBOT_ERR_NO_ERR;
 
     LOG_DEBUG(CAT_SM, "LOCK: TryDefault()");
     p_is_locked = true;
