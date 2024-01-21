@@ -2,7 +2,7 @@
 #include <windows.h>
 #include <math.h>
 
-#include "status.h"
+#include "cbot.h"
 #include "timeanalyzer.h" // TODO2 need unit tests.
 
 
