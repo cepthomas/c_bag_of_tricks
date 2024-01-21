@@ -11,7 +11,7 @@ extern "C"
 
 
 /////////////////////////////////////////////////////////////////////////////
-UT_SUITE(CLI_MAIN, "TODO2 tests please.")
+UT_SUITE(CLI_MAIN, "TODO-DBG tests please.")
 {
     logger_SetFilters(LVL_DEBUG, CAT_ALL);
 
