@@ -157,7 +157,7 @@ int stringx_Contains(stringx_t* s1, const char* s2, bool csens)
     }
     else
     {
-        // Need to convert to lower case before comparing. //TODO2 kinda clumsy
+        // Need to convert to lower case before comparing. kinda clumsy.
         stringx_t* lc1 = stringx_Copy(s1);
         stringx_ToLower(lc1);
         stringx_t* lc2 = stringx_Create(s2);
