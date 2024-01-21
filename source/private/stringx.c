@@ -153,24 +153,18 @@ int stringx_Contains(stringx_t* s1, const char* s2, bool csens)
     if(csens)
     {
         char* p = strstr(s1->raw, s2);
-        if(p != NULL)
-        {
-            index = p - s1->raw;
-        }
+        index = (p != NULL) ? p - s1->raw : -1;
     }
     else
     {
-        // Need to convert to lower case before comparing. //TODO1 kinda clumsy
+        // Need to convert to lower case before comparing. //TODO2 kinda clumsy
         stringx_t* lc1 = stringx_Copy(s1);
         stringx_ToLower(lc1);
         stringx_t* lc2 = stringx_Create(s2);
         stringx_ToLower(lc2);
 
         char* p = strstr(lc1->raw, lc2->raw);
-        if(p != NULL)
-        {
-            index = p - lc1->raw;
-        }
+        index = (p != NULL) ? p - lc1->raw : -1;
         stringx_Destroy(lc1);
         stringx_Destroy(lc2);
     }

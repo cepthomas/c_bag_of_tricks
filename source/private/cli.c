@@ -9,7 +9,7 @@
 #include "cli.h"
 
 
-// TODO1 handle e.g. immediate single space bar.
+// TODO2 handle immediate key e.g. space bar to start/stop, maybe ctrl-space?
 
 
 //---------------- Private ------------------------------//
@@ -109,10 +109,7 @@ int cli_Destroy(void)
             // Nothing.
             break;
         case IF_SOCKET:
-            // if (_fd > 0)
-            // {
-            //     close(_fd);
-            // }
+            // if (_fd > 0) { close(_fd); }
             break;
         case IF_SERIAL:
             break;
@@ -145,28 +142,14 @@ int cli_ReadLine(cli_args_t* args)
                 break;
             case IF_SOCKET:
                 c = -1;
+                // int num_read = read(fd, &c, 1);
+                // if (num_read == 1) { } // valid
+                // else if (num_read == -1)
                 // {
-                //     int num_read = read(fd, &c, 1);
-                //     if (num_read == 1)
-                //     {
-                //         // A char is read.
-                //     }
-                //     else if (num_read == -1)
-                //     {
-                //         if (errno == EINTR) // Interrupted --> restart read
-                //         {
-                //             c = -1;
-                //         }
-                //         else // Some other error
-                //         {
-                //             return -1;              
-                //         }
-                //     }
-                //     else if (num_read == 0) // EOF
-                //     {      
-                //         return 0;
-                //     }
+                //     if (errno == EINTR) { c = -1; } // Interrupted --> restart read
+                //     else { return -1; } // Some other error
                 // }
+                // else if (num_read == 0) { return 0; } // EOF
                 break;
             case IF_SERIAL:
                 break;
@@ -179,11 +162,9 @@ int cli_ReadLine(cli_args_t* args)
             case -1:
                 chars_done = true;
                 break;
-
             case '\n':
                 // Ignore.
                 break;
-
             case '\r':
                 // Echo return.
                 cli_WriteLine("");
@@ -194,7 +175,6 @@ int cli_ReadLine(cli_args_t* args)
                 // Echo prompt.
                 //cli_WriteLine("");
                 break;
-
             default:
                 // Echo char.
                 cli_WriteChar(c);
