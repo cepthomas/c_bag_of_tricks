@@ -7,7 +7,7 @@
 - No dependencies on third party components.
 - They all (except pnut) use the opaque pointer (pimpl) idiom.
 - Runtime components are plain C99 so should build and run on any win or nx platform using any compiler.
-- Test code is Windows 64 bit build using CMake. PATH must include ...\mingw64\bin.
+- Test code is Windows 64 bit build using CMake. PATH must include \your\path\mingw64\bin.
 - For conventions see [c_modular](https://github.com/cepthomas/c_modular/blob/master/README.md).
 
 ![logo](felix.jpg)

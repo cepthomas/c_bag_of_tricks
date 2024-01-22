@@ -1,17 +1,22 @@
-
 # Build the module with its unit tests.
-# This is a Windows 64 bit build. PATH must include ...\mingw64\bin.
 
 cmake_minimum_required(VERSION 3.5)
 
 project(cbot_test)
+
+# This is a Windows 64 bit build. PATH must include \your\path\mingw64\bin.
+if(NOT CMAKE_SIZEOF_VOID_P EQUAL 8)
+    message(FATAL_ERROR "Project must be built for 64 bit")
+endif()
 
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall")
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall")
 
+add_compile_definitions(USE_PROBE=1)
 
+# Header files.
 include_directories(
     source
     pnut
