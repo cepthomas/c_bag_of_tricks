@@ -25,7 +25,7 @@ uint32_t chksum_crc32(uint32_t crc_in, const uint8_t* buf, size_t len, bool adju
 
     uint32_t crc = 0;
 
-#ifdef _CRC32 // TODO-DBG fix this!
+#ifdef _CRC32 // TODO3-TEST fix this!
     crc = crc_in;
 
     // This check is not thread safe; there is no mutex.
