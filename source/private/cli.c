@@ -168,20 +168,16 @@ int cli_ReadLine(cli_args_t* args)
             case '\r':
                 // Echo return.
                 cli_WriteLine("");
-
                 // Line chars_done.
                 line_done = true;
-
                 // Echo prompt.
                 //cli_WriteLine("");
                 break;
             default:
                 // Echo char.
                 cli_WriteChar(c);
-                
                 // Save it.
                 _cli_buff[_buff_index++] = c;
-
                 // Check for overrun.
                 if (_buff_index >= CLI_BUFF_LEN - 1)
                 {

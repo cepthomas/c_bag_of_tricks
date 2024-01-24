@@ -47,6 +47,7 @@ add_executable(cbot_test
     test/lock.c
     test/test_ftimer.cpp
     test/test_stopwatch.cpp
+    test/test_cli.cpp
     )
 
 target_link_libraries(cbot_test
