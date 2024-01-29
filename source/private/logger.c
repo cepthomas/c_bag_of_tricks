@@ -5,7 +5,7 @@
 #include <stdarg.h>
 #include <assert.h>
 #include <time.h>
-#include <sys/time.h>
+//#include <sys/time.h>
 
 #include "diagnostics.h"
 #include "cbot.h"
@@ -28,7 +28,7 @@ static FILE* p_fp = NULL;
 static long long p_start_tick;
 
 /// The performance counter scale.
-static double p_ticks_per_sec;
+static long long p_ticks_per_sec;
 
 /// Translate to human.
 /// @param level to translate.
@@ -89,7 +89,7 @@ int logger_Log(log_level_t level, log_cat_t cat, int line, const char* format, .
             LARGE_INTEGER f;
             QueryPerformanceCounter(&f);
             long long elapsed_ticks = f.QuadPart - p_start_tick;
-            double sec = (double)(elapsed_ticks / p_ticks_per_sec);
+            double sec = (double)elapsed_ticks / p_ticks_per_sec;
 
             fprintf(p_fp, "%03.6f,%s,%s,%d,%s\n", sec, p_XlatLogLevel(level), p_XlatLogCat(cat), line, buff);
         }

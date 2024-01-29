@@ -57,7 +57,7 @@ static long long _CurrentTick(void)
 
 // Conversion for values.
 // @return msec
-static double _TicksToMsec(long ticks)
+static double _TicksToMsec(long long ticks)
 {
     return 1000.0 * ticks / _ticks_per_msec;
 }
@@ -133,7 +133,7 @@ time_results_t* timeanalyzer_Grab()
 
     bool stats = false;
 
-    long et = _CurrentTick(); // snap!
+    long long et = _CurrentTick(); // snap!
 
     if (_last_tick != -1 && _skip_count-- < 0)
     {

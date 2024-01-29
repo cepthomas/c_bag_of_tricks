@@ -115,7 +115,7 @@ int stringx_Len(stringx_t* s)
 {
     VAL_PTR(s, -CBOT_ERR_ARG_NULL);  // negative
 
-    return strlen(s->raw);
+    return (int)strlen(s->raw);
 }
 
 //--------------------------------------------------------//
@@ -131,7 +131,11 @@ int stringx_Compare(stringx_t* s1, const char* s2, bool csens)
     }
     else
     {
-        ret = strcasecmp(s1->raw, s2);
+#ifdef _WIN32
+        ret = _stricmp(s1->raw, s2);
+#else // mingw
+        //ret = strcasecmp(s1->raw, s2);
+#endif
     }
 
     // Impedance match.
@@ -153,7 +157,7 @@ int stringx_Contains(stringx_t* s1, const char* s2, bool csens)
     if(csens)
     {
         char* p = strstr(s1->raw, s2);
-        index = (p != NULL) ? p - s1->raw : -1;
+        index = (p != NULL) ? (int)(p - s1->raw) : -1;
     }
     else
     {
@@ -164,7 +168,7 @@ int stringx_Contains(stringx_t* s1, const char* s2, bool csens)
         stringx_ToLower(lc2);
 
         char* p = strstr(lc1->raw, lc2->raw);
-        index = (p != NULL) ? p - lc1->raw : -1;
+        index = (p != NULL) ? (int)(p - lc1->raw) : -1;
         stringx_Destroy(lc1);
         stringx_Destroy(lc2);
     }
@@ -181,7 +185,7 @@ bool stringx_StartsWith(stringx_t* s1, const char* s2, bool csens)
 
     bool match = stringx_Len(s1) >= strlen(s2);
 
-    for (unsigned int i = 0; i < stringx_Len(s1) && i < strlen(s2) && match; i++)
+    for (int i = 0; i < stringx_Len(s1) && i < strlen(s2) && match; i++)
     {
         match = p_Match(s1->raw[i], s2[i], csens);
     }
@@ -196,9 +200,9 @@ bool stringx_EndsWith(stringx_t* s1, const char* s2, bool csens)
     VAL_PTR(s2, false);
 
     bool match = stringx_Len(s1) >= strlen(s2);
-    unsigned int ind1 = stringx_Len(s1) - strlen(s2);
+    unsigned int ind1 = stringx_Len(s1) - (int)strlen(s2);
 
-    for (unsigned int i = 0; i < stringx_Len(s1) && i < strlen(s2) && match; i++)
+    for (int i = 0; i < stringx_Len(s1) && i < strlen(s2) && match; i++)
     {
         match = p_Match(s1->raw[ind1++], s2[i], csens);
     }
@@ -292,9 +296,9 @@ int stringx_ToUpper(stringx_t* s)
 
     int stat = CBOT_ERR_NO_ERR;
 
-    unsigned int len = strlen(s->raw);
+    int len = (int)strlen(s->raw);
 
-    for (unsigned int i = 0; i < len; i++)
+    for (int i = 0; i < len; i++)
     {
         if(isalpha(s->raw[i]))
         {
@@ -312,9 +316,9 @@ int stringx_ToLower(stringx_t* s)
 
     int stat = CBOT_ERR_NO_ERR;
 
-    unsigned int len = strlen(s->raw);
+    int len = (int)strlen(s->raw);
 
-    for (unsigned int i = 0; i < len; i++)
+    for (int i = 0; i < len; i++)
     {
         if(isalpha(s->raw[i]))
         {

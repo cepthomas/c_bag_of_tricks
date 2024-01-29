@@ -16,18 +16,18 @@
 struct TestContext
 {
     /// Current suite.
-    const char* CurrentSuiteId;
+    const char* CurrentSuiteId = {};
 
     /// Output format:
     ///  - 'r' for human readable.
     ///  - 'x' for junit xml.
-    char Format;
+    char Format = {};
 
     /// Collected output lines.
-    std::vector<std::string> OutLines;
+    std::vector<std::string> OutLines = {};
 
     /// Collected property lines.
-    std::vector<std::string> PropLines;
+    std::vector<std::string> PropLines = {};
 
     /// Reset the context.
     void Reset();

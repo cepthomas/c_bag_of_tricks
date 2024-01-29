@@ -125,7 +125,7 @@ void TestManager::RunSuites(std::vector<std::string> which, char fmt)
         {
             for(std::vector<std::string>::iterator itRun = which.begin(); itRun != which.end(); ++itRun)
             {
-                int n = (*iter)->ID.find(*itRun);
+                int n = (int)(*iter)->ID.find(*itRun);
                 if(n == 0) // beginning of name
                 {
                     newSuite = true;
