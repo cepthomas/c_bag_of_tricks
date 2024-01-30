@@ -131,10 +131,10 @@ int stringx_Compare(stringx_t* s1, const char* s2, bool csens)
     }
     else
     {
-#ifdef _WIN32
+#if defined(_MSC_VER)
         ret = _stricmp(s1->raw, s2);
 #else // mingw
-        //ret = strcasecmp(s1->raw, s2);
+        ret = strcasecmp(s1->raw, s2);
 #endif
     }
 
