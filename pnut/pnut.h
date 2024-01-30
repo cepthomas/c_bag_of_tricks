@@ -106,7 +106,8 @@ public:
     /// Run all selected test suites.
     /// @param which List of IDs to run.
     /// @param fmt @see TestContext.Format.
-    void RunSuites(std::vector<std::string> which, char fmt);
+    /// @param where output: optional file or cout.
+    void RunSuites(std::vector<std::string> which, char fmt, std::ostream* where = &std::cout);
 };
 
 

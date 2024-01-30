@@ -8,7 +8,6 @@ void TestContext::Reset()
 {
     CurrentSuiteId = "???";
     Format = 'r';
-
     OutLines.clear();
     PropLines.clear();
 }
@@ -107,7 +106,7 @@ void TestManager::AddSuite(TestSuite* ptc)
 }
 
 //---------------------------------------------------------------//
-void TestManager::RunSuites(std::vector<std::string> which, char fmt)
+void TestManager::RunSuites(std::vector<std::string> which, char fmt, std::ostream* where)
 {
     _context.Reset();
     _context.Format = fmt;
@@ -202,30 +201,30 @@ void TestManager::RunSuites(std::vector<std::string> which, char fmt)
 
     if(_context.Format == 'x')
     {
-        std::cout << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << std::endl;
-        std::cout << "<testsuites" << " tests=" << caseCnt << " failures=" << failCnt << " fatal=" << fatalCnt << " time=" << dur << ">" << std::endl;
+        *where << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << std::endl;
+        *where << "<testsuites" << " tests=" << caseCnt << " failures=" << failCnt << " fatal=" << fatalCnt << " time=" << dur << ">" << std::endl;
     }
     else // readable
     {
-        std::cout << "#------------------------------------------------------------------" << std::endl;
-        std::cout << "# Unit Test Report" << std::endl;
-        std::cout << "# Start Time: " << sStartTime << std::endl;
-        std::cout << "# Duration: " << dur << std::endl;
-        std::cout << "# Cases Run: " << caseCnt << std::endl;
-        std::cout << "# Cases Failed: " << failCnt << std::endl;
-        std::cout << "# Fatal Suites: " << fatalCnt << std::endl;
-        std::cout << "# Test Result: " << ((failCnt > 0) || (fatalCnt > 0) ? "Fail" : "Pass") << std::endl;
-        std::cout << "#--------------------------------------------------------------------" << std::endl;
+        *where << "#------------------------------------------------------------------" << std::endl;
+        *where << "# Unit Test Report" << std::endl;
+        *where << "# Start Time: " << sStartTime << std::endl;
+        *where << "# Duration: " << dur << std::endl;
+        *where << "# Cases Run: " << caseCnt << std::endl;
+        *where << "# Cases Failed: " << failCnt << std::endl;
+        *where << "# Fatal Suites: " << fatalCnt << std::endl;
+        *where << "# Test Result: " << ((failCnt > 0) || (fatalCnt > 0) ? "Fail" : "Pass") << std::endl;
+        *where << "#--------------------------------------------------------------------" << std::endl;
     }
 
     /// Write out the test result lines.
     for(std::vector<std::string>::iterator iter = _context.OutLines.begin(); iter != _context.OutLines.end(); ++iter)
     {
-        std::cout << *iter;
+        *where << *iter;
     }
 
     if(_context.Format == 'x')
     {
-        std::cout << "</testsuites>" << std::endl;
+        *where << "</testsuites>" << std::endl;
     }
 }
