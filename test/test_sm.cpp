@@ -16,7 +16,7 @@ extern "C"
 /////////////////////////////////////////////////////////////////////////////
 UT_SUITE(SM_MAIN, "Test the full state machine using a real world example.")
 {
-    logger_SetFilters(LVL_DEBUG, CAT_ALL);
+    logger_SetFilters(LVL_INFO, CAT_ALL); //LVL_DEBUG
 
     // Create a new lock.
     sm_t* sm = lock_Create();

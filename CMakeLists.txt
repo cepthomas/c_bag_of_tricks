@@ -14,7 +14,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall")
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall")
 
-add_compile_definitions(USE_PROBE=1)
+# add_compile_definitions(USE_PROBE=1)
 
 # Header files.
 include_directories(
@@ -34,6 +34,7 @@ add_executable(cbot_test
     source/private/cli.c
     source/private/ftimer.c
     source/private/stopwatch.c
+    source/private/timeanalyzer.c
     pnut/pnut.cpp
     test/main.cpp
     test/test_diagnostics.cpp
@@ -47,6 +48,7 @@ add_executable(cbot_test
     test/lock.c
     test/test_ftimer.cpp
     test/test_stopwatch.cpp
+    test/test_timeanalyzer.cpp
     test/test_cli.cpp
     )
 

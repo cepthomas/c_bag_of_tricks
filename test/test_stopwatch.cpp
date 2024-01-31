@@ -1,4 +1,3 @@
-
 #include <Windows.h>
 #include <cstdio>
 #include <cstring>
@@ -24,7 +23,7 @@ UT_SUITE(STOPWATCH_BASIC, "Test all stopwatch functions.")
 
     Sleep(1000);
 
-    UT_CLOSE(stopwatch_ElapsedMsec(), 1000.0, 5.0); // because sleep() is sloppy TODO3 still off a bit on first one.
+    UT_CLOSE(stopwatch_ElapsedMsec(), 1000.0, 10.0); // because sleep() is sloppy TODO3 still off a bit on first one.
 
     return 0;
 }

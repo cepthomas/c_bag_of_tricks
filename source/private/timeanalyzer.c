@@ -14,8 +14,8 @@
 /// How many.
 static int _num_samples = 0;
 
-// State.
-static bool _running = false;
+// // State.
+// static bool _running = false;
 
 // State.
 static bool _armed = false;
@@ -23,8 +23,8 @@ static bool _armed = false;
 /// Periodic time.
 static long long _last_tick = -1;
 
-/// False if high res is not available.
-static bool _valid = false;
+// /// False if high res is not available.
+// static bool _valid = false;
 
 /// The current performance counter scale, in ticks per msec.
 static double _ticks_per_msec;
@@ -73,12 +73,12 @@ int timeanalyzer_Init(int num_samples)
     if (num_samples > MAX_SAMPLES)
     {
         stat = EINVAL;
-        _valid = false;
+        // _valid = false;
     }
     else
     {
         _num_samples = num_samples;
-        _valid = true;
+        // _valid = true;
     }
 
     LARGE_INTEGER f;
@@ -94,7 +94,7 @@ int timeanalyzer_Init(int num_samples)
 //--------------------------------------------------------//
 void timeanalyzer_Reset(void)
 {
-    _running = false;
+    // _running = false;
     _armed = false;
 
     // Clear current.
@@ -104,16 +104,16 @@ void timeanalyzer_Reset(void)
 }
 
 
-//--------------------------------------------------------//
-bool timeanalyzer_Run(bool on)
-{
-    if(_valid)
-    {
-        _running = on;
-    }
+// //--------------------------------------------------------//
+// bool timeanalyzer_Run(bool on)
+// {
+//     if(_valid)
+//     {
+//         _running = on;
+//     }
 
-    return _running;
-}
+//     return _running;
+// }
 
 
 //--------------------------------------------------------//

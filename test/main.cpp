@@ -22,6 +22,7 @@ int main()
     whichSuites.emplace_back("DICT");
     whichSuites.emplace_back("FTIMER");
     whichSuites.emplace_back("STOPWATCH");
+    whichSuites.emplace_back("TMAN");
 
     // Init system before running tests.
     // FILE* fp = fopen("log_test_out.txt", "w");

@@ -24,10 +24,10 @@ int timeanalyzer_Init(int max_samples);
 /// Resets everything.
 void timeanalyzer_Reset(void);
 
-/// Start or stop the analysis.
-/// @param on T/F
-/// @return running
-bool timeanalyzer_Run(bool on);
+// /// Start or stop the analysis.
+// /// @param on T/F
+// /// @return running
+// bool timeanalyzer_Run(bool on);
 
 /// Start timing capture.
 void timeanalyzer_Arm(void);
