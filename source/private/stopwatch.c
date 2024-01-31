@@ -3,10 +3,6 @@
 #include <stdio.h>
 #include "stopwatch.h"
 
-// From Stopwatch.cs:
-// When measuring small time periods the StopWatch.Elapsed* properties can return negative values.
-// This is due to bugs in the basic input/output system (BIOS) or the hardware
-// abstraction layer (HAL) on machines with variable-speed CPUs (e.g. Intel SpeedStep).
 
 
 //---------------- Private Declarations ------------------//

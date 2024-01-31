@@ -3,8 +3,9 @@
 #include <math.h>
 
 #include "cbot.h"
-#include "timeanalyzer.h" // TODO2 need unit tests.
+#include "timeanalyzer.h"
 
+// TODO1 implement/test. Consolidate with stopwatch?
 
 //---------------- Privates ------------------------------//
 
