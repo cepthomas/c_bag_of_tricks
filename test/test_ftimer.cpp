@@ -63,7 +63,7 @@ UT_SUITE(FTIMER_BASIC, "Test all ftimer functions.")
     p_ticks_per_msec = (double)f.QuadPart / 1000.0;
 
     // Set resolution to best.
-    int stat = ftimer_Init(PeriodicInterruptFunc, 1);
+    int stat = ftimer_Init(PeriodicInterruptFunc, 10);
     UT_EQUAL(stat, 0);
 
     p_last_tick = p_CurrentTick();
