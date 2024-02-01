@@ -30,12 +30,6 @@ static double p_accum_msec = 0.0;
 /// Timer state. 0=stopped 1=running -1=invalid.
 static int p_state = -1;
 
-/// Simple stats.
-static double p_tmin = 1000;
-
-/// Simple stats.
-static double p_tmax = 0;
-
 /// Measuring.
 static long long p_last_tick = -1;
 
@@ -67,9 +61,6 @@ int ftimer_Init(ftimer_InterruptFunc_t fp, unsigned ft_res)
     QueryPerformanceFrequency(&f);
     p_ticks_per_msec = (double)f.QuadPart / 1000.0;
     p_interrupt_func = fp;
-    p_tmin = 1000;
-    p_tmax = 0;
-    //printf("ftimer_Init() p_state=%d\n", p_state);
     return stat;
 }
 
@@ -108,14 +99,12 @@ int ftimer_Run(unsigned period)
 
             p_sys_handle = 0;
             p_state = 0;
-            //printf("p_tmin:%g p_tmax:%g\n", p_tmin, p_tmax);
         }
     }
     else
     {
         stat = EINVAL;
     }
-    //printf("ftimer_Run()2 p_state=%d stat=%d\n", p_state, stat);
 
     return stat;
 }
@@ -151,21 +140,16 @@ void CALLBACK p_TimerCallback(UINT uID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR d
 {
     if(p_state == 1)
     {
-        // printf(".");
         // When are we?
         LARGE_INTEGER f;
         QueryPerformanceCounter(&f);
         long long elapsed_ticks = f.QuadPart - p_last_tick;
+        p_last_tick = f.QuadPart;
         double msec = (double)(elapsed_ticks / p_ticks_per_msec);
 
-        p_tmin = msec < p_tmin ? msec : p_tmin;
-        p_tmax = msec > p_tmax ? msec : p_tmax;
-
-        // Check for expirations.
+        // Check for expiration. Allow values +- resolution / 2.
         p_accum_msec += msec;
-        const double ALLOWANCE = 0.5; // msec
-
-        if((p_period - p_accum_msec) < ALLOWANCE)
+        if((p_period - p_accum_msec) < (double)p_ft_res / 2)
         {
             if(p_interrupt_func != NULL)
             {

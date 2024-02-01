@@ -33,8 +33,10 @@ long long p_CurrentTick(void)
 
 
 //-------------------------------------------------------//
-void PeriodicInterruptFunc(double msec)
+void PeriodicInterruptFunc(double ftimer_msec)
 {
+    // printf("ftimer_msec:%f\n", ftimer_msec);
+
     if(p_test_index < TEST_COUNT)
     {
         long long current_tick = p_CurrentTick();
@@ -80,21 +82,18 @@ UT_SUITE(FTIMER_BASIC, "Test all ftimer functions.")
 
     ftimer_Destroy();
 
-    // for(int i = 0; i < p_test_index; i++)
-    // {
-    //     printf("%d:%f\n", i, p_test_res[i]);
-    // }
-
-    // Check what happened. TODO1 doesn't work.
+    // Check what happened.
     stat_results_t res;
     int num = p_test_index;
     mathutils_CalcStats(p_test_res, num, &res);
     UT_INFO("Num vals", res.num_vals);
     UT_EQUAL(res.num_vals, num);
-    UT_CLOSE(res.mean, 5.00, 0.01);
-    UT_CLOSE(res.min, 5.00, 0.01);
-    UT_CLOSE(res.max, 5.00, 0.01);
-    UT_CLOSE(res.sd, 5.00, 0.01);
+    UT_CLOSE(res.mean, 10.00, 0.5);
+    UT_CLOSE(res.min, 10.00, 0.5);
+    UT_CLOSE(res.max, 10.00, 0.5);
+    UT_CLOSE(res.sd, 1.00, 0.01);
+
+    // printf("stat_results_t: num:%d mean:%f min:%f max:%f sd:%f allow:%f\n", num, res.mean, res.min, res.max, res.sd, (res.max - res.min) / 2);
 
     return 0;
 }
