@@ -8,16 +8,28 @@
 
 extern "C"
 {
-//#include "stopwatch.h"
+#include "mathutils.h"
 #include "ftimer.h"
 }
 
+// The current performance counter scale.
+static double p_ticks_per_msec;
 
-static double p_last_msec = 0.0;
+// Periodic time.
+static long long p_last_tick;
+
 #define TEST_COUNT 100
-double p_test_res_1[TEST_COUNT]; // driver says
-double p_test_res_2[TEST_COUNT]; // I say
+double p_test_res[TEST_COUNT];
 int p_test_index = 0;
+
+
+//--------------------------------------------------------//
+long long p_CurrentTick(void)
+{
+    LARGE_INTEGER ts;
+    QueryPerformanceCounter(&ts);
+    return ts.QuadPart;
+}
 
 
 //-------------------------------------------------------//
@@ -25,10 +37,11 @@ void PeriodicInterruptFunc(double msec)
 {
     if(p_test_index < TEST_COUNT)
     {
-        double em = stopwatch_TotalElapsedMsec();
-        p_test_res_1[p_test_index] = msec;
-        p_test_res_2[p_test_index] = em - p_last_msec;
-        p_last_msec = em;
+        long long current_tick = p_CurrentTick();
+        long long elapsed_ticks = current_tick - p_last_tick;
+        double msec = (double)elapsed_ticks / p_ticks_per_msec;
+        p_test_res[p_test_index] = msec;
+        p_last_tick = current_tick;
         p_test_index++;
     }
     else
@@ -43,15 +56,18 @@ UT_SUITE(FTIMER_BASIC, "Test all ftimer functions.")
 {
     // stopwatch_Init();
     
-    // Happy path.
-    int stat = ftimer_Init(PeriodicInterruptFunc, 5);
+    LARGE_INTEGER f;
+    QueryPerformanceFrequency(&f);
+    p_ticks_per_msec = (double)f.QuadPart / 1000.0;
+
+    // Set resolution to best.
+    int stat = ftimer_Init(PeriodicInterruptFunc, 1);
     UT_EQUAL(stat, 0);
 
-    // Grab the stopwatch time.
-    p_last_msec = stopwatch_TotalElapsedMsec();
+    p_last_tick = p_CurrentTick();
 
-    // Go.
-    UT_EQUAL(ftimer_Run(17), 0);
+    // Go. 10 msec period.
+    UT_EQUAL(ftimer_Run(10), 0);
 
     int timeout = 30; // safety
     while(ftimer_IsRunning() && timeout > 0)
@@ -64,26 +80,21 @@ UT_SUITE(FTIMER_BASIC, "Test all ftimer functions.")
 
     ftimer_Destroy();
 
-    // Check what happened.
-    double vmin_1 = 1000;
-    double vmax_1 = 0;
-    double vmin_2 = 1000;
-    double vmax_2 = 0;
+    // for(int i = 0; i < p_test_index; i++)
+    // {
+    //     printf("%d:%f\n", i, p_test_res[i]);
+    // }
 
-    for(int i = 0; i < TEST_COUNT; i++)
-    {
-        double v = p_test_res_1[i];
-        vmin_1 = v < vmin_1 ? v : vmin_1;
-        vmax_1 = v > vmax_1 ? v : vmax_1;
-
-        v = p_test_res_2[i];
-        vmin_2 = v < vmin_2 ? v : vmin_2;
-        vmax_2 = v > vmax_2 ? v : vmax_2;
-
-        //printf("%g\n", p_test_res[i]);
-    }
-
-    //printf("max_1:%g min_1:%g max_2:%g min_2:%g\n", vmax_1, vmin_1, vmax_2, vmin_2);
+    // Check what happened. TODO1 doesn't work.
+    stat_results_t res;
+    int num = p_test_index;
+    mathutils_CalcStats(p_test_res, num, &res);
+    UT_INFO("Num vals", res.num_vals);
+    UT_EQUAL(res.num_vals, num);
+    UT_CLOSE(res.mean, 5.00, 0.01);
+    UT_CLOSE(res.min, 5.00, 0.01);
+    UT_CLOSE(res.max, 5.00, 0.01);
+    UT_CLOSE(res.sd, 5.00, 0.01);
 
     return 0;
 }

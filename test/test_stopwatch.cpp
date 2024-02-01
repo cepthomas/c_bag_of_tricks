@@ -11,33 +11,33 @@ extern "C"
 }
 
 
-// TODO3 This doesn't actually test the stopwatch but rather the accuracy of Sleep().
-
+// TODO3 This doesn't actually test the stopwatch but rather the accuracy of Sleep() ~15.6ms. Oh well.
+const double TRES = 16; 
 
 
 /////////////////////////////////////////////////////////////////////////////
 UT_SUITE(STOPWATCH_BASIC, "Test all stopwatch functions.")
 {
-    // What do we know?
-    TIMECAPS tcaps;
-    MMRESULT res = timeGetDevCaps(&caps, sizeof(caps));
-    UT_INFO("wPeriodMin", tcaps.wPeriodMin);
-    UT_INFO("wPeriodMax", tcaps.wPeriodMax);
+    // What do we know? 1 -> 1000000.
+    // TIMECAPS tcaps;
+    // timeGetDevCaps(&tcaps, sizeof(tcaps));
+    // UT_INFO("wPeriodMin", tcaps.wPeriodMin);
+    // UT_INFO("wPeriodMax", tcaps.wPeriodMax);
 
     // Single capture accuracy.
     stopwatch_Init();
     UT_CLOSE(stopwatch_ElapsedMsec(), 0.0, 0.01);
 
     Sleep(250);
-    UT_CLOSE(stopwatch_ElapsedMsec(), 250.0, 10.0);
+    UT_CLOSE(stopwatch_ElapsedMsec(), 250.0, TRES);
 
     stopwatch_Reset();
     Sleep(500);
-    UT_CLOSE(stopwatch_ElapsedMsec(), 500.0, 10.0);
+    UT_CLOSE(stopwatch_ElapsedMsec(), 500.0, TRES);
 
     stopwatch_Reset();
     Sleep(1000);
-    UT_CLOSE(stopwatch_ElapsedMsec(), 1000.0, 10.0);
+    UT_CLOSE(stopwatch_ElapsedMsec(), 1000.0, TRES);
 
     stopwatch_Reset();
     UT_CLOSE(stopwatch_ElapsedMsec(), 0.0, 0.01);
@@ -52,13 +52,13 @@ UT_SUITE(STOPWATCH_BASIC, "Test all stopwatch functions.")
         vals[i] = stopwatch_ElapsedMsec();
     }
 
-    stat_results_t res;
-    mathutils_CalcDouble(vals, NUM, &res);
-    UT_EQUAL(res.num_vals, NUM);
-    UT_CLOSE(res.mean, 100.0, 0.01);
-    UT_CLOSE(res.min, 100.0, 0.01);
-    UT_CLOSE(res.max, 100.0, 0.01);
-    UT_CLOSE(res.sd, 100.0, 0.01);
+    stat_results_t stats;
+    mathutils_CalcStats(vals, NUM, &stats);
+    UT_EQUAL(stats.num_vals, NUM);
+    UT_CLOSE(stats.mean, 100.0, TRES);
+    UT_CLOSE(stats.min, 100.0, TRES);
+    UT_CLOSE(stats.max, 100.0, TRES);
+    UT_CLOSE(stats.sd, 0.6, 0.1);
 
     return 0;
 }

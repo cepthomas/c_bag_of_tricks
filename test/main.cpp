@@ -13,7 +13,6 @@ int main()
     // Run the requested tests. Could be obtained from the command line.
     std::vector<std::string> whichSuites;
 
-    whichSuites.emplace_back("MATHUTILS");
     // whichSuites.emplace_back("LOGGER");
     // whichSuites.emplace_back("SM");
     // whichSuites.emplace_back("DIAG");
@@ -21,10 +20,10 @@ int main()
     // whichSuites.emplace_back("STR");
     // whichSuites.emplace_back("DICT");
 
-
-    whichSuites.emplace_back("STOPWATCH");
+    // whichSuites.emplace_back("MATHUTILS");
+    // whichSuites.emplace_back("STOPWATCH");
     whichSuites.emplace_back("FTIMER");
-    // whichSuites.emplace_back("TMAN");
+
 
     // Init system before running tests.
     FILE* fp = fopen("cbot_log.txt", "a");
