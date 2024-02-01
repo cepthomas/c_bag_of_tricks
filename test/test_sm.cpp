@@ -16,7 +16,7 @@ extern "C"
 /////////////////////////////////////////////////////////////////////////////
 UT_SUITE(SM_MAIN, "Test the full state machine using a real world example.")
 {
-    logger_SetFilters(LVL_INFO, CAT_ALL); //LVL_DEBUG
+    logger_SetFilters(LVL_DEBUG);
 
     // Create a new lock.
     sm_t* sm = lock_Create();
@@ -73,7 +73,7 @@ UT_SUITE(SM_MAIN, "Test the full state machine using a real world example.")
 /////////////////////////////////////////////////////////////////////////////
 UT_SUITE(SM_DOT, "Test the dot file creation.")
 {
-    logger_SetFilters(LVL_DEBUG, CAT_ALL);
+    logger_SetFilters(LVL_DEBUG);
 
     system("del /q sm.*");
 
@@ -82,7 +82,7 @@ UT_SUITE(SM_DOT, "Test the dot file creation.")
 
     // Create a lock sm.
     sm_t* sm = lock_Create();
-    LOG_DEBUG(CAT_SM, "Lock created");
+    LOG_DEBUG("Lock created");
 
     sm_ToDot(sm, fp);
     fclose(fp);

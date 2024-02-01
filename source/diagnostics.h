@@ -11,7 +11,7 @@
 /// A crude memory alloc/free probe mechanism. Used to detect leaks during the collections development.
 /// Enable it being changing the define below, building, then run proc_mem.py. You can strip it out if you want.
 #ifdef USE_PROBE
-#define PROBE(mark, var, ln, fn) logger_Log(LVL_DEBUG, CAT_MEM, __LINE__, "%s,%p,%d,\"%s\"", mark, var, __LINE__, fn)
+#define PROBE(mark, var, ln, fn) LOG_TRACE("%s,%p,\"%s\"", mark, var, fn)
 #else
 #define PROBE(mark, var, ln, fn)
 #endif
@@ -20,7 +20,7 @@
 /// @param line Number.
 /// @param file Name.
 #ifdef USE_PROBE
-#define MEM_FAIL(line, file) { logger_Log(LVL_ERROR, CAT_MEM, line, "MEM_FAIL: %s", file); exit(1); }
+#define MEM_FAIL(line, file) { logger_Log(LVL_ERROR, line, "MEM_FAIL: %s", file); exit(1); }
 #else
 #define MEM_FAIL(line, file) exit(1)
 #endif

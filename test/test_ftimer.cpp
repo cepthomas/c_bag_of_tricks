@@ -8,7 +8,7 @@
 
 extern "C"
 {
-#include "stopwatch.h"
+//#include "stopwatch.h"
 #include "ftimer.h"
 }
 
@@ -41,7 +41,7 @@ void PeriodicInterruptFunc(double msec)
 /////////////////////////////////////////////////////////////////////////////
 UT_SUITE(FTIMER_BASIC, "Test all ftimer functions.")
 {
-    stopwatch_Init();
+    // stopwatch_Init();
     
     // Happy path.
     int stat = ftimer_Init(PeriodicInterruptFunc, 5);
@@ -58,8 +58,9 @@ UT_SUITE(FTIMER_BASIC, "Test all ftimer functions.")
     {
         Sleep(100);
         timeout--;
-        // printf("timeout:%d\n", timeout);
     }
+
+    UT_GREATER(timeout, 0);
 
     ftimer_Destroy();
 

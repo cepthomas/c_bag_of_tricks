@@ -192,7 +192,7 @@ int sm_ProcessEvent(sm_t* sm, unsigned int event_id)
             unsigned int qevtid = *qevt;
             FREE(qevt);
 
-            LOG_DEBUG(CAT_SM, "SM: Process current state %s event %s",
+            LOG_DEBUG("SM: Process current state %s event %s",
                      sm->xlat(sm->current_state->state_id), sm->xlat(qevtid));
 
             // Find match with this event for present state.
@@ -262,7 +262,7 @@ int sm_ProcessEvent(sm_t* sm, unsigned int event_id)
 
                     if(next_state != NULL)
                     {
-                        LOG_DEBUG(CAT_SM, "SM: Changing state from %s to %s",
+                        LOG_DEBUG("SM: Changing state from %s to %s",
                                  sm->xlat(sm->current_state->state_id), sm->xlat(next_state->state_id));
                         sm->current_state = next_state;
                         if(sm->current_state->func != NULL)
@@ -272,18 +272,18 @@ int sm_ProcessEvent(sm_t* sm, unsigned int event_id)
                     }
                     else
                     {
-                        LOG_DEBUG(CAT_SM, "SM: Couldn't find next state from %s to %s",
+                        LOG_DEBUG("SM: Couldn't find next state from %s to %s",
                                  sm->xlat(sm->current_state->state_id), sm->xlat(next_state->state_id)); // Should be an error.
                     }
                 }
                 else
                 {
-                    LOG_DEBUG(CAT_SM, "SM: Same state %s", sm->xlat(sm->current_state->state_id));
+                    LOG_DEBUG("SM: Same state %s", sm->xlat(sm->current_state->state_id));
                 }
             }
             else
             {
-                LOG_DEBUG(CAT_SM, "SM: No match for state %s for event %s",
+                LOG_DEBUG("SM: No match for state %s for event %s",
                          sm->xlat(sm->current_state->state_id), sm->xlat(qevtid));
             }
         }

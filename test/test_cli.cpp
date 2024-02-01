@@ -13,7 +13,7 @@ extern "C"
 /////////////////////////////////////////////////////////////////////////////
 UT_SUITE(CLI_MAIN, "TODO2 tests please.")
 {
-    logger_SetFilters(LVL_DEBUG, CAT_ALL);
+    logger_SetFilters(LVL_DEBUG);
 
     // // Should come up in the locked state.
     // UT_STR_EQUAL(STATE_STR, "ST_LOCKED");

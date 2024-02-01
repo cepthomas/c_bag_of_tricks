@@ -13,9 +13,6 @@ static long long p_start_tick;
 /// Periodic time.
 static long long p_last_tick;
 
-/// Don't init multiple times.
-static bool p_inited = false;
-
 /// The current performance counter scale.
 static double p_ticks_per_msec;
 
@@ -29,17 +26,13 @@ static long long p_CurrentTick(void);
 //--------------------------------------------------------//
 void stopwatch_Init(void)
 {
-    if (!p_inited)
-    {
-        p_start_tick = 0;
-        p_last_tick = 0;
+    p_start_tick = 0;
+    p_last_tick = 0;
 
-        LARGE_INTEGER f;
-        QueryPerformanceFrequency(&f);
-        p_inited = true;
-        p_ticks_per_msec = (double)f.QuadPart / 1000.0;
-        stopwatch_Reset();
-    }
+    LARGE_INTEGER f;
+    QueryPerformanceFrequency(&f);
+    p_ticks_per_msec = (double)f.QuadPart / 1000.0;
+    stopwatch_Reset();
 }
 
 //--------------------------------------------------------//

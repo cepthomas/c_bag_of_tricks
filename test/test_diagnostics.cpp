@@ -12,7 +12,7 @@ extern "C"
 /////////////////////////////////////////////////////////////////////////////
 UT_SUITE(DIAG_MEM, "Test memory probe functions. Make sure PROBE is set in diagnostics.h.")
 {
- //   logger_SetFilters(LVL_DEBUG, CAT_MEM);
+    logger_SetFilters(LVL_TRACE);
 
     const int STR_LEN = 16;
     const int NUM_TS = 20;

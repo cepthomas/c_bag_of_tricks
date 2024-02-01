@@ -133,7 +133,7 @@ int lock_PressKey(char key)
 {
     int ret = CBOT_ERR_NO_ERR;
 
-    LOG_DEBUG(CAT_SM, "LOCK: lock_PressKey(%c)", key);
+    LOG_DEBUG("LOCK: lock_PressKey(%c)", key);
 
     p_current_key = key;
 
@@ -196,7 +196,7 @@ int InitialEnter()
 {
     int ret = CBOT_ERR_NO_ERR;
 
-    LOG_DEBUG(CAT_SM, "LOCK: InitialEnter()");
+    LOG_DEBUG("LOCK: InitialEnter()");
 
     if(p_is_locked)
     {
@@ -215,7 +215,7 @@ int LockedEnter(void)
 {
     int ret = CBOT_ERR_NO_ERR;
 
-    LOG_DEBUG(CAT_SM, "LOCK: LockedEnter()");
+    LOG_DEBUG("LOCK: LockedEnter()");
     p_is_locked = true;
     list_Clear(p_current_entry);
 
@@ -227,7 +227,7 @@ int ClearCurrentEntry(void)
 {
     int ret = CBOT_ERR_NO_ERR;
 
-    LOG_DEBUG(CAT_SM, "LOCK: ClearCurrentEntry()");
+    LOG_DEBUG("LOCK: ClearCurrentEntry()");
     list_Clear(p_current_entry);
 
     return ret;
@@ -238,7 +238,7 @@ int LockedAddDigit(void)
 {
     int ret = CBOT_ERR_NO_ERR;
 
-    LOG_DEBUG(CAT_SM, "LOCK: LockedAddDigit()");
+    LOG_DEBUG("LOCK: LockedAddDigit()");
 
     CREATE_INST(data, lock_data_t);
     data->c = p_current_key;
@@ -280,7 +280,7 @@ int SetComboAddDigit(void)
 {
     int ret = CBOT_ERR_NO_ERR;
 
-    LOG_DEBUG(CAT_SM, "LOCK: SetComboAddDigit()");
+    LOG_DEBUG("LOCK: SetComboAddDigit()");
 
     CREATE_INST(data, lock_data_t);
     data->c = p_current_key;
@@ -294,7 +294,7 @@ int SetCombo(void)
 {
     int ret = CBOT_ERR_NO_ERR;
 
-    LOG_DEBUG(CAT_SM, "LOCK: SetCombo()");
+    LOG_DEBUG("LOCK: SetCombo()");
 
     int cnt_current = list_Count(p_current_entry);
 
@@ -330,7 +330,7 @@ int UnlockedEnter(void)
 {
     int ret = CBOT_ERR_NO_ERR;
 
-    LOG_DEBUG(CAT_SM, "LOCK: UnlockedEnter()");
+    LOG_DEBUG("LOCK: UnlockedEnter()");
     p_is_locked = false;
 
     return ret;
@@ -341,7 +341,7 @@ int TryDefault(void)
 {
     int ret = CBOT_ERR_NO_ERR;
 
-    LOG_DEBUG(CAT_SM, "LOCK: TryDefault()");
+    LOG_DEBUG("LOCK: TryDefault()");
     p_is_locked = true;
     list_Clear(p_current_entry);
 

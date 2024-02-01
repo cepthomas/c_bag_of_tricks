@@ -18,9 +18,6 @@
 /// Logging level.
 static log_level_t p_level = LVL_INFO;
 
-/// Logging filters.
-static log_cat_t p_cat = CAT_ALL;
-
 /// Output.
 static FILE* p_fp = NULL;
 
@@ -34,11 +31,6 @@ static long long p_ticks_per_sec;
 /// @param level to translate.
 /// @return string version
 static const char* p_XlatLogLevel(log_level_t level);
-
-/// Translate to human.
-/// @param cat to translate.
-/// @return string version
-static const char* p_XlatLogCat(log_cat_t cat);
 
 
 //---------------- Public API Implementation -------------//
@@ -59,15 +51,14 @@ int logger_Init(FILE* fp)
 }
 
 //--------------------------------------------------------//
-int logger_SetFilters(log_level_t level, log_cat_t cat)
+int logger_SetFilters(log_level_t level)
 {
     p_level = level;
-    p_cat = cat;
     return CBOT_ERR_NO_ERR;
 }
 
 //--------------------------------------------------------//
-int logger_Log(log_level_t level, log_cat_t cat, int line, const char* format, ...)
+int logger_Log(log_level_t level, int line, const char* format, ...)
 {
     VAL_PTR(format, CBOT_ERR_ARG_NULL);
 
@@ -77,7 +68,7 @@ int logger_Log(log_level_t level, log_cat_t cat, int line, const char* format, .
         static char buff[LOG_LINE_LEN];
 
         // Check filters.
-        if((level >= p_level) && (cat & p_cat))
+        if(level >= p_level)
         {
             va_list args;
             va_start(args, format);
@@ -91,7 +82,7 @@ int logger_Log(log_level_t level, log_cat_t cat, int line, const char* format, .
             long long elapsed_ticks = f.QuadPart - p_start_tick;
             double sec = (double)elapsed_ticks / p_ticks_per_sec;
 
-            fprintf(p_fp, "%03.6f,%s,%s,%d,%s\n", sec, p_XlatLogLevel(level), p_XlatLogCat(cat), line, buff);
+            fprintf(p_fp, "%03.6f %s %d %s\n", sec, p_XlatLogLevel(level), line, buff);
         }
     }
 
@@ -108,29 +99,10 @@ const char* p_XlatLogLevel(log_level_t level)
     switch(level)
     {
         case LVL_INFO:  strcpy(buff,  "INF"); break;
+        case LVL_TRACE: strcpy(buff,  "TRC"); break;
         case LVL_DEBUG: strcpy(buff,  "DBG"); break;
         case LVL_ERROR: strcpy(buff,  "ERR"); break;
         default: snprintf(buff, sizeof(buff)-1, "???%d", level); break;
-    }
-    return buff;
-}    
-
-//--------------------------------------------------------//
-const char* p_XlatLogCat(log_cat_t cat)
-{
-    static char buff[20];
-    switch(cat)
-    {
-        case CAT_INIT:    strcpy(buff, "INIT"); break;
-        case CAT_CREATE:  strcpy(buff, "CREATE"); break;
-        case CAT_DESTROY: strcpy(buff, "DESTROY"); break;
-        case CAT_ENTRY:   strcpy(buff, "ENTRY"); break;
-        case CAT_EXIT:    strcpy(buff, "EXIT"); break;
-        case CAT_LOOK:    strcpy(buff, "LOOK"); break;
-        case CAT_SM:      strcpy(buff, "SM"); break;
-        case CAT_MEM:     strcpy(buff, "MEM"); break;
-        case CAT_USER:    strcpy(buff, "USER"); break;
-        default: snprintf(buff, sizeof(buff)-1,  "???CAT_%d", cat); break;
     }
     return buff;
 }    

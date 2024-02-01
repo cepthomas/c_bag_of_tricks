@@ -30,11 +30,11 @@ add_executable(cbot_test
     source/private/dict.c
     source/private/state_machine.c
     source/private/stringx.c
-    source/private/chksum.c
+    source/private/mathutils.c
     source/private/cli.c
     source/private/ftimer.c
     source/private/stopwatch.c
-    source/private/timeanalyzer.c
+//    source/private/timeanalyzer.c
     pnut/pnut.cpp
     test/main.cpp
     test/test_diagnostics.cpp
@@ -43,12 +43,12 @@ add_executable(cbot_test
     test/test_dict.cpp
     test/test_pnut.cpp
     test/test_stringx.cpp
-    test/test_chksum.cpp
+    test/test_mathutils.cpp
     test/test_sm.cpp
     test/lock.c
     test/test_ftimer.cpp
     test/test_stopwatch.cpp
-    test/test_timeanalyzer.cpp
+//    test/test_timeanalyzer.cpp
     test/test_cli.cpp
     )
 

@@ -23,8 +23,9 @@
 #define CBOT_ERR_INVALID_INDEX   103
 
 /// Defines an invalid pointer (allocation, iniitialization, etc), typically that returned by a function.
-/// This is distinct from NULL which may be a normal value e.g. end of an array.
-#define BAD_PTR (void*)-1
+#define BAD_PTR     ((void*)-1)
 
+/// Convenience to bookend BAD_PTR. Distinct because it may be a normal value e.g. end of a list.
+#define NULL_PTR    ((void*)NULL)
 
 #endif // CBOT_H
