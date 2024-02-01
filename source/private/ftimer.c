@@ -6,6 +6,8 @@
 #include "cbot_internal.h"
 #include "ftimer.h"
 
+//TODO2 measured performance not much better than native.
+
 
 //---------------- Private Declarations ------------------//
 

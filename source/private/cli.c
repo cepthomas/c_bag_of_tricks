@@ -9,7 +9,7 @@
 #include "cli.h"
 
 
-// TODO2 handle immediate key e.g. space bar to start/stop, maybe ctrl-space?
+// TODO1 handle immediate key e.g. space bar to start/stop, maybe ctrl-space?
 
 
 //---------------- Private ------------------------------//
