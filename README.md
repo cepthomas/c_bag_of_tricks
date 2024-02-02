@@ -6,7 +6,7 @@
 - There is some dynamic allocation, maybe I can make it all static eventually. No assert() are used.
 - No dependencies on third party components.
 - They all (except pnut) use the opaque pointer (pimpl) idiom.
-- Runtime components are plain C99 so should build and run on any win or nx platform using any compiler.
+- Runtime components are (mostly) plain C99. Those marked with * are windows only.
 - Test code is Windows 64 bit build using CMake. PATH must include \your\path\mingw64\bin.
 - For conventions see [c_modular](https://github.com/cepthomas/c_modular/blob/master/README.md).
 
@@ -33,11 +33,11 @@
 - Higher level string manipulation.
 - See test_stringx.cpp for example of usage.
 
-## cli
-- Container for args with slicing and dicing into convenient parts. Windows only.
+## cli *
+- Container for args with slicing and dicing into convenient parts. Windows only but could be modified for nx.
 - See test_cli.cpp for example of usage.
 
-## ftimer
+## ftimer *
 A fast (msec) timer based on Windows multimedia timer. The win multimedia timer is erratic with possible
 errors of many msec.
 
@@ -48,16 +48,13 @@ unloaded system. That should be good enough for midi.
 
 See `test_ftimer.cpp` for usage.
 
-## stopwatch
-
+## stopwatch *
 Stopwatch similar to the .NET component. [Beware of QueryPerformanceCounter()](https://www.virtualdub.org/blog2/entry_106.html)
 
-## timeanalyzer
-
-Takes repeated time samples and performs some basic statistics.
+## mathutils
+Statistics, CRC.
 
 # Status
-
 - Most functions return an int status code of 0 or in the range of 100 and 127.
 - Some functions return numerical values like count/length/index which are always >= 0.
   For errors, they return the negative of the status code for easy testing and extraction by the caller.

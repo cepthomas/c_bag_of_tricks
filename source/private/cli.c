@@ -10,6 +10,10 @@
 
 
 // TODO1 handle immediate key e.g. space bar to start/stop, maybe ctrl-space?
+// [history](C:\Dev\AL\harvester\xib-firmware\vendor\appliedlogix\cli-library\cli\cli_interpreter.c)
+
+// TODO3 support nx, probably ncurses.
+// GetAsyncKeyState
 
 
 //---------------- Private ------------------------------//

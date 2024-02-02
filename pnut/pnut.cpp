@@ -49,7 +49,7 @@ void TestSuite::RecordResult(TestContext& context, bool pass, const std::string&
         else // readable
         {
             /// Output the failure string with file/line.
-            sstr << "! (" << file << ":" << line << ") " << context.CurrentSuiteId << "." << CaseCnt << " " << message << std::endl;
+            sstr << "! " << file << ":" << line << " " << context.CurrentSuiteId << "." << CaseCnt << " " << message << std::endl;
         }
     }
 

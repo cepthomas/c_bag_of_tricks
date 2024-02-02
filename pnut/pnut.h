@@ -152,7 +152,7 @@ else\
 /// @param info Extra info.
 #define UT_INFO(message, info)\
 {\
-if(testContext.Format == 'r')\
+    if(testContext.Format == 'r')\
     {\
         std::ostringstream oss;\
         oss << message << " " << info << std::endl;\
