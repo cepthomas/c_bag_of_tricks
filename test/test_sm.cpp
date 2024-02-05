@@ -75,7 +75,7 @@ UT_SUITE(SM_DOT, "Test the dot file creation.")
 {
     logger_SetFilters(LVL_DEBUG);
 
-    system("del /q sm.*");
+    system("del /q sm.* >NUL");
 
     FILE* fp = fopen("..\\test\\files\\sm.gv", "w");
     UT_NOT_NULL(fp);

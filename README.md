@@ -33,11 +33,7 @@
 - Higher level string manipulation.
 - See test_stringx.cpp for example of usage.
 
-## cli *
-- Container for args with slicing and dicing into convenient parts. Windows only but could be modified for nx.
-- See test_cli.cpp for example of usage.
-
-## ftimer *
+## ftimer*
 A fast (msec) timer based on Windows multimedia timer. The win multimedia timer is erratic with possible
 errors of many msec.
 
@@ -48,11 +44,12 @@ unloaded system. That should be good enough for midi.
 
 See `test_ftimer.cpp` for usage.
 
-## stopwatch *
+## stopwatch*
 Stopwatch similar to the .NET component. [Beware of QueryPerformanceCounter()](https://www.virtualdub.org/blog2/entry_106.html)
 
 ## mathutils
 Statistics, CRC.
+
 
 # Status
 - Most functions return an int status code of 0 or in the range of 100 and 127.
@@ -60,6 +57,7 @@ Statistics, CRC.
   For errors, they return the negative of the status code for easy testing and extraction by the caller.
 - Functions (usually low-level) that return pointers return BAD_PTR for hard alloc errors and
   NULL for normal and recoverable operations such as indicating end of iteration.
+
 
 # Tools
 

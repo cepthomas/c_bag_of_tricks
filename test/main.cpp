@@ -13,15 +13,14 @@ int main()
     // Run the requested tests. Could be obtained from the command line.
     std::vector<std::string> whichSuites;
 
-    // whichSuites.emplace_back("LOGGER");
-    // whichSuites.emplace_back("SM");
-    // whichSuites.emplace_back("DIAG");
-    // whichSuites.emplace_back("LIST");
-    // whichSuites.emplace_back("STR");
-    // whichSuites.emplace_back("DICT");
-
-    // whichSuites.emplace_back("MATHUTILS");
-    // whichSuites.emplace_back("STOPWATCH");
+    whichSuites.emplace_back("LOGGER");
+    whichSuites.emplace_back("SM");
+    whichSuites.emplace_back("DIAG");
+    whichSuites.emplace_back("LIST");
+    whichSuites.emplace_back("STR");
+    whichSuites.emplace_back("DICT");
+    whichSuites.emplace_back("MATHUTILS");
+    whichSuites.emplace_back("STOPWATCH");
     whichSuites.emplace_back("FTIMER");
 
 

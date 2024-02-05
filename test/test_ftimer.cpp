@@ -86,7 +86,6 @@ UT_SUITE(FTIMER_BASIC, "Test all ftimer functions.")
     stat_results_t res;
     int num = p_test_index;
     mathutils_CalcStats(p_test_res, num, &res);
-    UT_INFO("Num vals", res.num_vals);
     UT_EQUAL(res.num_vals, num);
     UT_CLOSE(res.mean, 10.00, 0.5);
     UT_CLOSE(res.min, 10.00, 0.5);
