@@ -26,7 +26,7 @@ UT_SUITE(STOPWATCH_BASIC, "Test all stopwatch functions.")
 
     // Single capture accuracy.
     stopwatch_Init();
-    UT_CLOSE(stopwatch_ElapsedMsec(), 0.0, 0.01); // TODO2 always fails badly.
+    UT_CLOSE(stopwatch_ElapsedMsec(), 0.0, 0.01); // TODO2 (first?) always fails badly.
 
     Sleep(250);
     UT_CLOSE(stopwatch_ElapsedMsec(), 250.0, TRES);
