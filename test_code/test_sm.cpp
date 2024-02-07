@@ -77,7 +77,7 @@ UT_SUITE(SM_DOT, "Test the dot file creation.")
 
     system("del /q sm.* >NUL");
 
-    FILE* fp = fopen("..\\test\\files\\sm.gv", "w");
+    FILE* fp = fopen("..\\test_code\\files\\sm.gv", "w");
     UT_NOT_NULL(fp);
 
     // Create a lock sm.
@@ -88,7 +88,7 @@ UT_SUITE(SM_DOT, "Test the dot file creation.")
     fclose(fp);
 
     // Convert to image.
-    const char* cmd = "dot -Tpng ..\\test\\files\\sm.gv -o sm.png";
+    const char* cmd = "dot -Tpng ..\\test_code\\files\\sm.gv -o sm.png";
     int r = system(cmd);
     UT_EQUAL(r, 0);
 

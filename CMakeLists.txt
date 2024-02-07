@@ -17,34 +17,34 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall")
 
 # Header files.
 include_directories(
-    source
+    source_code
+    test_code
     pnut
-    test
     )
 
 # Source files.
 add_executable(cbot_test
-    source/private/logger.c
-    source/private/list.c
-    source/private/dict.c
-    source/private/state_machine.c
-    source/private/stringx.c
-    source/private/mathutils.c
-    source/private/ftimer.c
-    source/private/stopwatch.c
+    source_code/private/logger.c
+    source_code/private/list.c
+    source_code/private/dict.c
+    source_code/private/state_machine.c
+    source_code/private/stringx.c
+    source_code/private/mathutils.c
+    source_code/private/ftimer.c
+    source_code/private/stopwatch.c
+    test_code/main.cpp
+    test_code/test_diagnostics.cpp
+    test_code/test_logger.cpp
+    test_code/test_list.cpp
+    test_code/test_dict.cpp
+    test_code/test_pnut.cpp
+    test_code/test_stringx.cpp
+    test_code/test_mathutils.cpp
+    test_code/test_sm.cpp
+    test_code/lock.c
+    test_code/test_ftimer.cpp
+    test_code/test_stopwatch.cpp
     pnut/pnut.cpp
-    test/main.cpp
-    test/test_diagnostics.cpp
-    test/test_logger.cpp
-    test/test_list.cpp
-    test/test_dict.cpp
-    test/test_pnut.cpp
-    test/test_stringx.cpp
-    test/test_mathutils.cpp
-    test/test_sm.cpp
-    test/lock.c
-    test/test_ftimer.cpp
-    test/test_stopwatch.cpp
     )
 
 target_link_libraries(cbot_test

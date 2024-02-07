@@ -183,7 +183,7 @@ dict_t* create_str_dict(void)
     dict_t* d = dict_Create(KEY_STRING);
 
     // Add some values.
-    FILE* fp = fopen("..\\test\\files\\hemingway_short.txt", "r");
+    FILE* fp = fopen("..\\test_code\\files\\hemingway_short.txt", "r");
 
     char buff[64]; // I just know this.
     int buffind = 0;

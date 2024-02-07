@@ -10,7 +10,7 @@ extern "C"
 
 
 /////////////////////////////////////////////////////////////////////////////
-UT_SUITE(DIAG_MEM, "Test memory probe functions. Make sure PROBE is set in diagnostics.h.")
+UT_SUITE(DIAG_MEM, "Test memory probe functions. TODO1 ? Make sure PROBE is set in diagnostics.h.")
 {
     logger_SetFilters(LVL_TRACE);
 

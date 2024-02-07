@@ -31,8 +31,8 @@ UT_SUITE(MATHUTILS_STATS, "Test gen statistics.")
 /////////////////////////////////////////////////////////////////////////////
 UT_SUITE(MATHUTILS_CRC, "Test crc32 generation.")
 {
-    // FILE* fp = fopen("..\\test\\files\\hemingway_short.txt", "r");
-    FILE* fp = fopen("..\\test\\files\\hemingway.txt", "r");
+    // FILE* fp = fopen("..\\test_code\\files\\hemingway_short.txt", "r");
+    FILE* fp = fopen("..\\test_code\\files\\hemingway.txt", "r");
 
     UT_NOT_NULL(fp);
 
