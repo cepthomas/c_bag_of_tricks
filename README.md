@@ -1,5 +1,5 @@
 
-# C Bag Of Tricks
+# C Bag Of Tricks  TODO1 scrub all
 
 - An ever-expanding collection of the C things I use repeatedly. The primary focus is on
   utilities for embedded systems. There are lots of other ways to do this but I find most to be over-complicated.
