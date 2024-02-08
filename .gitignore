@@ -1,2 +1,3 @@
 /build_test
 /test/files/sm.gv
+*.sublime-*

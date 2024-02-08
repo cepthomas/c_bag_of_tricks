@@ -1,14 +1,16 @@
 
-# C Bag Of Tricks  TODO1 scrub all
+# C Bag Of Tricks
 
 - An ever-expanding collection of the C things I use repeatedly. The primary focus is on
   utilities for embedded systems. There are lots of other ways to do this but I find most to be over-complicated.
 - There is some dynamic allocation, maybe I can make it all static eventually. No assert() are used.
 - No dependencies on third party components.
 - They all (except pnut) use the opaque pointer (pimpl) idiom.
-- Runtime components are (mostly) plain C99. Those marked with * are windows only.
-- Test code is Windows 64 bit build using CMake. PATH must include \your\path\mingw64\bin.
-- For conventions see [c_modular](https://github.com/cepthomas/c_modular/blob/master/README.md).
+- Runtime components are (mostly) plain C99. Those marked with * are Windows only.
+- Test code is Windows 64 bit build using CMake. PATH must include \your\path\mingw64\bin. TODO1
+- Uses [C code conventions](https://github.com/cepthomas/c_bag_of_tricks/blob/master/conventions.md) and
+  [C module model](https://github.com/cepthomas/c_modular/blob/master/README.md).
+
 
 ![logo](felix.jpg)
 
@@ -49,14 +51,6 @@ Stopwatch similar to the .NET component. [Beware of QueryPerformanceCounter()](h
 
 ## mathutils
 Statistics, CRC.
-
-
-# Status
-- Most functions return an int status code of 0 or in the range of 100 and 127.
-- Some functions return numerical values like count/length/index which are always >= 0.
-  For errors, they return the negative of the status code for easy testing and extraction by the caller.
-- Functions (usually low-level) that return pointers return BAD_PTR for hard alloc errors and
-  NULL for normal and recoverable operations such as indicating end of iteration.
 
 
 # Tools

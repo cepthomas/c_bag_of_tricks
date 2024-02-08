@@ -28,4 +28,7 @@
 /// Convenience to bookend BAD_PTR. Distinct because it may be a normal value e.g. end of a list.
 #define NULL_PTR    ((void*)NULL)
 
+/// Shuts up the compiler.
+#define UNUSED(x)   ((void)(x))
+
 #endif // CBOT_H
