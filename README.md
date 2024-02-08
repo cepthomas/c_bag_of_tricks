@@ -7,7 +7,6 @@
 - No dependencies on third party components.
 - They all (except pnut) use the opaque pointer (pimpl) idiom.
 - Runtime components are (mostly) plain C99. Those marked with * are Windows only.
-- Test code is Windows 64 bit build using CMake. PATH must include \your\path\mingw64\bin. TODO1
 - Uses [C code conventions](https://github.com/cepthomas/c_bag_of_tricks/blob/master/conventions.md) and
   [C module model](https://github.com/cepthomas/c_modular/blob/master/README.md).
 

@@ -4,10 +4,6 @@ cmake_minimum_required(VERSION 3.5)
 
 project(cbot_test)
 
-if(NOT CMAKE_SIZEOF_VOID_P EQUAL 8)
-    message(FATAL_ERROR "Project must be built for 64 bit")
-endif()
-
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall")
 set(CMAKE_CXX_STANDARD 11)
