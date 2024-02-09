@@ -5,12 +5,13 @@
 
 extern "C"
 {
+#define USE_PROBE
 #include "diagnostics.h"
 }
 
 
 /////////////////////////////////////////////////////////////////////////////
-UT_SUITE(DIAG_MEM, "Test memory probe functions. TODO1 ? Make sure PROBE is set in diagnostics.h.")
+UT_SUITE(DIAG_MEM, "Test memory probe functions.")
 {
     logger_SetFilters(LVL_TRACE);
 
