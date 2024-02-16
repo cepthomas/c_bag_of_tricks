@@ -70,7 +70,6 @@ int ftimer_Init(ftimer_InterruptFunc_t fp, unsigned ft_res)
 int ftimer_Run(unsigned period)
 {
     int stat = CBOT_ERR_NO_ERR;
-    //printf("ftimer_Run()1 p_state=%d stat=%d period=%d\n", p_state, stat, period);
 
     if(p_state >= 0)
     {
