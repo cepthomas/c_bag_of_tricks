@@ -354,4 +354,18 @@ else\
     PASS_COMMON\
 }
 
+/// Checks whether the string starts with the phrase.
+/// @param value
+/// @param phrase
+#define UT_STR_CONTAINS(value, phrase)\
+{\
+    if(strstr(value, phrase) == NULL)\
+    {\
+        std::ostringstream oss;\
+        oss << "[" << value << "] does not contain " << "[" << phrase << "]";\
+        RecordResult(testContext, false,  __FILE__, __LINE__, oss.str());\
+    }\
+    PASS_COMMON\
+}
+
 #endif

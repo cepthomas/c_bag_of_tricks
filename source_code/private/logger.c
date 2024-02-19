@@ -15,6 +15,8 @@
 
 //---------------- Private Declarations ------------------//
 
+#define LOG_LINE_LEN 500
+
 /// Logging level.
 static log_level_t p_level = LVL_INFO;
 
@@ -64,7 +66,6 @@ int logger_Log(log_level_t level, int line, const char* format, ...)
 
     if (p_fp != NULL)
     {
-        #define LOG_LINE_LEN 100
         static char buff[LOG_LINE_LEN];
 
         // Check filters.
