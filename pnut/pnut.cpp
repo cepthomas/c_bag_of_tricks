@@ -106,10 +106,11 @@ void TestManager::AddSuite(TestSuite* ptc)
 }
 
 //---------------------------------------------------------------//
-void TestManager::RunSuites(std::vector<std::string> which, char fmt, std::ostream* where)
+void TestManager::RunSuites(std::vector<std::string> which, char fmt, bool stopOnFail, std::ostream* where)
 {
     _context.Reset();
     _context.Format = fmt;
+    _context.StopOnFail = stopOnFail;
     int caseCnt = 0;
     int failCnt = 0;
     int fatalCnt = 0;

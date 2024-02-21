@@ -23,6 +23,9 @@ struct TestContext
     ///  - 'x' for junit xml.
     char Format = {};
 
+    /// Stop or try to continue.
+    bool StopOnFail = false;
+
     /// Collected output lines.
     std::vector<std::string> OutLines = {};
 
@@ -106,8 +109,9 @@ public:
     /// Run all selected test suites.
     /// @param which List of IDs to run.
     /// @param fmt @see TestContext.Format.
+    /// @param stopOnFail @see TestContext.StopOnFail.
     /// @param where output: optional file or cout.
-    void RunSuites(std::vector<std::string> which, char fmt, std::ostream* where = &std::cout);
+    void RunSuites(std::vector<std::string> which, char fmt, bool stopOnFail, std::ostream* where = &std::cout);
 };
 
 
@@ -169,6 +173,7 @@ else\
         std::ostringstream oss;\
         oss << "[" << #condition << "] should be true";\
         RecordResult(testContext, false,  __FILE__, __LINE__, oss.str());\
+        if (testContext.StopOnFail) return 1;\
     }\
     PASS_COMMON\
 }
@@ -182,6 +187,7 @@ else\
         std::ostringstream oss;\
         oss << "[" << #condition << "] should be false";\
         RecordResult(testContext, false,  __FILE__, __LINE__, oss.str());\
+        if (testContext.StopOnFail) return 1;\
     }\
     PASS_COMMON\
 }
@@ -195,6 +201,7 @@ else\
         std::ostringstream oss;\
         oss << "[" << value << "] should be null";\
         RecordResult(testContext, false,  __FILE__, __LINE__, oss.str());\
+        if (testContext.StopOnFail) return 1;\
     }\
     PASS_COMMON\
 }
@@ -208,7 +215,7 @@ else\
         std::ostringstream oss;\
         oss << "[" << value << "] should not be null";\
         RecordResult(testContext, false,  __FILE__, __LINE__, oss.str());\
-        return 1;\
+        if (testContext.StopOnFail) return 1;\
     }\
     PASS_COMMON\
 }
@@ -223,6 +230,7 @@ else\
         std::ostringstream oss;\
         oss << "[" << value << "] should be " << "[" << expected << "]";\
         RecordResult(testContext, false,  __FILE__, __LINE__, oss.str());\
+        if (testContext.StopOnFail) return 1;\
     }\
     PASS_COMMON\
 }
@@ -237,6 +245,7 @@ else\
         std::ostringstream oss;\
         oss << "[" << value << "] should not be " << "[" << unexpected << "]";\
         RecordResult(testContext, false,  __FILE__, __LINE__, oss.str());\
+        if (testContext.StopOnFail) return 1;\
     }\
     PASS_COMMON\
 }
@@ -251,6 +260,7 @@ else\
         std::ostringstream oss;\
         oss << "[" << value1 << "] should be less than " << "[" << value2 << "]";\
         RecordResult(testContext, false,  __FILE__, __LINE__, oss.str());\
+        if (testContext.StopOnFail) return 1;\
     }\
     PASS_COMMON\
 }
@@ -265,6 +275,7 @@ else\
         std::ostringstream oss;\
         oss << "[" << value1 << "] should be less than or equal to " << "[" << value2 << "]";\
         RecordResult(testContext, false,  __FILE__, __LINE__, oss.str());\
+        if (testContext.StopOnFail) return 1;\
     }\
     PASS_COMMON\
 }
@@ -279,6 +290,7 @@ else\
         std::ostringstream oss;\
         oss << "[" << value1 << "] should be greater than " << "[" << value2 << "]";\
         RecordResult(testContext, false,  __FILE__, __LINE__, oss.str());\
+        if (testContext.StopOnFail) return 1;\
     }\
     PASS_COMMON\
 }
@@ -293,6 +305,7 @@ else\
         std::ostringstream oss;\
         oss << "[" << value1 << "] should be greater than or equal to " << "[" << value2 << "]";\
         RecordResult(testContext, false,  __FILE__, __LINE__, oss.str());\
+        if (testContext.StopOnFail) return 1;\
     }\
     PASS_COMMON\
 }
@@ -309,6 +322,7 @@ else\
         std::ostringstream oss;\
         oss << "[" << value1 << "] should be within " << tolerance << " of " << "[" << value2 << "]";\
         RecordResult(testContext, false,  __FILE__, __LINE__, oss.str());\
+        if (testContext.StopOnFail) return 1;\
     }\
     PASS_COMMON\
 }
@@ -318,11 +332,12 @@ else\
 /// @param expected
 #define UT_STR_EQUAL(value, expected)\
 {\
-    if(strcmp(value, expected) != 0)\
+    if(value == NULL || expected == NULL || strcmp(value, expected) != 0)\
     {\
         std::ostringstream oss;\
         oss << "[" << value << "] should be " << "[" << expected << "]";\
         RecordResult(testContext, false,  __FILE__, __LINE__, oss.str());\
+        if (testContext.StopOnFail) return 1;\
     }\
     PASS_COMMON\
 }
@@ -332,11 +347,12 @@ else\
 /// @param unexpected
 #define UT_STR_NOT_EQUAL(value, unexpected)\
 {\
-    if(strcmp(value, unexpected) == 0)\
+    if(value == NULL || unexpected == NULL || strcmp(value, unexpected) == 0)\
     {\
         std::ostringstream oss;\
         oss << "[" << value << "] should not be " << "[" << unexpected << "]";\
         RecordResult(testContext, false,  __FILE__, __LINE__, oss.str());\
+        if (testContext.StopOnFail) return 1;\
     }\
     PASS_COMMON\
 }
@@ -345,11 +361,12 @@ else\
 /// @param value
 #define UT_STR_EMPTY(value)\
 {\
-    if(strlen(value) > 0)\
+    if(value == NULL || strlen(value) > 0)\
     {\
         std::ostringstream oss;\
         oss << "[" << value << "] should be empty";\
         RecordResult(testContext, false,  __FILE__, __LINE__, oss.str());\
+        if (testContext.StopOnFail) return 1;\
     }\
     PASS_COMMON\
 }
@@ -359,11 +376,12 @@ else\
 /// @param phrase
 #define UT_STR_CONTAINS(value, phrase)\
 {\
-    if(strstr(value, phrase) == NULL)\
+    if(value == NULL || phrase == NULL || (strstr(value, phrase) == NULL))\
     {\
         std::ostringstream oss;\
         oss << "[" << value << "] does not contain " << "[" << phrase << "]";\
         RecordResult(testContext, false,  __FILE__, __LINE__, oss.str());\
+        if (testContext.StopOnFail) return 1;\
     }\
     PASS_COMMON\
 }
