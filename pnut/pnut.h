@@ -371,7 +371,7 @@ else\
     PASS_COMMON\
 }
 
-/// Checks whether the string starts with the phrase.
+/// Checks whether the string contains the phrase.
 /// @param value
 /// @param phrase
 #define UT_STR_CONTAINS(value, phrase)\
