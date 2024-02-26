@@ -103,7 +103,7 @@ uint32_t mathutils_crc32(uint32_t crc_in, const uint8_t* buf, int num_vals, bool
 
     uint32_t crc = 0;
 
-#ifdef _CRC32 // TODO3 fix this!
+#ifdef _CRC32 // TODO2 fix this!
     crc = crc_in;
 
     if (have_table == 0)

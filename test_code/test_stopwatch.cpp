@@ -11,7 +11,7 @@ extern "C"
 }
 
 
-// TODO3 This doesn't actually test the stopwatch but rather the accuracy of Sleep() ~15.6ms. Oh well.
+// This doesn't actually test the stopwatch but rather the accuracy of Sleep() ~15.6ms. Oh well.
 const double TRES = 16; 
 
 
