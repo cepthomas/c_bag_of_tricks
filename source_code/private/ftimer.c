@@ -15,7 +15,7 @@
 static ftimer_InterruptFunc_t p_interrupt_func = NULL;
 
 /// Requested pulse period in msec.
-static unsigned p_period = 0;
+static double p_period = 0;
 
 /// Resolution of p_period.
 static unsigned p_ft_res = 0;
@@ -67,7 +67,7 @@ int ftimer_Init(ftimer_InterruptFunc_t fp, unsigned ft_res)
 }
 
 //--------------------------------------------------------//
-int ftimer_Run(unsigned period)
+int ftimer_Run(double period)
 {
     int stat = CBOT_ERR_NO_ERR;
 
@@ -75,7 +75,7 @@ int ftimer_Run(unsigned period)
     {
         p_period = period;
 
-        if(period > 0)
+        if(p_period > 0)
         {
             // Clean up if already running.
             if(p_sys_handle > 0)

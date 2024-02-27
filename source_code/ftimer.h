@@ -23,7 +23,7 @@ int ftimer_Init(ftimer_InterruptFunc_t fp, unsigned ft_res);
 /// Enter the forever loop.
 /// @param Desired period in msec or 0 to stop.
 /// @return status
-int ftimer_Run(unsigned period);
+int ftimer_Run(double period);
 
 /// Clean up module resources.
 /// @return status
