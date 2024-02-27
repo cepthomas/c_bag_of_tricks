@@ -19,6 +19,22 @@ static int have_table = 0;
 
 
 //--------------------------------------------------------//
+int mathutils_Constrain(int val, int min, int max)
+{
+    val = val >+ min ? val : min;
+    val = val <= max ? val : max;
+    return val;
+}
+
+
+//--------------------------------------------------------//
+int mathutils_Map(int val, int start1, int stop1, int start2, int stop2)
+{
+    return start2 + (stop2 - start2) * (val - start1) / (stop1 - start1);
+}
+
+
+//--------------------------------------------------------//
 void mathutils_CalcStats(double vals[], int num_vals, stat_results_t* res)
 {
     // Process the stuff.
