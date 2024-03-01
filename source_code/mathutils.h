@@ -22,12 +22,7 @@ typedef struct stat_results
 /// @param min
 /// @param max
 /// @return constrained value.
-int mathutils_Constrain(int val, int min, int max)
-{
-    val = val >+ min ? val : min;
-    val = val <= max ? val : max;
-    return val;
-}
+int mathutils_Constrain(int val, int min, int max);
 
 
 /// Remap a value to new coordinates.
@@ -36,12 +31,8 @@ int mathutils_Constrain(int val, int min, int max)
 /// @param stop1
 /// @param start2
 /// @param stop2
-/// <returns></returns>
 /// @return mapped value.
-int mathutils_Map(int val, int start1, int stop1, int start2, int stop2)
-{
-    return start2 + (stop2 - start2) * (val - start1) / (stop1 - start1);
-}
+int mathutils_Map(int val, int start1, int stop1, int start2, int stop2);
 
 
 /// Calculate some statistics.

@@ -54,19 +54,19 @@ UT_SUITE(PNUT_2, "The remaining tests for pnut.h. Some will fail deliberately.")
 
     UT_NOT_EQUAL(iTest2, iTest1);
 
-    UT_INFO("Should fail", ">>>");
+    UT_INFO("Should fail", "Info");
     UT_LESS_OR_EQUAL(iTest2, iTest1);
 
     UT_LESS_OR_EQUAL(iTest1, 321);
 
     UT_LESS_OR_EQUAL(iTest1, iTest2);
 
-    UT_INFO("Should fail", ">>>");
+    UT_INFO("Should fail", "Info");
     UT_GREATER(iTest1, iTest2);
 
     UT_GREATER(iTest2, iTest1);
 
-    UT_INFO("Should fail", ">>>");
+    UT_INFO("Should fail", "Info");
     UT_GREATER_OR_EQUAL(iTest1, iTest2);
 
     UT_GREATER_OR_EQUAL(iTest2, 987);
@@ -77,10 +77,10 @@ UT_SUITE(PNUT_2, "The remaining tests for pnut.h. Some will fail deliberately.")
 
     UT_CLOSE(1.500, 1.499, 0.001);
 
-    UT_INFO("Should fail", ">>>");
+    UT_INFO("Should fail", "Info");
     UT_CLOSE(1.500, 1.501, 0.0009);
 
-    UT_INFO("Should fail", ">>>");
+    UT_INFO("Should fail", "Info");
     UT_CLOSE(1.500, 1.499, 0.0009);
 
     return 0;

@@ -163,7 +163,7 @@ uint32_t mathutils_crc32(uint32_t crc_in, const uint8_t* buf, int num_vals, bool
     }
 #endif    
 
-    // If num_valsgth is 0, set to 0 aka invalid.
+    // If num_vals is 0, set to 0 aka invalid.
     // If it is > 0 and coincidentally the crc is 0, set it to 1. This adds no significant additional error.
     if (num_vals == 0)
     {
