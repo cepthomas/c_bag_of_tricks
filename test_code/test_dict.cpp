@@ -56,7 +56,7 @@ UT_SUITE(DICT_STR, "Test all dict functions using string key.")
     // Create data payload.
     CREATE_INST(tsrep, test_struct_t);
     tsrep->anumber = 9999;
-    snprintf(tsrep->astring, TEST_STR_LEN, "Ajay_%d", tsrep->anumber);
+    snprintf(tsrep->astring, TEST_STR_LEN - 1, "Ajay_%d", tsrep->anumber);
     // Create key/value.
     key.ks = "SOMETHING";
     dict_Set(mydict, key, tsrep);
@@ -207,7 +207,7 @@ dict_t* create_str_dict(void)
                     // Create data payload.
                     CREATE_INST(st, test_struct_t);
                     st->anumber = 100 + i++;
-                    snprintf(st->astring, TEST_STR_LEN, "Ajay_%d", st->anumber);
+                    snprintf(st->astring, TEST_STR_LEN - 1, "Ajay_%d", st->anumber);
 
                     // Create key/value.
                     key_t key;
@@ -250,7 +250,7 @@ dict_t* create_int_dict(void)
         // Create data payload.
         CREATE_INST(st, test_struct_t);
         st->anumber = 1000 + k;
-        snprintf(st->astring, TEST_STR_LEN, "Boo_%d", st->anumber);
+        snprintf(st->astring, TEST_STR_LEN - 1, "Boo_%d", st->anumber);
 
         // Create key/value.
         key_t key;

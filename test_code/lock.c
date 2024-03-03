@@ -185,7 +185,7 @@ const char* lock_Xlat(unsigned int id)
         case ST_SETTING_COMBO: return "ST_SETTING_COMBO";
         case ST_UNLOCKED: return "ST_UNLOCKED";
         case ST_DEAD: return "ST_DEAD";
-        default: snprintf(defId, 100-1, "*** Invalid id %d", id); return defId; // Should be an error?
+        default: snprintf(defId, sizeof(defId)-1, "*** Invalid id %d", id); return defId; // Should be an error?
     }
 }
 

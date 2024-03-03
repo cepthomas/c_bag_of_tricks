@@ -340,7 +340,7 @@ int stringx_Format(stringx_t* s, unsigned int maxlen, const char* format, ...)
     CREATE_STR(buff, maxlen);
     va_list args;
     va_start(args, format);
-    vsnprintf(buff, maxlen, format, args);
+    vsnprintf(buff, maxlen - 1, format, args);
 
     p_Assign(s, buff);
   
