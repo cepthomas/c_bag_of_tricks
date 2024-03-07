@@ -141,7 +141,14 @@ else\
     RecordResult(testContext, true,  __FILE__, __LINE__, "");\
 }
 
-/// Prints the property name and value.
+/// Toggle the fatal bail out mechanism.
+/// @param value True/false. value.
+#define UT_STOP_ON_FAIL(value)\
+{\
+    testContext.StopOnFail = value;\
+}\
+
+/// Record the property name and value.
 /// @param name Property name.
 /// @param value Property value.
 #define UT_PROPERTY(name, value)\
@@ -206,14 +213,14 @@ else\
     PASS_COMMON\
 }
 
-/// Checks whether the value is not NULL. Failure exits early because it's usually a bad pointer.
+/// Checks whether the value is not NULL.
 /// @param value NULL?
 #define UT_NOT_NULL(value)\
 {\
     if((value) == NULL)\
     {\
         std::ostringstream oss;\
-        oss << "[" << value << "] should not be null";\
+        oss << "[value] should not be null";\
         RecordResult(testContext, false,  __FILE__, __LINE__, oss.str());\
         if (testContext.StopOnFail) return 1;\
     }\
