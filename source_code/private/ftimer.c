@@ -6,7 +6,7 @@
 #include "cbot_internal.h"
 #include "ftimer.h"
 
-// TODO2 Is measured performance really better than native?
+// TODO3 Is measured performance really better than native?
 
 
 //---------------- Private Declarations ------------------//
